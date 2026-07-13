@@ -1,16 +1,13 @@
 import json
 import logging
-import os
 
 import httpx
 from sqlalchemy import select
 
+from app.config import get_settings
 from app.database import SessionLocal
 from app.models import AISuggestion, Annotation, OntologyNode, Paragraph
 from app.provenance import write_audit_event
-
-OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
-MODEL = os.getenv("OLLAMA_MODEL", "llama3")
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +24,7 @@ Respond with a JSON object only (no markdown, no explanation outside the JSON):
 
 
 def run_ollama_review(annotation_id: str) -> None:
+    cfg = get_settings()
     db = SessionLocal()
     try:
         annotation = db.get(Annotation, annotation_id)
@@ -48,9 +46,9 @@ def run_ollama_review(annotation_id: str) -> None:
 
         try:
             response = httpx.post(
-                f"{OLLAMA_URL}/api/chat",
+                f"{cfg.ollama_url}/api/chat",
                 json={
-                    "model": MODEL,
+                    "model": cfg.ollama_model,
                     "stream": False,
                     "messages": [
                         {"role": "system", "content": SYSTEM_PROMPT},
@@ -61,7 +59,6 @@ def run_ollama_review(annotation_id: str) -> None:
             )
             response.raise_for_status()
             content = response.json()["message"]["content"].strip()
-            # strip markdown code fences if model includes them
             if content.startswith("```"):
                 content = content.split("```")[1]
                 if content.startswith("json"):
@@ -74,7 +71,7 @@ def run_ollama_review(annotation_id: str) -> None:
         suggestion = AISuggestion(
             annotation_id=annotation_id,
             agent_name="ANNI Reviewer",
-            model_name=MODEL,
+            model_name=cfg.ollama_model,
             ontology_node_id=annotation.ontology_node_id,
             confidence=min(100, max(0, int(parsed.get("confidence", 75)))),
             evidence_quote=annotation.evidence_quote,
@@ -84,7 +81,7 @@ def run_ollama_review(annotation_id: str) -> None:
         )
         db.add(suggestion)
         db.flush()
-        write_audit_event(db, annotation.reviewer_id, "ai_suggestion", suggestion.id, "created", {"annotation_id": annotation_id, "model": MODEL})
+        write_audit_event(db, annotation.reviewer_id, "ai_suggestion", suggestion.id, "created", {"annotation_id": annotation_id, "model": cfg.ollama_model})
         db.commit()
     finally:
         db.close()

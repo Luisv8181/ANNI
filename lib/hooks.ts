@@ -57,12 +57,38 @@ export function useAnnotations(projectId?: string) {
   });
 }
 
-export function useSubmitAnnotation() {
+export function useSubmitAnnotation(projectId?: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: api.createAnnotation,
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["annotations"] });
+    onMutate: async (payload) => {
+      const key = ["annotations", projectId];
+      await qc.cancelQueries({ queryKey: key });
+      const previous = qc.getQueryData(key);
+      qc.setQueryData(key, (old: unknown[] = []) => [
+        {
+          id: `optimistic-${Date.now()}`,
+          project_id: payload.project_id,
+          paragraph_id: payload.evidence.paragraph_id,
+          ontology_node_id: payload.ontology_node_id,
+          ontology_label: null,
+          reviewer_id: payload.reviewer_id,
+          evidence_quote: payload.evidence.quote,
+          confidence: payload.confidence,
+          note: payload.note,
+          status: "submitted",
+          created_at: new Date().toISOString(),
+          decisions: [],
+        },
+        ...old,
+      ]);
+      return { previous, key };
+    },
+    onError: (_err, _payload, context) => {
+      if (context) qc.setQueryData(context.key, context.previous);
+    },
+    onSettled: (_data, _err, _payload, context) => {
+      if (context) qc.invalidateQueries({ queryKey: context.key });
     },
   });
 }

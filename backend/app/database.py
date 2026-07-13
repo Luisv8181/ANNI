@@ -1,11 +1,11 @@
-import os
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-DATABASE_URL = os.getenv("ANNI_DATABASE_URL", "sqlite:///./anni.db")
-connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
-engine = create_engine(DATABASE_URL, connect_args=connect_args)
+from app.config import get_settings
+
+_settings = get_settings()
+connect_args = {"check_same_thread": False} if _settings.database_url.startswith("sqlite") else {}
+engine = create_engine(_settings.database_url, connect_args=connect_args)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 

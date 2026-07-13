@@ -1,11 +1,16 @@
+import logging
 from contextlib import asynccontextmanager
 
+import httpx
 from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.config import get_settings
 from app.database import SessionLocal, get_db
+
+logger = logging.getLogger(__name__)
 from app.models import (
     AISuggestion,
     Annotation,
@@ -41,11 +46,28 @@ from app.seed import seed_demo_data
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    cfg = get_settings()
     db = SessionLocal()
     try:
         seed_demo_data(db)
     finally:
         db.close()
+    # Check Ollama is reachable and the configured model is available
+    try:
+        resp = httpx.get(f"{cfg.ollama_url}/api/tags", timeout=5.0)
+        resp.raise_for_status()
+        available = [m["name"] for m in resp.json().get("models", [])]
+        match = any(cfg.ollama_model in name for name in available)
+        if match:
+            logger.info("Ollama ready — model '%s' available. Models: %s", cfg.ollama_model, available)
+        else:
+            logger.warning(
+                "Ollama is running but model '%s' was not found. Available: %s. "
+                "Run: ollama pull %s",
+                cfg.ollama_model, available, cfg.ollama_model,
+            )
+    except Exception as exc:
+        logger.warning("Ollama not reachable at %s: %s. AI review will be skipped.", cfg.ollama_url, exc)
     yield
 
 
@@ -56,9 +78,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+cfg = get_settings()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=cfg.cors_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
