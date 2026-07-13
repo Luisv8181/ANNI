@@ -115,6 +115,7 @@ class AISuggestion(Base):
     ontology_node_id: Mapped[str] = mapped_column(ForeignKey("ontology_nodes.id"))
     confidence: Mapped[int] = mapped_column(Integer)
     evidence_quote: Mapped[str] = mapped_column(Text)
+    suggestion: Mapped[str] = mapped_column(Text, default="")
     rationale: Mapped[str] = mapped_column(Text)
     decision: Mapped[str] = mapped_column(String, default="pending")
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

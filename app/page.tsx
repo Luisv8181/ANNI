@@ -9,6 +9,7 @@ import {
   Database,
   FileText,
   GitBranch,
+  Loader2,
   Lock,
   Network,
   Search,
@@ -17,9 +18,22 @@ import {
   Users
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { FormEvent, useMemo, useState } from "react";
-import { ontologyNodes, testimonyParagraphs } from "@/lib/data";
+import { FormEvent, useState } from "react";
+import { testimonyParagraphs } from "@/lib/data";
 import { useAnniStore } from "@/lib/store";
+import {
+  useAnnotations,
+  useDecideSuggestion,
+  useOntologyNodes,
+  useSubmitAnnotation,
+  useSubmitReadConfirmation,
+  useSuggestions
+} from "@/lib/hooks";
+import { useCurrentUser } from "@/lib/identity";
+import type { Annotation } from "@/lib/api";
+
+const DEMO_PROJECT_ID = "proj-anni-demo";
+const DEMO_SOURCE_ID = "T-DEMO-001";
 
 const steps = [
   "Import",
@@ -32,42 +46,79 @@ const steps = [
 ];
 
 export default function Home() {
+  const reviewerId = useCurrentUser();
   const {
     hasRead,
     setHasRead,
-    annotations,
-    suggestions,
     selectedOntologyId,
     setSelectedOntologyId,
-    addAnnotation,
-    decideSuggestion
+    readConfirmationId,
+    setReadConfirmationId
   } = useAnniStore();
+
   const [span, setSpan] = useState("I waited until the pain was bad");
   const [note, setNote] = useState("Delayed disclosure should influence simulation behavior.");
+  const [confidence, setConfidence] = useState(78);
+  const [relationship, setRelationship] = useState<"supports" | "contradicts" | "qualifies" | "contextualizes">("supports");
   const [paragraphId, setParagraphId] = useState("p1");
+  const [focusedAnnotationId, setFocusedAnnotationId] = useState<string | null>(null);
 
-  const selectedOntology = useMemo(
-    () => ontologyNodes.find((node) => node.id === selectedOntologyId) ?? ontologyNodes[0],
-    [selectedOntologyId]
-  );
+  const { data: ontologyNodes = [], isLoading: ontologyLoading } = useOntologyNodes();
+  const { data: annotations = [] } = useAnnotations(DEMO_PROJECT_ID);
+  const { data: suggestions = [] } = useSuggestions(focusedAnnotationId);
 
-  function submitAnnotation(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!span.trim() || !note.trim()) return;
-    addAnnotation({
-      paragraphId,
-      span,
-      note,
-      ontologyId: selectedOntologyId,
-      confidence: 78,
-      relationship: "supports"
-    });
-    setSpan("");
-    setNote("");
+  const submitReadConfirmation = useSubmitReadConfirmation();
+  const submitAnnotation = useSubmitAnnotation();
+  const decideSuggestion = useDecideSuggestion();
+
+  const selectedOntology = ontologyNodes.find((n) => n.id === selectedOntologyId) ?? ontologyNodes[0];
+
+  async function handleReadToggle(checked: boolean) {
+    setHasRead(checked);
+    if (checked && !readConfirmationId && reviewerId) {
+      try {
+        const result = await submitReadConfirmation.mutateAsync(DEMO_SOURCE_ID);
+        setReadConfirmationId(result.id);
+      } catch {
+        setHasRead(false);
+      }
+    }
   }
 
-  const approvedCount = suggestions.filter((suggestion) => suggestion.decision === "accepted").length;
-  const pendingCount = suggestions.filter((suggestion) => suggestion.decision === "pending").length;
+  async function submitAnnotationForm(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!span.trim() || !note.trim() || !readConfirmationId || !reviewerId) return;
+    const paragraph = testimonyParagraphs.find((p) => p.id === paragraphId);
+    const charStart = paragraph ? paragraph.text.indexOf(span) : 0;
+    const charEnd = charStart >= 0 ? charStart + span.length : span.length;
+    try {
+      const annotation = await submitAnnotation.mutateAsync({
+        project_id: DEMO_PROJECT_ID,
+        ontology_node_id: selectedOntologyId,
+        relationship,
+        confidence,
+        note,
+        evidence: {
+          source_id: DEMO_SOURCE_ID,
+          paragraph_id: paragraphId,
+          character_start: Math.max(0, charStart),
+          character_end: Math.max(0, charEnd),
+          quote: span
+        },
+        reviewer_id: reviewerId,
+        read_confirmation_id: readConfirmationId
+      });
+      setFocusedAnnotationId(annotation.id);
+      setSpan("");
+      setNote("");
+    } catch (err) {
+      console.error("Annotation failed:", err);
+    }
+  }
+
+  const pendingCount = annotations.filter((a: Annotation) => a.status === "submitted").length;
+  const approvedCount = annotations.filter((a: Annotation) => a.status === "approved").length;
+  const pendingSuggestions = suggestions.filter((s) => s.decision === "pending").length;
 
   return (
     <main className="min-h-screen">
@@ -110,8 +161,8 @@ export default function Home() {
 
           <div className="mt-8 grid gap-3 md:grid-cols-3">
             <Metric label="Human annotations" value={annotations.length.toString()} icon={<Users size={18} />} />
-            <Metric label="ANNI suggestions" value={suggestions.length.toString()} icon={<Bot size={18} />} />
-            <Metric label="Pending decisions" value={pendingCount.toString()} icon={<CircleDot size={18} />} />
+            <Metric label="Pending review" value={pendingCount.toString()} icon={<CircleDot size={18} />} />
+            <Metric label="Approved" value={approvedCount.toString()} icon={<Check size={18} />} />
           </div>
         </motion.div>
 
@@ -141,7 +192,7 @@ export default function Home() {
         <div className="grid gap-4 lg:grid-cols-4">
           <StageCard icon={<FileText />} title="Source Import" text="Allow-list, license, robots, metadata, and testimony segmentation." />
           <StageCard icon={<BookOpenCheck />} title="Reading Gate" text="Annotation stays locked until the reviewer confirms personal reading." />
-          <StageCard icon={<Bot />} title="Local AI Review" text="Ollama, llama.cpp, or vLLM-compatible reviewers run after human submission." />
+          <StageCard icon={<Bot />} title="Local AI Review" text="Ollama runs after human submission and writes a structured second opinion." />
           <StageCard icon={<Database />} title="Citation Engine" text="Evidence spans, reviewer decisions, versions, and audit events stay attached." />
         </div>
       </section>
@@ -156,10 +207,15 @@ export default function Home() {
             <input
               type="checkbox"
               checked={hasRead}
-              onChange={(event) => setHasRead(event.target.checked)}
+              onChange={(event) => handleReadToggle(event.target.checked)}
               className="h-4 w-4 accent-accent"
+              disabled={submitReadConfirmation.isPending}
             />
-            I confirm I personally read this testimony.
+            {submitReadConfirmation.isPending ? (
+              <span className="flex items-center gap-2 text-muted"><Loader2 size={14} className="animate-spin" /> Confirming...</span>
+            ) : (
+              "I confirm I personally read this testimony."
+            )}
           </label>
         </div>
 
@@ -191,7 +247,7 @@ export default function Home() {
                 Confirm personal reading before adding annotations. ANNI stores this as part of the audit trail.
               </div>
             )}
-            <form onSubmit={submitAnnotation} className={`mt-4 space-y-4 ${!hasRead ? "pointer-events-none opacity-45" : ""}`}>
+            <form onSubmit={submitAnnotationForm} className={`mt-4 space-y-4 ${!hasRead ? "pointer-events-none opacity-45" : ""}`}>
               <label className="block">
                 <span className="text-sm font-medium text-muted">Evidence quote or span</span>
                 <textarea
@@ -213,61 +269,88 @@ export default function Home() {
               <div className="grid gap-3 md:grid-cols-2">
                 <label className="block">
                   <span className="text-sm font-medium text-muted">Relationship</span>
-                  <select className="mt-2 w-full rounded-lg border border-line bg-panel p-3 outline-none focus:border-accent">
-                    <option>supports</option>
-                    <option>contradicts</option>
-                    <option>qualifies</option>
-                    <option>contextualizes</option>
+                  <select
+                    value={relationship}
+                    onChange={(e) => setRelationship(e.target.value as typeof relationship)}
+                    className="mt-2 w-full rounded-lg border border-line bg-panel p-3 outline-none focus:border-accent"
+                  >
+                    <option value="supports">supports</option>
+                    <option value="contradicts">contradicts</option>
+                    <option value="qualifies">qualifies</option>
+                    <option value="contextualizes">contextualizes</option>
                   </select>
                 </label>
                 <label className="block">
-                  <span className="text-sm font-medium text-muted">Confidence</span>
+                  <span className="text-sm font-medium text-muted">Confidence: {confidence}%</span>
                   <input
                     type="range"
                     min="0"
                     max="100"
-                    defaultValue="78"
+                    value={confidence}
+                    onChange={(e) => setConfidence(Number(e.target.value))}
                     className="mt-5 w-full accent-accent"
                   />
                 </label>
               </div>
-              <button className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-ink px-4 py-3 font-medium text-white transition hover:bg-accent">
-                Submit for ANNI review
-                <ArrowRight size={18} />
+              <button
+                type="submit"
+                disabled={submitAnnotation.isPending || !readConfirmationId}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-ink px-4 py-3 font-medium text-white transition hover:bg-accent disabled:opacity-50"
+              >
+                {submitAnnotation.isPending ? (
+                  <><Loader2 size={18} className="animate-spin" /> Submitting...</>
+                ) : (
+                  <>Submit for ANNI review <ArrowRight size={18} /></>
+                )}
               </button>
+              {submitAnnotation.isError && (
+                <p className="text-sm text-red-600">Submission failed. Is the backend running?</p>
+              )}
             </form>
 
             <div className="mt-5 space-y-3">
-              {annotations.slice(0, 3).map((annotation) => (
-                <div key={annotation.id} className="rounded-lg border border-line bg-panel p-3">
-                  <p className="text-sm font-semibold">"{annotation.span}"</p>
-                  <p className="mt-2 text-sm leading-6 text-muted">{annotation.note}</p>
-                </div>
+              {annotations.slice(0, 3).map((annotation: Annotation) => (
+                <button
+                  key={annotation.id}
+                  onClick={() => setFocusedAnnotationId(annotation.id)}
+                  className={`w-full rounded-lg border p-3 text-left transition ${
+                    focusedAnnotationId === annotation.id ? "border-accent bg-lilac" : "border-line bg-panel hover:border-accent/50"
+                  }`}
+                >
+                  <p className="text-sm font-semibold">"{annotation.evidence_quote}"</p>
+                  <p className="mt-1 text-xs text-muted">{annotation.ontology_label} · {annotation.status}</p>
+                </button>
               ))}
             </div>
           </section>
 
           <section className="rounded-lg border border-line bg-white p-5 shadow-soft">
             <PanelTitle icon={<Search size={18} />} title="Ontology browser" />
-            <div className="mt-4 max-h-[570px] space-y-2 overflow-auto pr-1 scrollbar-thin">
-              {ontologyNodes.map((node) => (
-                <button
-                  key={node.id}
-                  onClick={() => setSelectedOntologyId(node.id)}
-                  className={`w-full rounded-lg border p-3 text-left transition ${
-                    selectedOntologyId === node.id ? "border-accent bg-lilac" : "border-line bg-white hover:bg-panel"
-                  }`}
-                >
-                  <span className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">{node.group}</span>
-                  <span className="mt-1 block font-semibold">{node.label}</span>
-                  <span className="mt-1 block text-sm leading-5 text-muted">{node.description}</span>
-                </button>
-              ))}
-            </div>
-            <div className="mt-4 rounded-lg bg-ink p-4 text-white">
-              <p className="text-xs uppercase tracking-[0.18em] text-white/50">Selected node</p>
-              <p className="mt-2 font-semibold">{selectedOntology.label}</p>
-            </div>
+            {ontologyLoading ? (
+              <div className="mt-6 flex justify-center"><Loader2 className="animate-spin text-muted" /></div>
+            ) : (
+              <div className="mt-4 max-h-[570px] space-y-2 overflow-auto pr-1 scrollbar-thin">
+                {ontologyNodes.map((node) => (
+                  <button
+                    key={node.id}
+                    onClick={() => setSelectedOntologyId(node.id)}
+                    className={`w-full rounded-lg border p-3 text-left transition ${
+                      selectedOntologyId === node.id ? "border-accent bg-lilac" : "border-line bg-white hover:bg-panel"
+                    }`}
+                  >
+                    <span className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">{node.group}</span>
+                    <span className="mt-1 block font-semibold">{node.label}</span>
+                    <span className="mt-1 block text-sm leading-5 text-muted">{node.description}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+            {selectedOntology && (
+              <div className="mt-4 rounded-lg bg-ink p-4 text-white">
+                <p className="text-xs uppercase tracking-[0.18em] text-white/50">Selected node</p>
+                <p className="mt-2 font-semibold">{selectedOntology.label}</p>
+              </div>
+            )}
           </section>
         </div>
       </section>
@@ -277,25 +360,36 @@ export default function Home() {
           <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
             <PanelTitle icon={<Bot size={18} />} title="Comparison dashboard" />
             <div className="rounded-full bg-mint px-3 py-2 text-sm font-medium text-[#206640]">
-              {approvedCount} accepted into final review
+              {focusedAnnotationId
+                ? pendingSuggestions === 0 && suggestions.length === 0
+                  ? "Waiting for Ollama review..."
+                  : `${pendingSuggestions} suggestion${pendingSuggestions !== 1 ? "s" : ""} pending`
+                : "Select an annotation to view suggestions"}
             </div>
           </div>
           <div className="mt-5 grid gap-3">
+            {suggestions.length === 0 && focusedAnnotationId && (
+              <div className="flex items-center gap-3 rounded-lg border border-line bg-panel p-4 text-sm text-muted">
+                <Loader2 size={16} className="animate-spin" />
+                Ollama is reviewing this annotation...
+              </div>
+            )}
             {suggestions.map((suggestion) => {
-              const ontology = ontologyNodes.find((node) => node.id === suggestion.ontologyId);
+              const ontology = ontologyNodes.find((n) => n.id === suggestion.ontology_node_id);
+              const annotation = annotations.find((a: Annotation) => a.id === suggestion.annotation_id);
               return (
                 <div key={suggestion.id} className="grid gap-3 rounded-lg border border-line bg-panel p-4 lg:grid-cols-[0.9fr_1.15fr_0.95fr]">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">Human</p>
-                    <p className="mt-2 font-semibold">{ontology?.label}</p>
+                    <p className="mt-2 font-semibold">{annotation?.ontology_label ?? ontology?.label}</p>
                     <p className="mt-2 text-sm leading-6 text-muted">Human annotation remains the baseline. AI cannot overwrite it.</p>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">{suggestion.agent}</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">{suggestion.agent_name}</p>
                     <p className="mt-2 font-semibold">{suggestion.suggestion}</p>
                     <p className="mt-2 text-sm leading-6 text-muted">{suggestion.rationale}</p>
                     <p className="mt-2 text-sm">
-                      Evidence: <span className="font-medium">"{suggestion.evidence}"</span>
+                      Evidence: <span className="font-medium">"{suggestion.evidence_quote}"</span>
                     </p>
                   </div>
                   <div>
@@ -304,7 +398,13 @@ export default function Home() {
                       {(["accepted", "rejected", "modified", "merged"] as const).map((decision) => (
                         <button
                           key={decision}
-                          onClick={() => decideSuggestion(suggestion.id, decision)}
+                          onClick={() =>
+                            decideSuggestion.mutate({
+                              annotationId: suggestion.annotation_id,
+                              suggestionId: suggestion.id,
+                              decision,
+                            })
+                          }
                           className={`rounded-md border px-3 py-2 text-sm font-medium capitalize transition ${
                             suggestion.decision === decision
                               ? "border-accent bg-accent text-white"
@@ -331,20 +431,19 @@ export default function Home() {
         <section className="rounded-lg border border-line bg-white p-5 shadow-soft">
           <PanelTitle icon={<GitBranch size={18} />} title="Citation engine" />
           <div className="mt-4 space-y-3">
-            {annotations.slice(0, 4).map((annotation) => {
-              const paragraph = testimonyParagraphs.find((item) => item.id === annotation.paragraphId);
-              const ontology = ontologyNodes.find((item) => item.id === annotation.ontologyId);
+            {annotations.slice(0, 4).map((annotation: Annotation) => {
+              const paragraph = testimonyParagraphs.find((item) => item.id === annotation.paragraph_id);
               return (
                 <div key={annotation.id} className="rounded-lg border border-line bg-panel p-4">
-                  <p className="text-sm font-semibold">{ontology?.label}</p>
-                  <p className="mt-2 text-sm leading-6 text-muted">"{annotation.span}"</p>
+                  <p className="text-sm font-semibold">{annotation.ontology_label}</p>
+                  <p className="mt-2 text-sm leading-6 text-muted">"{annotation.evidence_quote}"</p>
                   <div className="mt-3 grid gap-2 text-xs text-muted md:grid-cols-3">
-                    <span>Source: public-testimony-demo</span>
+                    <span>Source: T-DEMO-001</span>
                     <span>Paragraph: {paragraph?.order}</span>
                     <span>Ontology version: v0.1</span>
-                    <span>Human reviewer: current user</span>
-                    <span>AI reviewer: local agents</span>
-                    <span>Decision: {annotation.status}</span>
+                    <span>Reviewer: {annotation.reviewer_id.slice(0, 8)}…</span>
+                    <span>Confidence: {annotation.confidence}%</span>
+                    <span>Status: {annotation.status}</span>
                   </div>
                 </div>
               );
@@ -355,18 +454,38 @@ export default function Home() {
         <section className="rounded-lg border border-line bg-white p-5 shadow-soft">
           <PanelTitle icon={<Database size={18} />} title="Research dashboard" />
           <div className="mt-5 grid gap-3 md:grid-cols-2">
-            <ResearchMetric label="Human-AI agreement" value="67%" />
-            <ResearchMetric label="Annotation density" value="1.0 / paragraph" />
-            <ResearchMetric label="Ontology coverage" value="8 nodes" />
-            <ResearchMetric label="Review precision" value="Pending" />
+            <ResearchMetric
+              label="Total annotations"
+              value={annotations.length.toString()}
+            />
+            <ResearchMetric
+              label="Approved"
+              value={approvedCount.toString()}
+            />
+            <ResearchMetric
+              label="Ontology nodes used"
+              value={new Set(annotations.map((a: Annotation) => a.ontology_node_id)).size.toString()}
+            />
+            <ResearchMetric
+              label="Pending review"
+              value={pendingCount.toString()}
+            />
           </div>
-          <div className="mt-5 rounded-lg border border-line bg-panel p-4">
-            <p className="font-semibold">Synthetic trait preview</p>
-            <p className="mt-2 text-sm leading-6 text-muted">
-              Hesitates to disclose symptoms, requests slower explanation, and benefits from a family-supported teach-back
-              conversation. Each characteristic inherits evidence spans and reviewer decisions.
-            </p>
-          </div>
+          {approvedCount > 0 && (
+            <div className="mt-5 rounded-lg border border-line bg-panel p-4">
+              <p className="font-semibold">Approved annotation traits</p>
+              <ul className="mt-2 space-y-1">
+                {annotations
+                  .filter((a: Annotation) => a.status === "approved")
+                  .slice(0, 3)
+                  .map((a: Annotation) => (
+                    <li key={a.id} className="text-sm leading-6 text-muted">
+                      · {a.ontology_label}: {a.note}
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          )}
         </section>
       </section>
     </main>

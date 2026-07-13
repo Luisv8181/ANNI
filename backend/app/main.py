@@ -1,49 +1,170 @@
 from contextlib import asynccontextmanager
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.database import engine, get_db
-from app.models import Annotation, AnnotationDecision, Base, PromptCompilation, PromptCompilationAnnotation, ReadConfirmation
+from app.database import SessionLocal, get_db
+from app.models import (
+    AISuggestion,
+    Annotation,
+    AnnotationDecision,
+    AuditLog,
+    OntologyNode,
+    Paragraph,
+    Project,
+    PromptCompilation,
+    PromptCompilationAnnotation,
+    ReadConfirmation,
+    Source,
+)
+from app.ollama import run_ollama_review
 from app.provenance import COMPILER_VERSION, citation_report, compile_system_prompt, write_audit_event
-from app.schemas import AnnotationCreate, PromptCompilationCreate, ReadConfirmationCreate, ReviewDecision
+from app.schemas import (
+    AISuggestionOut,
+    AnnotationCreate,
+    AnnotationOut,
+    AuditLogOut,
+    DecisionOut,
+    OntologyNodeOut,
+    ParagraphOut,
+    ProjectOut,
+    PromptCompilationCreate,
+    ReadConfirmationCreate,
+    ReadConfirmationOut,
+    ReviewDecision,
+    SourceOut,
+)
+from app.seed import seed_demo_data
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    Base.metadata.create_all(bind=engine)
+    db = SessionLocal()
+    try:
+        seed_demo_data(db)
+    finally:
+        db.close()
     yield
 
 
 app = FastAPI(
     title="ANNI API",
     description="Local-first annotation and provenance API for Artificial Neural Annotation Intelligence.",
-    version="0.1.0",
+    version="0.2.0",
     lifespan=lifespan,
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# ── Health ───────────────────────────────────────────────────────────────────
 
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
-@app.post("/read-confirmations")
-def create_read_confirmation(payload: ReadConfirmationCreate, db: Session = Depends(get_db)) -> dict[str, object]:
+# ── Ontology ─────────────────────────────────────────────────────────────────
+
+@app.get("/ontology-nodes", response_model=list[OntologyNodeOut])
+def list_ontology_nodes(db: Session = Depends(get_db)):
+    return db.scalars(select(OntologyNode).order_by(OntologyNode.group, OntologyNode.label)).all()
+
+
+# ── Projects ─────────────────────────────────────────────────────────────────
+
+@app.get("/projects", response_model=list[ProjectOut])
+def list_projects(db: Session = Depends(get_db)):
+    return db.scalars(select(Project).order_by(Project.created_at)).all()
+
+
+# ── Sources ──────────────────────────────────────────────────────────────────
+
+@app.get("/sources", response_model=list[SourceOut])
+def list_sources(project_id: str | None = Query(None), db: Session = Depends(get_db)):
+    query = select(Source)
+    if project_id:
+        query = query.where(Source.project_id == project_id)
+    return db.scalars(query.order_by(Source.created_at)).all()
+
+
+@app.get("/sources/{source_id}/paragraphs", response_model=list[ParagraphOut])
+def list_paragraphs(source_id: str, db: Session = Depends(get_db)):
+    return db.scalars(
+        select(Paragraph).where(Paragraph.source_id == source_id).order_by(Paragraph.order_index)
+    ).all()
+
+
+# ── Read confirmations ────────────────────────────────────────────────────────
+
+@app.post("/read-confirmations", response_model=ReadConfirmationOut)
+def create_read_confirmation(payload: ReadConfirmationCreate, db: Session = Depends(get_db)):
     confirmation = ReadConfirmation(**payload.model_dump())
     db.add(confirmation)
     db.flush()
     write_audit_event(db, payload.reviewer_id, "read_confirmation", confirmation.id, "created", payload.model_dump())
     db.commit()
-    return {"id": confirmation.id, "confirmed_at": confirmation.confirmed_at}
+    db.refresh(confirmation)
+    return confirmation
 
 
-@app.post("/annotations")
-def create_annotation(payload: AnnotationCreate, db: Session = Depends(get_db)) -> dict[str, object]:
+# ── Annotations ───────────────────────────────────────────────────────────────
+
+def _annotation_out(annotation: Annotation, db: Session) -> AnnotationOut:
+    decisions = db.scalars(
+        select(AnnotationDecision)
+        .where(AnnotationDecision.annotation_id == annotation.id)
+        .order_by(AnnotationDecision.created_at)
+    ).all()
+    ontology = db.get(OntologyNode, annotation.ontology_node_id)
+    return AnnotationOut(
+        id=annotation.id,
+        project_id=annotation.project_id,
+        paragraph_id=annotation.paragraph_id,
+        ontology_node_id=annotation.ontology_node_id,
+        reviewer_id=annotation.reviewer_id,
+        evidence_quote=annotation.evidence_quote,
+        confidence=annotation.confidence,
+        note=annotation.note,
+        status=annotation.status,
+        created_at=annotation.created_at,
+        ontology_label=ontology.label if ontology else None,
+        decisions=[
+            DecisionOut(
+                id=d.id,
+                decision=d.decision,
+                decision_note=d.decision_note,
+                decided_by=d.decided_by,
+                created_at=d.created_at,
+            )
+            for d in decisions
+        ],
+    )
+
+
+@app.get("/annotations", response_model=list[AnnotationOut])
+def list_annotations(project_id: str | None = Query(None), db: Session = Depends(get_db)):
+    query = select(Annotation)
+    if project_id:
+        query = query.where(Annotation.project_id == project_id)
+    annotations = db.scalars(query.order_by(Annotation.created_at.desc())).all()
+    return [_annotation_out(a, db) for a in annotations]
+
+
+@app.post("/annotations", response_model=AnnotationOut)
+def create_annotation(payload: AnnotationCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     confirmation = db.get(ReadConfirmation, payload.read_confirmation_id)
     if not confirmation or confirmation.reviewer_id != payload.reviewer_id:
         raise HTTPException(status_code=422, detail="A valid personal-reading confirmation is required.")
+    if confirmation.source_id != payload.evidence.source_id:
+        raise HTTPException(status_code=422, detail="Read confirmation source does not match the annotation source.")
     annotation = Annotation(
         project_id=payload.project_id,
         paragraph_id=payload.evidence.paragraph_id,
@@ -59,11 +180,12 @@ def create_annotation(payload: AnnotationCreate, db: Session = Depends(get_db)) 
     db.flush()
     write_audit_event(db, payload.reviewer_id, "annotation", annotation.id, "created", payload.model_dump(mode="json"))
     db.commit()
-    return {"id": annotation.id, "status": annotation.status, "citation": citation_report(db, annotation)}
+    background_tasks.add_task(run_ollama_review, annotation.id)
+    return _annotation_out(annotation, db)
 
 
-@app.post("/annotations/{annotation_id}/decisions")
-def decide_annotation(annotation_id: str, payload: ReviewDecision, db: Session = Depends(get_db)) -> dict[str, object]:
+@app.post("/annotations/{annotation_id}/decisions", response_model=AnnotationOut)
+def decide_annotation(annotation_id: str, payload: ReviewDecision, db: Session = Depends(get_db)):
     annotation = db.get(Annotation, annotation_id)
     if not annotation:
         raise HTTPException(status_code=404, detail="Annotation not found.")
@@ -75,11 +197,12 @@ def decide_annotation(annotation_id: str, payload: ReviewDecision, db: Session =
         created_at=payload.decided_at,
     )
     db.add(decision)
-    annotation.status = "approved" if payload.decision in {"accepted", "merged"} else annotation.status
+    if payload.decision in {"accepted", "merged"}:
+        annotation.status = "approved"
     db.flush()
     write_audit_event(db, payload.decided_by, "annotation", annotation_id, "decision_recorded", payload.model_dump(mode="json"))
     db.commit()
-    return {"decision_id": decision.id, "citation": citation_report(db, annotation)}
+    return _annotation_out(annotation, db)
 
 
 @app.get("/annotations/{annotation_id}/citation")
@@ -90,9 +213,35 @@ def get_annotation_citation(annotation_id: str, db: Session = Depends(get_db)) -
     return citation_report(db, annotation)
 
 
+@app.get("/annotations/{annotation_id}/suggestions", response_model=list[AISuggestionOut])
+def list_suggestions(annotation_id: str, db: Session = Depends(get_db)):
+    return db.scalars(
+        select(AISuggestion)
+        .where(AISuggestion.annotation_id == annotation_id)
+        .order_by(AISuggestion.created_at)
+    ).all()
+
+
+@app.post("/annotations/{annotation_id}/suggestions/{suggestion_id}/decide", response_model=AISuggestionOut)
+def decide_suggestion(annotation_id: str, suggestion_id: str, payload: ReviewDecision, db: Session = Depends(get_db)):
+    suggestion = db.get(AISuggestion, suggestion_id)
+    if not suggestion or suggestion.annotation_id != annotation_id:
+        raise HTTPException(status_code=404, detail="Suggestion not found.")
+    suggestion.decision = payload.decision
+    db.flush()
+    write_audit_event(db, payload.decided_by, "ai_suggestion", suggestion_id, "decision_recorded", payload.model_dump(mode="json"))
+    db.commit()
+    db.refresh(suggestion)
+    return suggestion
+
+
+# ── Prompt compilations ───────────────────────────────────────────────────────
+
 @app.post("/prompt-compilations")
 def create_prompt_compilation(payload: PromptCompilationCreate, db: Session = Depends(get_db)) -> dict[str, object]:
-    annotations = db.scalars(select(Annotation).where(Annotation.id.in_(payload.annotation_ids), Annotation.status == "approved")).all()
+    annotations = db.scalars(
+        select(Annotation).where(Annotation.id.in_(payload.annotation_ids), Annotation.status == "approved")
+    ).all()
     if len(annotations) != len(payload.annotation_ids):
         raise HTTPException(status_code=422, detail="Prompt compilation accepts only approved annotations.")
     try:
@@ -127,3 +276,12 @@ def create_prompt_compilation(payload: PromptCompilationCreate, db: Session = De
         "compiler_version": compilation.compiler_version,
         "citations": [citation_report(db, annotation) for annotation in annotations],
     }
+
+
+# ── Audit log ─────────────────────────────────────────────────────────────────
+
+@app.get("/audit-log", response_model=list[AuditLogOut])
+def list_audit_log(limit: int = Query(50, le=200), offset: int = Query(0), db: Session = Depends(get_db)):
+    return db.scalars(
+        select(AuditLog).order_by(AuditLog.created_at.desc()).offset(offset).limit(limit)
+    ).all()
