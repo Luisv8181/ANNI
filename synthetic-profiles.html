@@ -1,0 +1,375 @@
+<title>ANNI — Synthetic Patient Profiles</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --ground:#f7f5fd; --surface:#ffffff; --surface-2:#fbfaff;
+    --ink:#17151f; --muted:#6b6575; --faint:#98909f;
+    --line:#e7e2f0; --accent:#7c5cff; --accent-soft:#f2edff;
+    --human:#177a4d; --human-soft:#e6f6ed; --ai:#8a5a06; --ai-soft:#fdf1d8;
+    --ink-panel:#17151f; --on-panel:#f3f0fb;
+    --shadow:0 22px 60px rgba(28,20,48,.10);
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,"JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:"Inter var",Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ground:#100d1b; --surface:#1a1626; --surface-2:#211c30;
+      --ink:#f3f0fb; --muted:#a59cb5; --faint:#7a7189;
+      --line:#2b2540; --accent:#a48bff; --accent-soft:#241d3a;
+      --human:#57d295; --human-soft:#152a20; --ai:#e0ad55; --ai-soft:#2c2413;
+      --ink-panel:#0b0912; --on-panel:#f3f0fb; --shadow:0 22px 60px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="light"]{
+    --ground:#f7f5fd; --surface:#ffffff; --surface-2:#fbfaff; --ink:#17151f; --muted:#6b6575;
+    --faint:#98909f; --line:#e7e2f0; --accent:#7c5cff; --accent-soft:#f2edff;
+    --human:#177a4d; --human-soft:#e6f6ed; --ai:#8a5a06; --ai-soft:#fdf1d8; --shadow:0 22px 60px rgba(28,20,48,.10);
+  }
+  :root[data-theme="dark"]{
+    --ground:#100d1b; --surface:#1a1626; --surface-2:#211c30; --ink:#f3f0fb; --muted:#a59cb5;
+    --faint:#7a7189; --line:#2b2540; --accent:#a48bff; --accent-soft:#241d3a;
+    --human:#57d295; --human-soft:#152a20; --ai:#e0ad55; --ai-soft:#2c2413; --shadow:0 22px 60px rgba(0,0,0,.5);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--sans);color:var(--ink);
+    background:
+      radial-gradient(1100px 520px at 12% -8%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 60%),
+      var(--ground);
+    line-height:1.55;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+  a{color:var(--accent);text-decoration:none}
+
+  /* header */
+  header.top{position:sticky;top:0;z-index:20;backdrop-filter:blur(10px);
+    background:color-mix(in srgb, var(--ground) 82%, transparent);
+    border-bottom:1px solid var(--line)}
+  .top-in{display:flex;align-items:center;gap:14px;padding:14px 0}
+  .mark{width:38px;height:38px;border-radius:11px;background:var(--ink-panel);color:#fff;
+    display:grid;place-items:center;flex-shrink:0}
+  .mark svg{width:20px;height:20px}
+  .brand h1{font-size:15px;margin:0;letter-spacing:-.01em;font-weight:650}
+  .brand p{margin:0;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+  .top-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .chip{font-family:var(--mono);font-size:11px;color:var(--muted);border:1px solid var(--line);
+    background:var(--surface);border-radius:999px;padding:6px 11px;display:inline-flex;align-items:center;gap:7px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--human)}
+  .themebtn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:9px;
+    width:34px;height:34px;cursor:pointer;display:grid;place-items:center;font-size:15px}
+  .themebtn:hover{border-color:var(--accent)}
+
+  /* hero */
+  .hero{padding:52px 0 26px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--accent);margin:0 0 16px;display:flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--accent)}
+  .hero h2{font-size:clamp(30px,4.6vw,50px);line-height:1.02;letter-spacing:-.028em;margin:0;max-width:16ch;
+    text-wrap:balance;font-weight:680}
+  .hero p.lede{font-size:18px;color:var(--muted);max-width:60ch;margin:18px 0 0}
+  .hero .rule{font-family:var(--mono);font-size:12.5px;color:var(--ink);margin-top:20px;
+    background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 22%,transparent);
+    border-radius:10px;padding:11px 14px;display:inline-block}
+  .hero .rule b{color:var(--accent)}
+
+  /* chain ribbon */
+  .chain{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 6px}
+  .step{font-family:var(--mono);font-size:11.5px;color:var(--muted);background:var(--surface);
+    border:1px solid var(--line);border-radius:8px;padding:7px 11px;display:flex;align-items:center;gap:8px}
+  .step .n{color:var(--accent);font-weight:600}
+  .step.on{color:var(--ink);border-color:color-mix(in srgb,var(--accent) 40%,transparent);background:var(--accent-soft)}
+  .arrow{color:var(--faint);align-self:center}
+
+  /* tabs */
+  .tabs{display:flex;gap:8px;margin:34px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:0}
+  .tab{appearance:none;border:1px solid var(--line);border-bottom:none;background:var(--surface-2);color:var(--muted);
+    cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:560;padding:12px 16px;border-radius:11px 11px 0 0;
+    display:flex;align-items:center;gap:10px;position:relative;top:1px}
+  .tab .code{font-family:var(--mono);font-size:11px;color:var(--faint)}
+  .tab[aria-selected="true"]{background:var(--surface);color:var(--ink);border-color:var(--line);box-shadow:0 -3px 0 var(--accent) inset}
+  .tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  /* panel */
+  .panel{background:var(--surface);border:1px solid var(--line);border-top:none;border-radius:0 0 16px 16px;
+    padding:28px;box-shadow:var(--shadow)}
+  .persona{display:flex;flex-wrap:wrap;gap:20px 30px;align-items:flex-start;padding-bottom:22px;border-bottom:1px solid var(--line)}
+  .persona h3{margin:0;font-size:26px;letter-spacing:-.02em;font-weight:680}
+  .persona .sub{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;margin:6px 0 0}
+  .meta{display:grid;gap:12px;min-width:min(340px,100%);flex:1}
+  .meta .row{display:flex;gap:12px;font-size:13.5px}
+  .meta .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);
+    width:78px;flex-shrink:0;padding-top:3px}
+  .meta .v{color:var(--ink)}
+  .traitrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+  .trait{font-size:12px;font-weight:560;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:4px 10px}
+
+  .cols{display:grid;grid-template-columns:1fr;gap:24px;padding-top:24px}
+  @media(min-width:900px){.cols{grid-template-columns:0.92fr 1.08fr}}
+  .colhead{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+    margin:0 0 14px;display:flex;align-items:center;gap:8px}
+
+  /* testimony */
+  .para{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:15px 16px;margin-bottom:12px;position:relative}
+  .para .pn{position:absolute;top:-9px;left:14px;font-family:var(--mono);font-size:10px;color:var(--faint);
+    background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:1px 7px}
+  .para p{margin:6px 0 0;font-size:15px;line-height:1.72;color:var(--ink)}
+  mark.ev{background:transparent;color:inherit;padding:1px 0;border-bottom:2px solid color-mix(in srgb,var(--accent) 45%,transparent);
+    cursor:pointer;transition:background .15s;border-radius:2px}
+  mark.ev sup{font-family:var(--mono);font-size:9px;color:var(--accent);font-weight:700;margin-left:2px}
+  mark.ev:hover,mark.ev.lit{background:var(--accent-soft)}
+
+  /* ledger */
+  .ledger{display:grid;gap:14px}
+  .card{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface);transition:border-color .15s,box-shadow .15s}
+  .card.lit{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .card-h{display:flex;align-items:center;gap:11px;padding:13px 15px;background:var(--surface-2);border-bottom:1px solid var(--line);cursor:pointer}
+  .idx{width:22px;height:22px;flex-shrink:0;border-radius:6px;background:var(--accent);color:#fff;font-family:var(--mono);
+    font-size:11px;font-weight:700;display:grid;place-items:center}
+  .card-h .lab{font-weight:620;font-size:14.5px;letter-spacing:-.01em}
+  .card-h .grp{font-family:var(--mono);font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.1em;margin-top:1px}
+  .conf{margin-left:auto;text-align:right;flex-shrink:0}
+  .conf .num{font-family:var(--mono);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+  .conf .bar{width:60px;height:4px;border-radius:2px;background:var(--line);margin-top:4px;overflow:hidden}
+  .conf .bar i{display:block;height:100%;background:var(--accent);border-radius:2px}
+  .card-b{padding:14px 15px;display:grid;gap:11px}
+  .qt{font-size:13.5px;color:var(--muted);font-style:italic;border-left:2px solid var(--line);padding-left:11px}
+  .lane{border-radius:9px;padding:10px 12px;font-size:13px}
+  .lane .who{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;display:flex;
+    align-items:center;gap:7px;margin-bottom:4px;font-weight:600}
+  .lane.human{background:var(--human-soft)}
+  .lane.human .who{color:var(--human)}
+  .lane.ai{background:var(--ai-soft)}
+  .lane.ai .who{color:var(--ai)}
+  .lane .body{color:var(--ink)}
+  .badge{margin-left:auto;font-family:var(--mono);font-size:9px;letter-spacing:.08em;padding:2px 7px;border-radius:5px;font-weight:700}
+  .badge.agree{background:color-mix(in srgb,var(--human) 22%,transparent);color:var(--human)}
+  .badge.override{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+  .decision{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink);
+    border-top:1px dashed var(--line);padding-top:10px}
+  .decision .verdict{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+    color:var(--human);background:var(--human-soft);border-radius:5px;padding:2px 8px}
+
+  /* compiled prompt */
+  .compiled{margin-top:26px;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+  .compiled-h{display:flex;align-items:center;gap:11px;padding:13px 16px;background:var(--ink-panel);color:var(--on-panel)}
+  .compiled-h .t{font-family:var(--mono);font-size:12px;letter-spacing:.04em}
+  .compiled-h .t b{color:#c9b6ff}
+  .traffic{display:flex;gap:6px}.traffic i{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.18)}
+  .copybtn{margin-left:auto;font-family:var(--mono);font-size:11px;color:#fff;background:rgba(255,255,255,.12);
+    border:none;border-radius:7px;padding:6px 11px;cursor:pointer;display:flex;align-items:center;gap:6px}
+  .copybtn:hover{background:rgba(255,255,255,.22)}
+  pre.code{margin:0;background:var(--ink-panel);color:var(--on-panel);font-family:var(--mono);font-size:12.5px;
+    line-height:1.75;padding:18px 20px;overflow-x:auto;white-space:pre-wrap;word-break:break-word;max-height:none}
+  pre.code .kw{color:#c9b6ff;font-weight:600}
+  .compiled-f{background:var(--surface-2);border-top:1px solid var(--line);padding:11px 16px;font-family:var(--mono);
+    font-size:10.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 18px}
+  .compiled-f b{color:var(--ink)}
+
+  footer{padding:40px 0 60px;color:var(--muted);font-size:12.5px}
+  footer .note{font-family:var(--mono);font-size:11px;line-height:1.7;max-width:70ch}
+  footer .hash{color:var(--accent);word-break:break-all}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+  .fade{animation:fade .34s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+</style>
+
+<header class="top">
+  <div class="wrap top-in">
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="5" cy="6" r="2.4"/><circle cx="5" cy="18" r="2.4"/><circle cx="19" cy="12" r="2.4"/>
+        <path d="M7.2 6.7 16.8 11.3M7.2 17.3 16.8 12.7"/>
+      </svg>
+    </div>
+    <div class="brand">
+      <h1>ANNI</h1>
+      <p>Artificial Neural Annotation Intelligence</p>
+    </div>
+    <div class="top-right">
+      <span class="chip"><span class="dot"></span>Audit chain verified</span>
+      <button class="themebtn" id="theme" title="Toggle theme" aria-label="Toggle theme">◐</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">Synthetic patient profiles · demonstration set</p>
+    <h2>Every trait traces back to a human decision.</h2>
+    <p class="lede">These synthetic patient personas were compiled from public-testimony annotations under ANNI's
+      provenance pipeline. Each behavioral trait carries its evidence quote, the reviewer's judgment, and the
+      local AI's second opinion — nothing enters a profile without an approved annotation behind it.</p>
+    <div class="rule"><b>The core rule:</b> AI can suggest. Humans decide.</div>
+    <div class="chain" id="chain"></div>
+  </section>
+
+  <div class="tabs" id="tabs" role="tablist" aria-label="Synthetic patient profiles"></div>
+  <div id="panel"></div>
+</main>
+
+<footer class="wrap">
+  <p class="note">
+    All testimony shown is <b>synthetic</b> — composite, illustrative text authored for demonstration, not
+    transcribed from any real person. Profiles are compiled only from annotations a human reviewer approved.<br><br>
+    Audit chain tip · <span class="hash" id="audittip"></span><br>
+    <span id="auditcount"></span> chained events · SHA-256 tamper-evident · compiler v0.1 · ontology v0.1
+  </p>
+</footer>
+
+<script id="data" type="application/json">{"profiles": [{"id": "pc-sp-01", "name": "SP-01 — Reluctant Discloser", "scenario": "Primary-care visit for escalating abdominal pain the patient has minimized for weeks.", "objective": "Elicit concerns from a patient who minimizes symptoms and defers to family.", "system_prompt": "You are a synthetic patient in an educational simulation.\n\nRole boundaries:\n- Do not claim to be a real person or describe source testimony.\n- Stay within the approved profile below.\n- Do not invent personal history, diagnoses, trauma, demographics, or motives not supplied.\n- When asked about an unsupported detail, say you are unsure or redirect naturally.\n\nApproved behavioral profile:\n- Hesitates to disclose symptoms: Delays disclosure to avoid seeming dramatic; actively minimizes symptom severity.\n- Indirect communication: Masks distress with reassurance; the verbal report contradicts the internal state.\n- Family support system: Sister scaffolds the question-asking the patient cannot initiate alone.\n- Medical literacy gap: Recognition without comprehension; explicitly wants teach-back.\n\nScenario: Primary-care visit for escalating abdominal pain the patient has minimized for weeks.\nLearning objective: Elicit concerns from a patient who minimizes symptoms and defers to family.\n\nBehavioral guidance:\n- Reveal sensitive concerns gradually when the learner demonstrates trust, validation, and plain language.\n- Maintain internal consistency across the conversation.\n- Do not provide medical advice or break character to evaluate the learner.", "ontology_version": "0.1", "compiler_version": "0.1", "source": {"id": "T-DEMO-001", "title": "Reluctant Discloser — synthetic testimony", "url": "https://example.org/anni/synthetic/sp-01", "license": "demo-only", "allow": "approved", "version": "1", "paragraphs": [{"order": 1, "text": "I waited until the pain was bad before I told anyone. I kept thinking it would sound dramatic if I complained again, so I smiled and said I was fine."}, {"order": 2, "text": "When the nurse asked direct questions I answered, but I did not know how to explain what scared me most. My sister noticed and helped me ask about the next steps."}, {"order": 3, "text": "The printed instructions were full of words I had heard before but did not really understand. I wanted someone to slow down and make sure I could repeat the plan back."}]}, "annotations": [{"id": "ann-sp01-01", "label": "Hesitates to disclose symptoms", "group": "Emotion", "quote": "I waited until the pain was bad before I told anyone", "para_text": "I waited until the pain was bad before I told anyone. I kept thinking it would sound dramatic if I complained again, so I smiled and said I was fine.", "para_order": 1, "start": 0, "end": 52, "confidence": 91, "note": "Delays disclosure to avoid seeming dramatic; actively minimizes symptom severity.", "status": "approved", "ai_suggestion": "Hesitates to disclose symptoms", "ai_conf": 88, "ai_rationale": "'Waited until the pain was bad' before telling anyone is a canonical delayed-disclosure marker.", "ai_agree": true, "ai_decision": "accepted", "decision": "accepted", "decision_note": "Clear, well-evidenced."}, {"id": "ann-sp01-02", "label": "Indirect communication", "group": "Communication", "quote": "I smiled and said I was fine", "para_text": "I waited until the pain was bad before I told anyone. I kept thinking it would sound dramatic if I complained again, so I smiled and said I was fine.", "para_order": 1, "start": 120, "end": 148, "confidence": 84, "note": "Masks distress with reassurance; the verbal report contradicts the internal state.", "status": "approved", "ai_suggestion": "Indirect communication", "ai_conf": 80, "ai_rationale": "Reassuring speech ('I was fine') paired with a smile masks the true concern.", "ai_agree": true, "ai_decision": "accepted", "decision": "accepted", "decision_note": "Distinct from hesitation — this is the masking behavior itself."}, {"id": "ann-sp01-03", "label": "Family support system", "group": "Support", "quote": "My sister noticed and helped me ask about the next steps", "para_text": "When the nurse asked direct questions I answered, but I did not know how to explain what scared me most. My sister noticed and helped me ask about the next steps.", "para_order": 2, "start": 105, "end": 161, "confidence": 86, "note": "Sister scaffolds the question-asking the patient cannot initiate alone.", "status": "approved", "ai_suggestion": "Family support system", "ai_conf": 84, "ai_rationale": "A named family member actively enables navigation of next steps.", "ai_agree": true, "ai_decision": "accepted", "decision": "accepted", "decision_note": "Support role is explicit and load-bearing."}, {"id": "ann-sp01-04", "label": "Medical literacy gap", "group": "Health literacy", "quote": "words I had heard before but did not really understand", "para_text": "The printed instructions were full of words I had heard before but did not really understand. I wanted someone to slow down and make sure I could repeat the plan back.", "para_order": 3, "start": 38, "end": 92, "confidence": 82, "note": "Recognition without comprehension; explicitly wants teach-back.", "status": "approved", "ai_suggestion": "Medical literacy gap", "ai_conf": 79, "ai_rationale": "Familiar-but-not-understood vocabulary indicates a comprehension gap, not an access gap.", "ai_agree": true, "ai_decision": "accepted", "decision": "accepted", "decision_note": "Good example of recognition-vs-comprehension gap."}]}, {"id": "pc-sp-02", "name": "SP-02 — Guarded Navigator", "scenario": "Follow-up visit to review a new medication the patient is hesitant to start.", "objective": "Build trust and shared decision-making with a patient who needs to retain control.", "system_prompt": "You are a synthetic patient in an educational simulation.\n\nRole boundaries:\n- Do not claim to be a real person or describe source testimony.\n- Stay within the approved profile below.\n- Do not invent personal history, diagnoses, trauma, demographics, or motives not supplied.\n- When asked about an unsupported detail, say you are unsure or redirect naturally.\n\nApproved behavioral profile:\n- Healthcare trust barrier: Frames prior care as depersonalizing; low institutional trust is the driver, not hostility.\n- Autonomy goal: Explicit autonomy goal; cooperation is conditional on being given the choice.\n- Dignity in care: Self-tracking is a dignity-and-safety strategy in a low-trust setting, not mistrust for its own sake.\n\nScenario: Follow-up visit to review a new medication the patient is hesitant to start.\nLearning objective: Build trust and shared decision-making with a patient who needs to retain control.\n\nBehavioral guidance:\n- Reveal sensitive concerns gradually when the learner demonstrates trust, validation, and plain language.\n- Maintain internal consistency across the conversation.\n- Do not provide medical advice or break character to evaluate the learner.", "ontology_version": "0.1", "compiler_version": "0.1", "source": {"id": "T-DEMO-002", "title": "Guarded Navigator — synthetic testimony", "url": "https://example.org/anni/synthetic/sp-02", "license": "demo-only", "allow": "approved", "version": "1", "paragraphs": [{"order": 1, "text": "The last time I felt like a person and not a chart was a long time ago. Now I ask a lot of questions before I agree to anything, and I know some of the staff find it tiring."}, {"order": 2, "text": "I am not trying to be difficult. I just need to understand the reason, and I need to be the one who makes the final decision. When someone explains why and leaves the choice to me, I almost always say yes."}, {"order": 3, "text": "I keep my own notes now — every medication, every date, every name. If something does not match what I am told, I say so. It is the only way I feel safe in there."}]}, "annotations": [{"id": "ann-sp02-01", "label": "Healthcare trust barrier", "group": "Healthcare", "quote": "I felt like a person and not a chart", "para_text": "The last time I felt like a person and not a chart was a long time ago. Now I ask a lot of questions before I agree to anything, and I know some of the staff find it tiring.", "para_order": 1, "start": 14, "end": 50, "confidence": 88, "note": "Frames prior care as depersonalizing; low institutional trust is the driver, not hostility.", "status": "approved", "ai_suggestion": "Healthcare trust barrier", "ai_conf": 82, "ai_rationale": "'Person, not a chart' is a textbook depersonalization / eroded-trust signal.", "ai_agree": true, "ai_decision": "accepted", "decision": "accepted", "decision_note": "Person-vs-chart contrast is the trust marker."}, {"id": "ann-sp02-02", "label": "Autonomy goal", "group": "Goals", "quote": "I need to be the one who makes the final decision", "para_text": "I am not trying to be difficult. I just need to understand the reason, and I need to be the one who makes the final decision. When someone explains why and leaves the choice to me, I almost always say yes.", "para_order": 2, "start": 75, "end": 124, "confidence": 92, "note": "Explicit autonomy goal; cooperation is conditional on being given the choice.", "status": "approved", "ai_suggestion": "Autonomy goal", "ai_conf": 90, "ai_rationale": "First-person insistence on holding the final decision — high confidence.", "ai_agree": true, "ai_decision": "accepted", "decision": "accepted", "decision_note": "Direct first-person statement of decisional control."}, {"id": "ann-sp02-03", "label": "Dignity in care", "group": "Values", "quote": "It is the only way I feel safe in there", "para_text": "I keep my own notes now — every medication, every date, every name. If something does not match what I am told, I say so. It is the only way I feel safe in there.", "para_order": 3, "start": 122, "end": 161, "confidence": 79, "note": "Self-tracking is a dignity-and-safety strategy in a low-trust setting, not mistrust for its own sake.", "status": "approved", "ai_suggestion": "Autonomy goal", "ai_conf": 68, "ai_rationale": "Self-kept records could read as a control/autonomy behavior.", "ai_agree": false, "ai_decision": "rejected", "decision": "accepted", "decision_note": "Reviewer overrode the AI's Autonomy suggestion — the driver here is safety and respect, not control."}]}, {"id": "pc-sp-03", "name": "SP-03 — Plain-Language Seeker", "scenario": "Discharge teaching for a multi-step medication regimen, caregiver present.", "objective": "Practice teach-back and plain-language communication with a caregiver in the room.", "system_prompt": "You are a synthetic patient in an educational simulation.\n\nRole boundaries:\n- Do not claim to be a real person or describe source testimony.\n- Stay within the approved profile below.\n- Do not invent personal history, diagnoses, trauma, demographics, or motives not supplied.\n- When asked about an unsupported detail, say you are unsure or redirect naturally.\n\nApproved behavioral profile:\n- Family support system: Daughter is a consistent comprehension-and-navigation support at the point of care.\n- Medical literacy gap: Missing teach-back caused a real adherence error (stopped medication early).\n- Dignity in care: Asserts dignity; the gap is in delivery, not in the patient's capacity.\n\nScenario: Discharge teaching for a multi-step medication regimen, caregiver present.\nLearning objective: Practice teach-back and plain-language communication with a caregiver in the room.\n\nBehavioral guidance:\n- Reveal sensitive concerns gradually when the learner demonstrates trust, validation, and plain language.\n- Maintain internal consistency across the conversation.\n- Do not provide medical advice or break character to evaluate the learner.", "ontology_version": "0.1", "compiler_version": "0.1", "source": {"id": "T-DEMO-003", "title": "Plain-Language Seeker — synthetic testimony", "url": "https://example.org/anni/synthetic/sp-03", "license": "demo-only", "allow": "approved", "version": "1", "paragraphs": [{"order": 1, "text": "My daughter comes to every appointment because the words go by too fast for me. She writes them down and at home we look them up together until they make sense."}, {"order": 2, "text": "The first time, I stopped the medication when I started to feel better. I thought that was the instruction. Nobody asked me to repeat the plan back, so nobody knew I had it wrong."}, {"order": 3, "text": "I am not slow. I just need it in plain language and a little time. When the pharmacist drew a simple picture, the whole thing finally made sense."}]}, "annotations": [{"id": "ann-sp03-01", "label": "Family support system", "group": "Support", "quote": "My daughter comes to every appointment", "para_text": "My daughter comes to every appointment because the words go by too fast for me. She writes them down and at home we look them up together until they make sense.", "para_order": 1, "start": 0, "end": 38, "confidence": 90, "note": "Daughter is a consistent comprehension-and-navigation support at the point of care.", "status": "approved", "ai_suggestion": "Family support system", "ai_conf": 87, "ai_rationale": "Attends every appointment and co-processes information at home.", "ai_agree": true, "ai_decision": "accepted", "decision": "accepted", "decision_note": "Consistent, load-bearing support."}, {"id": "ann-sp03-02", "label": "Medical literacy gap", "group": "Health literacy", "quote": "Nobody asked me to repeat the plan back", "para_text": "The first time, I stopped the medication when I started to feel better. I thought that was the instruction. Nobody asked me to repeat the plan back, so nobody knew I had it wrong.", "para_order": 2, "start": 108, "end": 147, "confidence": 85, "note": "Missing teach-back caused a real adherence error (stopped medication early).", "status": "approved", "ai_suggestion": "Medical literacy gap", "ai_conf": 83, "ai_rationale": "Absence of teach-back led to misunderstanding the stop criteria.", "ai_agree": true, "ai_decision": "accepted", "decision": "accepted", "decision_note": "Ties a literacy gap to a concrete safety outcome."}, {"id": "ann-sp03-03", "label": "Dignity in care", "group": "Values", "quote": "I am not slow. I just need it in plain language", "para_text": "I am not slow. I just need it in plain language and a little time. When the pharmacist drew a simple picture, the whole thing finally made sense.", "para_order": 3, "start": 0, "end": 47, "confidence": 88, "note": "Asserts dignity; the gap is in delivery, not in the patient's capacity.", "status": "approved", "ai_suggestion": "Medical literacy gap", "ai_conf": 72, "ai_rationale": "Request for plain language also signals a literacy-delivery gap.", "ai_agree": false, "ai_decision": "merged", "decision": "merged", "decision_note": "Kept Dignity as primary and merged the AI's literacy read as a linked secondary trait."}]}], "audit_tip": "518203fc249c4ba01add2ce399912403b59cf5e4cea1b50f59e8d34aaf5872b2", "audit_count": 36}</script>
+<script>
+  const DATA = JSON.parse(document.getElementById("data").textContent);
+  const $ = (s,r=document)=>r.querySelector(s);
+
+  // theme
+  const root=document.documentElement, tbtn=$("#theme");
+  tbtn.addEventListener("click",()=>{
+    const cur=root.getAttribute("data-theme")
+      || (matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light");
+    root.setAttribute("data-theme", cur==="dark"?"light":"dark");
+  });
+
+  // provenance chain
+  const STEPS=["Testimony","Human annotation","AI review","Human decision","Approved trait","Synthetic prompt"];
+  $("#chain").innerHTML = STEPS.map((s,i)=>
+    `<span class="step ${i<STEPS.length?'':''}"><span class="n">${i+1}</span>${s}</span>`+
+    (i<STEPS.length-1?'<span class="arrow" aria-hidden="true">→</span>':'')).join("");
+
+  $("#audittip").textContent = DATA.audit_tip;
+  $("#auditcount").textContent = DATA.audit_count;
+
+  function esc(t){return t.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+
+  // highlight evidence spans in a paragraph
+  function renderPara(text, order, anns){
+    const spans = anns.filter(a=>a.para_order===order).map(a=>({start:a.start,end:a.end,idx:a.idx}))
+      .sort((x,y)=>x.start-y.start);
+    let html="", cur=0;
+    for(const s of spans){
+      if(s.start<cur) continue;
+      html+=esc(text.slice(cur,s.start));
+      html+=`<mark class="ev" data-idx="${s.idx}">${esc(text.slice(s.start,s.end))}<sup>${s.idx}</sup></mark>`;
+      cur=s.end;
+    }
+    html+=esc(text.slice(cur));
+    return html;
+  }
+
+  function highlightPrompt(t){
+    return esc(t)
+      .replace(/^(Role boundaries:|Approved behavioral profile:|Behavioral guidance:)$/gm,'<span class="kw">$1</span>')
+      .replace(/^(Scenario:|Learning objective:)/gm,'<span class="kw">$1</span>');
+  }
+
+  function renderProfile(p){
+    p.annotations.forEach((a,i)=>a.idx=i+1);
+    const traits = p.annotations.map(a=>`<span class="trait">${esc(a.label)}</span>`).join("");
+    const paras = p.source.paragraphs.map(pr=>
+      `<div class="para"><span class="pn">¶ ${pr.order}</span><p>${renderPara(pr.text,pr.order,p.annotations)}</p></div>`).join("");
+
+    const cards = p.annotations.map(a=>{
+      const badge = a.ai_agree
+        ? `<span class="badge agree">agreed</span>`
+        : `<span class="badge override">human override</span>`;
+      return `<div class="card" data-idx="${a.idx}">
+        <div class="card-h" role="button" tabindex="0">
+          <span class="idx">${a.idx}</span>
+          <div><div class="lab">${esc(a.label)}</div><div class="grp">${esc(a.group)}</div></div>
+          <div class="conf" title="reviewer confidence">
+            <div class="num">${a.confidence}%</div><div class="bar"><i style="width:${a.confidence}%"></i></div>
+          </div>
+        </div>
+        <div class="card-b">
+          <div class="qt">"${esc(a.quote)}"</div>
+          <div class="lane human"><div class="who">◆ Human reviewer · confidence ${a.confidence}%</div>
+            <div class="body">${esc(a.note)}</div></div>
+          <div class="lane ai"><div class="who">◇ ANNI local review · llama3 · ${a.ai_conf}% ${badge}</div>
+            <div class="body">Suggested <b>${esc(a.ai_suggestion)}</b> — ${esc(a.ai_rationale)}</div></div>
+          <div class="decision"><span class="verdict">${esc(a.decision)}</span><span>${esc(a.decision_note)}</span></div>
+        </div>
+      </div>`;
+    }).join("");
+
+    const promptText = p.system_prompt;
+    return `<div class="panel fade">
+      <div class="persona">
+        <div>
+          <h3>${esc(p.name)}</h3>
+          <p class="sub">${p.annotations.length} approved traits · source ${esc(p.source.id)}</p>
+          <div class="traitrow">${traits}</div>
+        </div>
+        <div class="meta">
+          <div class="row"><span class="k">Scenario</span><span class="v">${esc(p.scenario)}</span></div>
+          <div class="row"><span class="k">Objective</span><span class="v">${esc(p.objective)}</span></div>
+          <div class="row"><span class="k">Source</span><span class="v">${esc(p.source.title)} · <span style="font-family:var(--mono);font-size:11px">${esc(p.source.license)} / ${esc(p.source.allow)}</span></span></div>
+        </div>
+      </div>
+      <div class="cols">
+        <div>
+          <p class="colhead">◆ Source testimony <span style="color:var(--faint)">— evidence spans underlined</span></p>
+          ${paras}
+        </div>
+        <div>
+          <p class="colhead">Annotation ledger — trait · human · AI · decision</p>
+          <div class="ledger">${cards}</div>
+        </div>
+      </div>
+      <div class="compiled">
+        <div class="compiled-h">
+          <span class="traffic"><i></i><i></i><i></i></span>
+          <span class="t">compiled_system_prompt · <b>${esc(p.name.split(" — ")[0])}</b></span>
+          <button class="copybtn" id="copy">⧉ Copy</button>
+        </div>
+        <pre class="code">${highlightPrompt(promptText)}</pre>
+        <div class="compiled-f">
+          <span>compiler <b>v${p.compiler_version}</b></span>
+          <span>ontology <b>v${p.ontology_version}</b></span>
+          <span>source <b>${esc(p.source.id)}</b> v${p.source.version}</span>
+          <span>annotations <b>${p.annotations.map(a=>a.id).join(", ")}</b></span>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  const panel=$("#panel"), tabs=$("#tabs");
+  DATA.profiles.forEach((p,i)=>{
+    const b=document.createElement("button");
+    b.className="tab"; b.setAttribute("role","tab"); b.setAttribute("aria-selected", i===0?"true":"false");
+    const [code,label]=p.name.split(" — ");
+    b.innerHTML=`<span class="code">${code}</span> ${label}`;
+    b.addEventListener("click",()=>select(i));
+    tabs.appendChild(b);
+  });
+
+  let promptCache={};
+  function wire(p){
+    // link testimony marks <-> ledger cards
+    const marks=[...panel.querySelectorAll("mark.ev")];
+    const cards=[...panel.querySelectorAll(".card")];
+    function lit(idx,on){
+      marks.forEach(m=>m.classList.toggle("lit", on && m.dataset.idx===String(idx)));
+      cards.forEach(c=>c.classList.toggle("lit", on && c.dataset.idx===String(idx)));
+    }
+    marks.forEach(m=>{
+      m.addEventListener("mouseenter",()=>lit(m.dataset.idx,true));
+      m.addEventListener("mouseleave",()=>lit(m.dataset.idx,false));
+    });
+    cards.forEach(c=>{
+      const h=c.querySelector(".card-h");
+      const idx=c.dataset.idx;
+      h.addEventListener("mouseenter",()=>lit(idx,true));
+      h.addEventListener("mouseleave",()=>lit(idx,false));
+      h.addEventListener("click",()=>{const m=marks.find(x=>x.dataset.idx===idx); if(m) m.scrollIntoView({behavior:"smooth",block:"center"});});
+    });
+    const copy=$("#copy");
+    copy.addEventListener("click",async()=>{
+      try{await navigator.clipboard.writeText(p.system_prompt);copy.textContent="✓ Copied";
+        setTimeout(()=>copy.textContent="⧉ Copy",1500);}catch(e){}
+    });
+  }
+
+  function select(i){
+    [...tabs.children].forEach((t,j)=>t.setAttribute("aria-selected", j===i?"true":"false"));
+    panel.innerHTML=renderProfile(DATA.profiles[i]);
+    wire(DATA.profiles[i]);
+  }
+  select(0);
+</script>

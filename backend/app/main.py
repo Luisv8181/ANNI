@@ -36,6 +36,7 @@ from app.schemas import (
     ParagraphOut,
     ProjectOut,
     PromptCompilationCreate,
+    PromptCompilationOut,
     ReadConfirmationCreate,
     ReadConfirmationOut,
     ReviewDecision,
@@ -259,6 +260,35 @@ def decide_suggestion(annotation_id: str, suggestion_id: str, payload: ReviewDec
 
 
 # ── Prompt compilations ───────────────────────────────────────────────────────
+
+@app.get("/prompt-compilations", response_model=list[PromptCompilationOut])
+def list_prompt_compilations(project_id: str | None = Query(None), db: Session = Depends(get_db)):
+    query = select(PromptCompilation)
+    if project_id:
+        query = query.where(PromptCompilation.project_id == project_id)
+    compilations = db.scalars(query.order_by(PromptCompilation.created_at)).all()
+    result = []
+    for compilation in compilations:
+        annotation_ids = db.scalars(
+            select(PromptCompilationAnnotation.annotation_id).where(
+                PromptCompilationAnnotation.compilation_id == compilation.id
+            )
+        ).all()
+        result.append(
+            PromptCompilationOut(
+                id=compilation.id,
+                project_id=compilation.project_id,
+                name=compilation.name,
+                system_prompt=compilation.system_prompt,
+                ontology_version=compilation.ontology_version,
+                compiler_version=compilation.compiler_version,
+                created_by=compilation.created_by,
+                created_at=compilation.created_at,
+                annotation_ids=list(annotation_ids),
+            )
+        )
+    return result
+
 
 @app.post("/prompt-compilations")
 def create_prompt_compilation(payload: PromptCompilationCreate, db: Session = Depends(get_db)) -> dict[str, object]:

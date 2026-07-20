@@ -24,6 +24,7 @@ import { AnnotationForm } from "@/components/annotation-form";
 import { CitationEngine, ResearchDashboard } from "@/components/citation-engine";
 import { OntologyBrowser } from "@/components/ontology-browser";
 import { SuggestionDashboard } from "@/components/suggestion-dashboard";
+import { SyntheticProfiles } from "@/components/synthetic-profiles";
 import { TestimonyPanel } from "@/components/testimony-panel";
 import type { Annotation } from "@/lib/api";
 
@@ -171,6 +172,10 @@ export default function Home() {
 
       <section className="mx-auto max-w-7xl px-5 py-6">
         <SuggestionDashboard focusedAnnotationId={focusedAnnotationId} />
+      </section>
+
+      <section className="mx-auto max-w-7xl px-5 py-6">
+        <SyntheticProfiles />
       </section>
 
       <section className="mx-auto grid max-w-7xl gap-4 px-5 py-6 pb-12 lg:grid-cols-[1fr_1fr]">

@@ -108,6 +108,16 @@ export function useDecideAnnotation() {
   });
 }
 
+// ── Prompt compilations (synthetic patient profiles) ──────────────────────────
+
+export function usePromptCompilations(projectId?: string) {
+  return useQuery({
+    queryKey: ["prompt-compilations", projectId],
+    queryFn: () => api.getPromptCompilations(projectId),
+    staleTime: 0,
+  });
+}
+
 // ── AI Suggestions ────────────────────────────────────────────────────────────
 
 export function useSuggestions(annotationId: string | null) {

@@ -87,6 +87,18 @@ export type ReadConfirmation = {
   confirmed_at: string;
 };
 
+export type PromptCompilation = {
+  id: string;
+  project_id: string;
+  name: string;
+  system_prompt: string;
+  ontology_version: string;
+  compiler_version: string;
+  created_by: string;
+  created_at: string;
+  annotation_ids: string[];
+};
+
 // ── API calls ────────────────────────────────────────────────────────────────
 
 export const api = {
@@ -155,6 +167,10 @@ export const api = {
       method: "POST",
       body: JSON.stringify(body),
     }),
+
+  // Prompt compilations (synthetic patient profiles)
+  getPromptCompilations: (projectId?: string) =>
+    request<PromptCompilation[]>(`/prompt-compilations${projectId ? `?project_id=${projectId}` : ""}`),
 
   // Audit log
   getAuditLog: (limit = 50) => request<unknown[]>(`/audit-log?limit=${limit}`),

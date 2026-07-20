@@ -148,6 +148,21 @@ class ReadConfirmationOut(BaseModel):
         from_attributes = True
 
 
+class PromptCompilationOut(BaseModel):
+    id: str
+    project_id: str
+    name: str
+    system_prompt: str
+    ontology_version: str
+    compiler_version: str
+    created_by: str
+    created_at: datetime
+    annotation_ids: list[str] = []
+
+    class Config:
+        from_attributes = True
+
+
 class AuditLogOut(BaseModel):
     id: str
     actor_id: str
