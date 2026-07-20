@@ -101,9 +101,21 @@ export type PromptCompilation = {
 
 export type LabProfile = { id: string; name: string; trait_count: number };
 export type LabRiskLevel = { id: string; label: string; blurb: string };
-export type LabConfig = { profiles: LabProfile[]; risk_levels: LabRiskLevel[]; model_name: string };
+export type LabOutcomeMode = { id: string; label: string; blurb: string };
+export type LabConfig = {
+  profiles: LabProfile[];
+  risk_levels: LabRiskLevel[];
+  outcome_modes: LabOutcomeMode[];
+  model_name: string;
+};
 export type LabMessage = { role: "user" | "assistant"; content: string };
-export type LabChatResponse = { reply: string; model_name: string; persona_name: string; risk_level: string };
+export type LabChatResponse = {
+  reply: string;
+  model_name: string;
+  persona_name: string;
+  risk_level: string;
+  outcome_mode: string;
+};
 
 // ── API calls ────────────────────────────────────────────────────────────────
 
@@ -185,6 +197,7 @@ export const api = {
   labMessage: (body: {
     compilation_id: string;
     risk_level: string;
+    outcome_mode: string;
     cue?: string | null;
     messages: LabMessage[];
   }) => request<LabChatResponse>("/synthetic-lab/message", { method: "POST", body: JSON.stringify(body) }),

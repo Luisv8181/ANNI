@@ -17,7 +17,7 @@ import {
   User,
 } from "lucide-react";
 import { useLabConfig, useLabMessage } from "@/lib/hooks";
-import type { LabMessage, LabProfile, LabRiskLevel } from "@/lib/api";
+import type { LabMessage, LabOutcomeMode, LabProfile, LabRiskLevel } from "@/lib/api";
 
 const PROJECT_ID = "proj-anni-demo";
 
@@ -42,6 +42,7 @@ export default function LabPage() {
 
   const [profileId, setProfileId] = useState("");
   const [risk, setRisk] = useState("none");
+  const [outcome, setOutcome] = useState("open");
   const [cue, setCue] = useState("");
   const [responder, setResponder] = useState("wysa");
   const [messages, setMessages] = useState<LabMessage[]>([]);
@@ -61,6 +62,7 @@ export default function LabPage() {
 
   const activeProfile = config?.profiles.find((p) => p.id === profileId);
   const activeRisk = config?.risk_levels.find((r) => r.id === risk);
+  const activeOutcome = config?.outcome_modes.find((o) => o.id === outcome);
 
   function resetSession() {
     setMessages([]);
@@ -74,6 +76,7 @@ export default function LabPage() {
       const res = await send.mutateAsync({
         compilation_id: profileId,
         risk_level: risk,
+        outcome_mode: outcome,
         cue: cue.trim() || null,
         messages: next,
       });
@@ -110,6 +113,7 @@ export default function LabPage() {
       `RESPONDER: ${responderLabel}`,
       `PATIENT MODEL: ${config?.model_name ?? "ollama"} (synthetic patient)`,
       `RISK (hidden): ${activeRisk?.label ?? risk}${cue.trim() ? ` — cue: "${cue.trim()}"` : ""}`,
+      `OUTCOME (hidden): ${activeOutcome?.label ?? outcome}`,
       `DATE: ${stamp}`,
       `TURNS: ${messages.length}`,
       "--- conversation below (patient = synthetic; responder = " + responderLabel + ") ---",
@@ -214,6 +218,27 @@ export default function LabPage() {
                 className="mt-1.5 w-full rounded-lg border border-line bg-panel px-3 py-2 text-sm outline-none focus:border-accent"
               />
             </label>
+          </section>
+
+          <section className="rounded-2xl border border-line bg-white p-5 shadow-soft">
+            <h2 className="font-semibold tracking-tight">Outcome mode</h2>
+            <p className="mt-1 text-xs text-muted">
+              The patient&apos;s hidden trajectory — a tracked study variable. DSM-5 GAD baseline is always on.
+            </p>
+            <div className="mt-3 space-y-2">
+              {config?.outcome_modes.map((o: LabOutcomeMode) => (
+                <button
+                  key={o.id}
+                  onClick={() => setOutcome(o.id)}
+                  className={`w-full rounded-lg border p-2.5 text-left transition ${
+                    outcome === o.id ? "border-accent bg-lilac" : "border-line bg-panel hover:border-accent/50"
+                  }`}
+                >
+                  <span className="text-sm font-medium">{o.label}</span>
+                  <span className="mt-0.5 block text-xs text-muted">{o.blurb}</span>
+                </button>
+              ))}
+            </div>
           </section>
 
           <section className="rounded-2xl border border-line bg-white p-5 shadow-soft">

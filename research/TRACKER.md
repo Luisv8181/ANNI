@@ -144,6 +144,9 @@ either way. Log the decision in the meeting log.
 
 Add newest at the top: `YYYY-MM-DD — what changed — who`.
 
+- **2026-07-20 (post-meeting)** — Wired **DSM-5 GAD baseline + open/closed outcome mode** into the lab
+  (backend + `/lab` selector, recorded in transcript export). Added a draft **Heath update email** and a
+  ready-to-paste **Antigravity setup prompt** for Rahmat. — Luis
 - **2026-07-20 (post-meeting)** — Integrated Jul 20 decisions (5 cases, open/closed outcomes, DSM-5
   baseline, blinding, inspiration-not-replication, 20→70–75 turns). Added patient self-consistency
   reviewer prompt, GitHub onboarding + Ollama setup guides, and the meeting record (summary + transcript).

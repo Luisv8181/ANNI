@@ -27,7 +27,9 @@ from app.models import (
 from app.ollama import run_ollama_review
 from app.provenance import COMPILER_VERSION, citation_report, compile_system_prompt, write_audit_event
 from app.synthetic_lab import (
+    DEFAULT_OUTCOME,
     DEFAULT_RISK,
+    OUTCOME_MODES,
     RISK_LEVELS,
     build_patient_system_prompt,
     generate_patient_reply,
@@ -43,6 +45,7 @@ from app.schemas import (
     LabChatRequest,
     LabChatResponse,
     LabConfigOut,
+    LabOutcomeModeOut,
     LabProfileOut,
     LabRiskLevelOut,
     ProjectOut,
@@ -376,7 +379,13 @@ def synthetic_lab_config(project_id: str | None = Query(None), db: Session = Dep
         LabRiskLevelOut(id=key, label=value["label"], blurb=value["blurb"])
         for key, value in RISK_LEVELS.items()
     ]
-    return LabConfigOut(profiles=profiles, risk_levels=risk_levels, model_name=cfg.ollama_model)
+    outcome_modes = [
+        LabOutcomeModeOut(id=key, label=value["label"], blurb=value["blurb"])
+        for key, value in OUTCOME_MODES.items()
+    ]
+    return LabConfigOut(
+        profiles=profiles, risk_levels=risk_levels, outcome_modes=outcome_modes, model_name=cfg.ollama_model
+    )
 
 
 @app.post("/synthetic-lab/message", response_model=LabChatResponse)
@@ -387,6 +396,8 @@ def synthetic_lab_message(payload: LabChatRequest, db: Session = Depends(get_db)
         raise HTTPException(status_code=404, detail="Profile not found.")
     if payload.risk_level not in RISK_LEVELS:
         payload.risk_level = DEFAULT_RISK
+    if payload.outcome_mode not in OUTCOME_MODES:
+        payload.outcome_mode = DEFAULT_OUTCOME
 
     traits = _profile_traits(db, compilation)
     system_prompt = build_patient_system_prompt(
@@ -394,6 +405,7 @@ def synthetic_lab_message(payload: LabChatRequest, db: Session = Depends(get_db)
         traits=traits,
         risk_level=payload.risk_level,
         cue=payload.cue,
+        outcome_mode=payload.outcome_mode,
     )
     messages = [{"role": m.role, "content": m.content} for m in payload.messages]
     try:
@@ -413,6 +425,7 @@ def synthetic_lab_message(payload: LabChatRequest, db: Session = Depends(get_db)
         model_name=cfg.ollama_model,
         persona_name=compilation.name,
         risk_level=payload.risk_level,
+        outcome_mode=payload.outcome_mode,
     )
 
 

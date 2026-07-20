@@ -19,9 +19,29 @@ that's expected.
    If it replies, you're set.
 
 ## Option B — let Antigravity set it up for you
-Since you have a Google account, you have access to Google's **Antigravity** tool. Luis will send a
-prompt you can paste in; it will download and configure everything (Ollama + the ANNI lab) for you, so
-you can skip the manual steps and just open the lab. Use this if the terminal steps feel like a lot.
+Since you have a Google account, you have access to Google's **Antigravity** tool. Open it and paste the
+prompt below; it will download and configure everything (Ollama + the ANNI lab) for you, then open the
+lab. Use this if the terminal steps feel like a lot. Read what it proposes before approving each step.
+
+> **Paste this into Antigravity:**
+>
+> ```
+> I'm on a MacBook and want to run a research app locally. Please set this up step by step, explaining
+> each step and asking before anything destructive:
+>
+> 1. Install Ollama (https://ollama.com) and pull the model "llama3".
+> 2. Clone the GitHub repo https://github.com/luisv8181/ANNI into my home folder.
+> 3. Backend: in ANNI/backend, create a Python venv, activate it, `pip install -r requirements.txt`,
+>    then `alembic upgrade head`, then run `uvicorn app.main:app --reload --port 8000`.
+> 4. Frontend: in the ANNI repo root, run `npm install` then `npm run dev`.
+> 5. Open http://localhost:3000/lab in my browser.
+>
+> If a step fails, show me the error and suggest a fix instead of continuing. Don't change any files in
+> the repo — only run it.
+> ```
+
+If anything errors, copy the message to Luis. Nothing here touches your files or sends data anywhere —
+it just runs the app locally.
 
 ## Running the ANNI Synthetic Patient Lab
 With Ollama running and the repo cloned (see [`ONBOARDING-github.md`](ONBOARDING-github.md)):

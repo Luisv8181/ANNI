@@ -171,6 +171,7 @@ class LabMessage(BaseModel):
 class LabChatRequest(BaseModel):
     compilation_id: str
     risk_level: str = "none"
+    outcome_mode: str = "open"
     cue: str | None = None
     messages: list[LabMessage] = []
 
@@ -180,6 +181,7 @@ class LabChatResponse(BaseModel):
     model_name: str
     persona_name: str
     risk_level: str
+    outcome_mode: str
 
 
 class LabProfileOut(BaseModel):
@@ -194,9 +196,16 @@ class LabRiskLevelOut(BaseModel):
     blurb: str
 
 
+class LabOutcomeModeOut(BaseModel):
+    id: str
+    label: str
+    blurb: str
+
+
 class LabConfigOut(BaseModel):
     profiles: list[LabProfileOut]
     risk_levels: list[LabRiskLevelOut]
+    outcome_modes: list[LabOutcomeModeOut]
     model_name: str
 
 
