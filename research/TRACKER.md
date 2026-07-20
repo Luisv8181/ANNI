@@ -77,8 +77,8 @@ either way. Log the decision in the meeting log.
 | Evaluation categories | ✅ done | Rahmat |
 | Scoring rubric | 🔧 draft | Luis |
 | Pre-registration | 🔧 draft (blanks to fill) | Luis |
-| Vignette template + 1 worked example | ✅ done | Luis |
-| Starter vignette set (all four risk levels) | ✅ VIG-001…004 | Luis |
+| Vignette template + format illustration | ✅ done | Luis |
+| Real vignettes (from ANNI-annotated, cited testimony) | ⬜ blocked on annotation | Luis |
 | Plain-language briefing | ✅ done | — |
 
 ---
@@ -133,7 +133,8 @@ either way. Log the decision in the meeting log.
 
 Add newest at the top: `YYYY-MM-DD — what changed — who`.
 
-- **2026-07-20** — Added starter vignette set (VIG-001…004, all four risk levels) and the transcript
-  storage convention + index. — Luis
+- **2026-07-20** — Correction: removed hand-generated vignettes (VIG-002/003/004). Vignettes must come
+  from ANNI-annotated, cited testimony — not authored by hand. Kept the template + a clearly-labeled
+  format illustration; real vignettes now blocked on annotation. Transcript convention + index kept. — Luis
 - **2026-07-20** — Stood up `research/` workspace, all system prompts, protocol docs, intake workflow,
   and this tracker. Wysa confirmed set up. Reconciled 4-responder lineup with counselor-support. — Luis

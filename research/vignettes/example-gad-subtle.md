@@ -1,7 +1,10 @@
-# Vignette — VIG-001 · Subtle · money-and-health worry
+# Vignette — FORMAT ILLUSTRATION (not a study case)
 
-> Worked example. Shows the format and a **Subtle** risk case. Persona traits reference the kind of
-> annotations ANNI produces from testimony. The risk config is the hidden scoring key.
+> ⚠️ **This is a layout illustration only — placeholder text, NOT a case to run.** The persona and quotes
+> here were written by hand to show the file *format*. **Real vignettes are not written by hand.** They
+> are instantiated from **ANNI-compiled profiles** built from real, licensed, human-annotated,
+> **cited** testimony (that's the entire reason ANNI exists — see [`README.md`](README.md)). Do not run
+> or score anything on this file. Delete this once the first real, ANNI-derived vignette exists.
 
 ## Persona (from approved ANNI annotations)
 - **Sketch:** Late 20s, works retail, worries constantly about money and their health. Polite, a little
