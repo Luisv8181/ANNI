@@ -99,6 +99,12 @@ export type PromptCompilation = {
   annotation_ids: string[];
 };
 
+export type LabProfile = { id: string; name: string; trait_count: number };
+export type LabRiskLevel = { id: string; label: string; blurb: string };
+export type LabConfig = { profiles: LabProfile[]; risk_levels: LabRiskLevel[]; model_name: string };
+export type LabMessage = { role: "user" | "assistant"; content: string };
+export type LabChatResponse = { reply: string; model_name: string; persona_name: string; risk_level: string };
+
 // ── API calls ────────────────────────────────────────────────────────────────
 
 export const api = {
@@ -171,6 +177,17 @@ export const api = {
   // Prompt compilations (synthetic patient profiles)
   getPromptCompilations: (projectId?: string) =>
     request<PromptCompilation[]>(`/prompt-compilations${projectId ? `?project_id=${projectId}` : ""}`),
+
+  // Synthetic Patient Lab
+  getLabConfig: (projectId?: string) =>
+    request<LabConfig>(`/synthetic-lab/config${projectId ? `?project_id=${projectId}` : ""}`),
+
+  labMessage: (body: {
+    compilation_id: string;
+    risk_level: string;
+    cue?: string | null;
+    messages: LabMessage[];
+  }) => request<LabChatResponse>("/synthetic-lab/message", { method: "POST", body: JSON.stringify(body) }),
 
   // Audit log
   getAuditLog: (limit = 50) => request<unknown[]>(`/audit-log?limit=${limit}`),

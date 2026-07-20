@@ -57,7 +57,8 @@ either way. Log the decision in the meeting log.
 | ANNI app (annotation pipeline) | ✅ built | Backend + frontend + provenance + audit log |
 | Annotator mode (`/annotate`) | ✅ built | Guided flow for the team |
 | Annotator Playground (no-setup) | ✅ built | `annotator-playground.html` — practice in any browser |
-| Synthetic patient profiles | ✅ built | 3 worked profiles seeded in the app |
+| Synthetic patient profiles (library) | ✅ built | 3 worked profiles seeded; extensible library — new approved profiles auto-appear |
+| Synthetic Patient Lab (`/lab`) | ✅ built | Chat with an Ollama model playing a profile; planted risk level; needs Ollama running locally |
 | GitHub repo + `research/` workspace | ✅ set up | Branch `claude/next-steps-835mcw` |
 | Wysa access | ✅ set up | Responder #1 |
 | Model + temperature to pin | ⬜ decide | Needed before data collection |
@@ -132,6 +133,10 @@ either way. Log the decision in the meeting log.
 ## Update log
 
 Add newest at the top: `YYYY-MM-DD — what changed — who`.
+
+- **2026-07-20** — Built the **Synthetic Patient Lab** (`/lab`): an Ollama model role-plays a compiled
+  profile with a planted risk level; profile library is extensible. Logged candidate testimony sources
+  (healthtalk/DIPEx, CC-BY OA studies, DSM-5-TR cases, DEPAC, CLPsych) for Heath to license-check. — Luis
 
 - **2026-07-20** — Correction: removed hand-generated vignettes (VIG-002/003/004). Vignettes must come
   from ANNI-annotated, cited testimony — not authored by hand. Kept the template + a clearly-labeled

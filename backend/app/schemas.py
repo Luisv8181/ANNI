@@ -163,6 +163,43 @@ class PromptCompilationOut(BaseModel):
         from_attributes = True
 
 
+class LabMessage(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str
+
+
+class LabChatRequest(BaseModel):
+    compilation_id: str
+    risk_level: str = "none"
+    cue: str | None = None
+    messages: list[LabMessage] = []
+
+
+class LabChatResponse(BaseModel):
+    reply: str
+    model_name: str
+    persona_name: str
+    risk_level: str
+
+
+class LabProfileOut(BaseModel):
+    id: str
+    name: str
+    trait_count: int
+
+
+class LabRiskLevelOut(BaseModel):
+    id: str
+    label: str
+    blurb: str
+
+
+class LabConfigOut(BaseModel):
+    profiles: list[LabProfileOut]
+    risk_levels: list[LabRiskLevelOut]
+    model_name: str
+
+
 class AuditLogOut(BaseModel):
     id: str
     actor_id: str

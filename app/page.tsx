@@ -8,6 +8,7 @@ import {
   CircleDot,
   Database,
   FileText,
+  FlaskConical,
   GitBranch,
   Loader2,
   Lock,
@@ -76,6 +77,12 @@ export default function Home() {
             className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-2 text-sm font-medium text-white shadow-sm transition hover:opacity-90"
           >
             <Sparkles size={15} /> Annotator mode
+          </a>
+          <a
+            href="/lab"
+            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3.5 py-2 text-sm font-medium text-ink shadow-sm transition hover:border-accent hover:text-accent"
+          >
+            <FlaskConical size={15} /> Patient Lab
           </a>
           <div className="hidden items-center gap-2 rounded-full border border-line bg-white/80 px-3 py-2 text-sm text-muted shadow-sm md:flex">
             <Lock size={15} />

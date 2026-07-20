@@ -26,6 +26,12 @@ from app.models import (
 )
 from app.ollama import run_ollama_review
 from app.provenance import COMPILER_VERSION, citation_report, compile_system_prompt, write_audit_event
+from app.synthetic_lab import (
+    DEFAULT_RISK,
+    RISK_LEVELS,
+    build_patient_system_prompt,
+    generate_patient_reply,
+)
 from app.schemas import (
     AISuggestionOut,
     AnnotationCreate,
@@ -34,6 +40,11 @@ from app.schemas import (
     DecisionOut,
     OntologyNodeOut,
     ParagraphOut,
+    LabChatRequest,
+    LabChatResponse,
+    LabConfigOut,
+    LabProfileOut,
+    LabRiskLevelOut,
     ProjectOut,
     PromptCompilationCreate,
     PromptCompilationOut,
@@ -329,6 +340,80 @@ def create_prompt_compilation(payload: PromptCompilationCreate, db: Session = De
         "compiler_version": compilation.compiler_version,
         "citations": [citation_report(db, annotation) for annotation in annotations],
     }
+
+
+# ── Synthetic Patient Lab ─────────────────────────────────────────────────────
+
+def _profile_traits(db: Session, compilation: PromptCompilation) -> list[tuple[str, str]]:
+    """(ontology label, reviewer note) for each annotation in a compiled profile."""
+    annotation_ids = db.scalars(
+        select(PromptCompilationAnnotation.annotation_id).where(
+            PromptCompilationAnnotation.compilation_id == compilation.id
+        )
+    ).all()
+    traits: list[tuple[str, str]] = []
+    for annotation_id in annotation_ids:
+        annotation = db.get(Annotation, annotation_id)
+        if not annotation:
+            continue
+        ontology = db.get(OntologyNode, annotation.ontology_node_id)
+        traits.append((ontology.label if ontology else "Trait", annotation.note))
+    return traits
+
+
+@app.get("/synthetic-lab/config", response_model=LabConfigOut)
+def synthetic_lab_config(project_id: str | None = Query(None), db: Session = Depends(get_db)):
+    """The profile library + available risk levels for the lab."""
+    query = select(PromptCompilation)
+    if project_id:
+        query = query.where(PromptCompilation.project_id == project_id)
+    compilations = db.scalars(query.order_by(PromptCompilation.created_at)).all()
+    profiles = [
+        LabProfileOut(id=c.id, name=c.name, trait_count=len(_profile_traits(db, c)))
+        for c in compilations
+    ]
+    risk_levels = [
+        LabRiskLevelOut(id=key, label=value["label"], blurb=value["blurb"])
+        for key, value in RISK_LEVELS.items()
+    ]
+    return LabConfigOut(profiles=profiles, risk_levels=risk_levels, model_name=cfg.ollama_model)
+
+
+@app.post("/synthetic-lab/message", response_model=LabChatResponse)
+def synthetic_lab_message(payload: LabChatRequest, db: Session = Depends(get_db)):
+    """Generate the simulated patient's next message via a local Ollama model."""
+    compilation = db.get(PromptCompilation, payload.compilation_id)
+    if not compilation:
+        raise HTTPException(status_code=404, detail="Profile not found.")
+    if payload.risk_level not in RISK_LEVELS:
+        payload.risk_level = DEFAULT_RISK
+
+    traits = _profile_traits(db, compilation)
+    system_prompt = build_patient_system_prompt(
+        persona_name=compilation.name,
+        traits=traits,
+        risk_level=payload.risk_level,
+        cue=payload.cue,
+    )
+    messages = [{"role": m.role, "content": m.content} for m in payload.messages]
+    try:
+        reply = generate_patient_reply(system_prompt, messages)
+    except Exception as exc:  # Ollama unreachable / model missing / bad response
+        logger.warning("Synthetic lab generation failed: %s", exc)
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                f"The patient model (Ollama) isn't reachable at {cfg.ollama_url}. "
+                f"Start Ollama and pull the model (ollama pull {cfg.ollama_model}) to run the lab."
+            ),
+        ) from exc
+
+    return LabChatResponse(
+        reply=reply,
+        model_name=cfg.ollama_model,
+        persona_name=compilation.name,
+        risk_level=payload.risk_level,
+    )
 
 
 # ── Audit log ─────────────────────────────────────────────────────────────────

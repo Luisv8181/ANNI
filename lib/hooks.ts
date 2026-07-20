@@ -126,6 +126,20 @@ export function usePromptCompilations(projectId?: string) {
   });
 }
 
+// ── Synthetic Patient Lab ─────────────────────────────────────────────────────
+
+export function useLabConfig(projectId?: string) {
+  return useQuery({
+    queryKey: ["lab-config", projectId],
+    queryFn: () => api.getLabConfig(projectId),
+    staleTime: 60_000,
+  });
+}
+
+export function useLabMessage() {
+  return useMutation({ mutationFn: api.labMessage });
+}
+
 // ── AI Suggestions ────────────────────────────────────────────────────────────
 
 export function useSuggestions(annotationId: string | null) {
