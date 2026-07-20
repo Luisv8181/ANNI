@@ -41,6 +41,12 @@ The study compares how the **same underlying model** behaves under different ins
    client; it writes an analysis + a suggested response for a human counselor to review. This is the
    **human-in-the-loop** arm and the heart of the study. It mirrors ANNI's rule: *AI suggests, humans decide.*
 
+## The patient side
+
+- **`patient-consistency-reviewer.md`** — the synthetic patient's internal check (Jul 20 decision):
+  keeps it in character and factually consistent over long runs, while allowing mood/symptom change per
+  the open/closed outcome mode. Runs alongside the simulated client.
+
 ## Rules for running
 
 - **Pin the model + settings.** Record model name, temperature, and date in each transcript. The

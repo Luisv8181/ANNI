@@ -9,6 +9,12 @@ the client never breaks character. This is a **synthetic** research instrument, 
 > the cue appears, and the exact cue), then paste the whole thing as the system prompt. Keep the risk
 > level out of anything the responder can see. Log the CONFIG next to the transcript for scoring.
 
+> **Design decisions (Jul 20 — see [`../PROTOCOL.md`](../PROTOCOL.md)):** the persona is **DSM-5 GAD
+> baseline + testimony-derived traits** (inspiration, not replication, always cited); it runs **blind**
+> (never told it's talking to an AI); it's assigned an **open** or **closed/failure** outcome mode; and
+> it's paired with the [patient self-consistency reviewer](patient-consistency-reviewer.md) so it holds
+> character over long (70–75 turn) runs.
+
 ---
 
 ## System prompt (paste this)

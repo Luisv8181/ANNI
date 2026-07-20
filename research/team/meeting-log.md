@@ -4,25 +4,22 @@ Newest first. Keep it short — decisions and owners, not transcripts.
 
 ---
 
-## Jul 20, 2:00 PM — ramp-up meeting (agenda)
+## Jul 20 — ramp-up meeting (held) → next meeting **Fri Aug 7**
 
-**Goal:** everyone can navigate the GitHub repo and knows their first move.
+Full record: [`meetings/2026-07-20-summary.md`](meetings/2026-07-20-summary.md) ·
+[`meetings/2026-07-20-transcript.md`](meetings/2026-07-20-transcript.md).
 
-1. **Walk the repo** — [`../README.md`](../README.md) → the 6-step GitHub walkthrough. Everyone switches
-   to branch `claude/next-steps-835mcw` and opens `research/`.
-2. **Show ANNI** — the annotator dashboard (`/annotate`) + the standalone playground; the synthetic
-   patient profiles as the payoff. Luis demos one annotation end to end.
-3. **Confirm the design (v3)** — [`../PROTOCOL.md`](../PROTOCOL.md): risk-signal focus, A / A′ / B
-   conditions, ~20 turns, multiple sessions, AI self-assessment layer.
-4. **Hand out first moves:**
-   - Rahmat → log found testimony in the intake register; start background reading.
-   - Heath → transcript-DB license + IRB.
-   - Luis → finalize simulated client, draft rubric + pre-reg, annotate solo for a week.
-5. **New since last time (built and in the repo):** full `research/` workspace, all five system prompts
-   (incl. ChatGPT-as-therapist and the simulated client), risk matrix, scoring rubric, pre-reg draft,
-   source-intake workflow, vignette template + worked example.
-6. **Decide:** target counts (cases per risk level, sessions per persona) → fill into the pre-reg
-   sampling plan. Pick the model(s) + temperature to pin.
+**Decisions aligned:** (1) build the synthetic profile from **5** deeply annotated cases (compare 5 vs
+10 later); (2) model **open + closed** patient outcomes (recovery path + predetermined treatment-failure
+path); (3) annotation = **inspiration, not replication**, always cited; (4) **blinded** AI-to-AI (patient
+isn't told it's an AI); (5) **DSM-5 GAD baseline** + testimony traits on top.
+
+**To build:** a **patient self-consistency reviewer**; long-run tests (**20 → 70–75 turns**) across
+session **stages**; refined scoring categories; a new **privacy / conflict-of-interest** dimension.
+
+**Action items:** Luis → annotation space by Wed, GitHub clone instructions + Ollama setup guide for
+Rahmat, add transcripts to repo, email Heath, share lab access by end of week. Rahmat → upload found
+articles/testimonies, keep finding literature, translation feedback. Group → review the protocol.
 
 **Decisions:** {{fill in during/after}}
 **Action items:** {{fill in}}

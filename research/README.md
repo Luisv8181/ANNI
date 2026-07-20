@@ -37,9 +37,13 @@ research/
 ├── scoring-rubric.md             ← how the blind panel scores, and how we handle disagreement
 ├── pre-registration.md           ← the plan + predictions we publish before running (Luis)
 │
+├── ONBOARDING-github.md          ← clone/access guide (for Rahmat)
+├── ollama-setup.md               ← run the synthetic patient locally
+│
 ├── system-prompts/               ← every prompt the study uses
 │   ├── README.md
-│   ├── simulated-client.md       ← the AI "client" with planted risk cues (Luis is building this)
+│   ├── simulated-client.md       ← the AI "client" (DSM-5 baseline + testimony traits, planted cues)
+│   ├── patient-consistency-reviewer.md ← keeps the patient in character over long runs
 │   ├── chatgpt-therapist.md      ← "act like a therapist" responder
 │   ├── direct-to-user.md         ← Setup A: AI talks straight to the user
 │   ├── counselor-support.md      ← Setup B: AI advises a human counselor (the heart of the study)
@@ -57,7 +61,8 @@ research/
 │
 └── team/
     ├── roles.md                  ← who owns what
-    └── meeting-log.md            ← notes + agendas
+    ├── meeting-log.md            ← notes + agendas
+    └── meetings/                 ← full meeting records (summary + transcript)
 ```
 
 ---

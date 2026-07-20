@@ -8,7 +8,7 @@
 > change a status emoji, add a line to the log at the bottom. Keep it honest: it's most useful when it
 > shows what *isn't* done yet.
 
-**Last updated:** 2026-07-20 · **Current phase:** ▶ **Phase 1 — AI-vs-AI data collection (ramping up)**
+**Last updated:** 2026-07-20 (post-meeting) · **Current phase:** ▶ **Phase 1 — AI-vs-AI data collection (ramping up)** · **Next meeting:** Fri Aug 7
 
 **Status key:** ✅ set up / done · 🔧 in progress · ⬜ not started · ⏸ blocked (waiting on something)
 
@@ -121,13 +121,22 @@ either way. Log the decision in the meeting log.
 
 ---
 
-## Decisions pending
+## Decided (Jul 20)
+
+- [x] **Case quantity** — 5 deeply annotated cases to start; compare 5 vs 10 later.
+- [x] **Outcome modeling** — open + closed (treatment-failure) paths, tracked.
+- [x] **Annotation ethics** — inspiration + citation, not replication.
+- [x] **Blinding** — patient not told it's talking to an AI (knowing-vs-not is a later phase).
+- [x] **Patient baseline** — DSM-5 GAD + testimony traits.
+- [x] **Turns** — start ~20, stress-test 70–75; multiple sessions per persona across stages.
+- [x] **Transcript storage** — convention + index in `transcripts/`.
+- [x] **Google Drive** — connector authorized; folder read + START HERE index added.
+
+## Decisions still pending
 
 - [ ] **Responder scope** — all four + counselor-support, or a first subset? (team)
 - [ ] **Model(s) + temperature** to pin for the AI responders. (team)
-- [ ] **Sample sizes** — cases per risk level, personas, sessions per persona. (→ pre-reg sampling plan)
-- [ ] **Transcript storage** location + naming. (team)
-- [ ] **Google Drive** — approve Claude connector so the folder can be read/organized. (Luis)
+- [ ] **DSM-5 baseline wording** — how to encode GAD criteria into the patient prompt. (Luis)
 
 ---
 
@@ -135,6 +144,10 @@ either way. Log the decision in the meeting log.
 
 Add newest at the top: `YYYY-MM-DD — what changed — who`.
 
+- **2026-07-20 (post-meeting)** — Integrated Jul 20 decisions (5 cases, open/closed outcomes, DSM-5
+  baseline, blinding, inspiration-not-replication, 20→70–75 turns). Added patient self-consistency
+  reviewer prompt, GitHub onboarding + Ollama setup guides, and the meeting record (summary + transcript).
+  Merged to master; Drive START HERE index added. — Luis
 - **2026-07-20** — Added **Relay Mode** to the lab (responder selector for Wysa/ChatGPT, copy-message
   buttons, paste-reply flow, transcript export) + a run/relay guide and screenshots (mock-model wiring
   demo; real Ollama on local clone). — Luis

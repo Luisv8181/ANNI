@@ -55,12 +55,26 @@ so AI data collection and the student timeline stay on track.
 > review one option considered was narrowing to two AI setups (Direct-to-User vs. Counselor-Support)
 > with human therapists as a bonus; we're keeping the fuller lineup unless the team decides to narrow.
 
-## The client
+## The client (synthetic patient)
 
 One AI plays a person with GAD via [`system-prompts/simulated-client.md`](system-prompts/simulated-client.md),
-with a hidden **risk level** planted per case. Cases are grounded, where possible, in **licensed
-clinical transcript language** (Heath owns the license/IRB check) rather than purely AI-invented text,
-to avoid the "AI recognizing its own syntax" artifact.
+with a hidden **risk level** planted per case. How the patient is built (Jul 20 decisions):
+
+- **DSM-5 GAD baseline + testimony traits.** Start from DSM-5 GAD criteria as a clinical baseline, then
+  layer on natural human characteristics **annotated from real testimony** in ANNI.
+- **Inspiration, not replication.** Traits are *common characteristics* extracted and **cited** across
+  testimonies — never a reproduction of one person's story. This is the ethical line ("be inspired by
+  it, don't be it") and it avoids the "AI recognizing its own syntax" artifact.
+- **5 cases to start.** The initial profile is built from **5 high-quality annotated cases**; a
+  follow-up compares **5 vs 10** to see whether more testimony improves the profile.
+- **Open + closed outcomes.** The same patient is modeled on two tracked paths: an **open** outcome
+  (free to improve or not) and a **closed**, predetermined **treatment-failure** outcome — so we can
+  study the *path* to deterioration vs. recovery (~5–10% of GAD patients deteriorate after starting therapy).
+- **Self-consistency reviewer.** The patient carries an internal check that it stays in character and
+  doesn't lose context over long runs (see
+  [`system-prompts/patient-consistency-reviewer.md`](system-prompts/patient-consistency-reviewer.md)).
+  Open question we'll model: does enforcing consistency make the patient resistant to legitimate change
+  from the therapist? Plan: a tunable trial window (~first 20–30 turns), then lock the prompt.
 
 ## The risk levels
 
@@ -73,13 +87,26 @@ Every case plants a cue at one of four intensities — see [`risk-matrix.md`](ri
 
 Over-reacting to **None** is a failure too, in the other direction.
 
-## Conversation length & sessions
+## Conversation length, sessions & stages
 
-- ~**20 back-and-forth turns** per case — long enough to go somewhere, short enough to run and score
-  many times.
-- **Multiple sessions** per persona, varying risk level and cue timing. Rationale: AI safety
-  **degrades over more turns** and repeated interactions, so multi-turn/multi-session is where failures
-  surface. (Confirmed by the Jul 9 design note and the multi-turn-degradation literature.)
+- Start at ~**20 back-and-forth turns** per case, then also run **long sessions of 70–75 turns** to test
+  whether the patient and therapist retain earlier context (does it forget what it said at the start?).
+- **Multiple sessions per persona at different stages** of the counseling life cycle (beginning /
+  middle / later), varying risk level and cue timing. Rationale: AI safety **degrades over more turns**
+  and repeated interactions, so multi-turn/multi-session is where failures surface.
+
+## Blinding
+
+The AI-to-AI simulation is **blind**: the synthetic patient is **not told it is talking to an AI**, so
+every side behaves as if it were talking to a person. Comparing *knowing* vs. *not knowing* is a
+**later-phase** study; the initial phase stays blind to preserve integrity.
+
+## Secondary research dimension: privacy & conflict of interest
+
+Alongside the safety evaluation, analyze mental-health chatbots' **privacy policies** (what happens to
+disclosures, retention, subpoena exposure) and probe a possible **conflict of interest** — whether
+chatbots are tuned to maximize **engagement** (profit) over reaching a successful therapy outcome
+(e.g., pulling a user back who says "I'm good now"). Ties to Luis's Polisee / Optimust work.
 
 ## Meta layer
 
