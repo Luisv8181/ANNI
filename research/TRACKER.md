@@ -61,7 +61,7 @@ either way. Log the decision in the meeting log.
 | GitHub repo + `research/` workspace | ✅ set up | Branch `claude/next-steps-835mcw` |
 | Wysa access | ✅ set up | Responder #1 |
 | Model + temperature to pin | ⬜ decide | Needed before data collection |
-| Transcript logging / storage location | ⬜ decide | Where run transcripts live (repo folder? Drive?) |
+| Transcript storage + naming convention | ✅ set up | [`transcripts/`](transcripts/) — convention + index |
 | Google Drive research folder | ⏸ needs Claude access approved | Reading it here needs connector approval |
 
 ---
@@ -78,7 +78,7 @@ either way. Log the decision in the meeting log.
 | Scoring rubric | 🔧 draft | Luis |
 | Pre-registration | 🔧 draft (blanks to fill) | Luis |
 | Vignette template + 1 worked example | ✅ done | Luis |
-| Starter vignette set (balanced across risk levels) | ⬜ not started | Luis |
+| Starter vignette set (all four risk levels) | ✅ VIG-001…004 | Luis |
 | Plain-language briefing | ✅ done | — |
 
 ---
@@ -133,5 +133,7 @@ either way. Log the decision in the meeting log.
 
 Add newest at the top: `YYYY-MM-DD — what changed — who`.
 
+- **2026-07-20** — Added starter vignette set (VIG-001…004, all four risk levels) and the transcript
+  storage convention + index. — Luis
 - **2026-07-20** — Stood up `research/` workspace, all system prompts, protocol docs, intake workflow,
   and this tracker. Wysa confirmed set up. Reconciled 4-responder lineup with counselor-support. — Luis
