@@ -1,0 +1,228 @@
+<title>Crisis-Signal Study — Plain-Language Briefing</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --ground:#f5f7f8;--surface:#ffffff;--surface-2:#eef2f3;--ink:#14201f;--muted:#5c6b6a;--faint:#94a3a2;
+    --line:#dde5e5;--accent:#0e8f8a;--accent-soft:#e2f2f1;--accent-ink:#0a6b67;
+    --none:#2f9e6b;--subtle:#c99a2e;--amb:#d97634;--expl:#c5453b;
+    --none-s:#e6f5ee;--subtle-s:#f8efd8;--amb-s:#fbebdd;--expl-s:#f8e2e0;
+    --ink-panel:#122120;--on-panel:#eaf2f1;--shadow:0 20px 55px rgba(18,40,38,.10);
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+    --sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  @media(prefers-color-scheme:dark){:root{
+    --ground:#0e1514;--surface:#16211f;--surface-2:#1c2725;--ink:#e9f1f0;--muted:#9fb0ae;--faint:#6d7e7c;
+    --line:#26332f;--accent:#3fb9b2;--accent-soft:#123028;--accent-ink:#7fd8d2;
+    --none-s:#12281d;--subtle-s:#2a2413;--amb-s:#2c1f14;--expl-s:#2c1615;
+    --ink-panel:#0a1211;--on-panel:#eaf2f1;--shadow:0 20px 55px rgba(0,0,0,.5);}}
+  :root[data-theme="dark"]{
+    --ground:#0e1514;--surface:#16211f;--surface-2:#1c2725;--ink:#e9f1f0;--muted:#9fb0ae;--faint:#6d7e7c;
+    --line:#26332f;--accent:#3fb9b2;--accent-soft:#123028;--accent-ink:#7fd8d2;
+    --none-s:#12281d;--subtle-s:#2a2413;--amb-s:#2c1f14;--expl-s:#2c1615;
+    --ink-panel:#0a1211;--on-panel:#eaf2f1;--shadow:0 20px 55px rgba(0,0,0,.5);}
+  :root[data-theme="light"]{
+    --ground:#f5f7f8;--surface:#ffffff;--surface-2:#eef2f3;--ink:#14201f;--muted:#5c6b6a;--faint:#94a3a2;
+    --line:#dde5e5;--accent:#0e8f8a;--accent-soft:#e2f2f1;--accent-ink:#0a6b67;
+    --none-s:#e6f5ee;--subtle-s:#f8efd8;--amb-s:#fbebdd;--expl-s:#f8e2e0;--ink-panel:#122120;--shadow:0 20px 55px rgba(18,40,38,.10);}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--sans);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;
+    background:radial-gradient(900px 460px at 88% -10%,color-mix(in srgb,var(--accent) 10%,transparent),transparent 62%),var(--ground);}
+  .wrap{max-width:880px;margin:0 auto;padding:0 22px}
+  a{color:var(--accent-ink)}
+  header.top{position:sticky;top:0;z-index:10;backdrop-filter:blur(9px);background:color-mix(in srgb,var(--ground) 84%,transparent);border-bottom:1px solid var(--line)}
+  .top-in{display:flex;align-items:center;gap:12px;padding:13px 0}
+  .badge{width:34px;height:34px;border-radius:9px;background:var(--ink-panel);color:var(--on-panel);display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:15px}
+  .top b{font-size:14px;letter-spacing:-.01em}
+  .top p{margin:0;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .themebtn{margin-left:auto;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:14px}
+  .themebtn:hover{border-color:var(--accent)}
+
+  .hero{padding:54px 0 30px;border-bottom:1px solid var(--line)}
+  .kick{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent-ink);display:flex;align-items:center;gap:10px;margin:0 0 18px}
+  .kick::before{content:"";width:26px;height:1px;background:var(--accent)}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,5vw,50px);line-height:1.04;letter-spacing:-.01em;margin:0;text-wrap:balance}
+  .team{margin-top:20px;font-size:14px;color:var(--muted)}
+  .team b{color:var(--ink);font-weight:600}
+  .q{margin-top:26px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 14px 14px 0;padding:18px 22px}
+  .q .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink)}
+  .q p{margin:8px 0 0;font-family:var(--serif);font-size:20px;line-height:1.4;font-style:italic}
+
+  section.blk{padding:34px 0;border-bottom:1px solid var(--line)}
+  .h2{display:flex;gap:14px;align-items:baseline;margin:0 0 16px}
+  .h2 .n{font-family:var(--mono);font-size:12px;color:var(--accent-ink);font-weight:700}
+  .h2 h2{font-size:23px;letter-spacing:-.015em;margin:0;font-weight:660}
+  p.body{font-size:15.5px;max-width:68ch}
+  p.body b{font-weight:660}
+  .lede{font-size:16.5px;color:var(--muted)}
+
+  .two{display:grid;gap:14px;grid-template-columns:1fr 1fr;margin-top:8px}
+  @media(max-width:640px){.two{grid-template-columns:1fr}}
+  .setup{border:1px solid var(--line);border-radius:15px;padding:18px;background:var(--surface);box-shadow:var(--shadow)}
+  .setup.heart{border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+  .setup .tag{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+  .setup h3{margin:7px 0 8px;font-size:17px;letter-spacing:-.01em}
+  .setup p{margin:0;font-size:14px;color:var(--muted)}
+  .setup .pin{margin-top:12px;display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--accent-ink);background:var(--accent-soft);border-radius:999px;padding:5px 11px}
+
+  table.risk{width:100%;border-collapse:separate;border-spacing:0;margin-top:6px;font-size:14px}
+  table.risk th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:0 12px 9px}
+  table.risk td{padding:12px;border-top:1px solid var(--line);vertical-align:top}
+  table.risk tr td:first-child{width:120px}
+  .rl{display:inline-flex;align-items:center;gap:8px;font-weight:660}
+  .rl i{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .rl.none i{background:var(--none)} .rl.subtle i{background:var(--subtle)}
+  .rl.amb i{background:var(--amb)} .rl.expl i{background:var(--expl)}
+  .good{color:var(--muted)}
+
+  .stats{display:grid;gap:12px;grid-template-columns:repeat(3,1fr);margin-top:6px}
+  @media(max-width:640px){.stats{grid-template-columns:1fr}}
+  .stat{border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--surface)}
+  .stat .big{font-family:var(--mono);font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .stat.warn .big{color:var(--expl)}
+  .stat .cap{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.5}
+
+  .callout{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent) 32%,transparent);background:var(--accent-soft);border-radius:15px;padding:18px 20px}
+  .callout .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:7px}
+  .callout p{margin:0;font-size:15px}
+  .steps{display:grid;gap:10px;margin-top:8px}
+  .stepc{display:flex;gap:13px;border:1px solid var(--line);border-radius:13px;padding:14px 15px;background:var(--surface)}
+  .stepc .num{font-family:var(--mono);font-weight:700;color:var(--accent-ink);flex-shrink:0}
+  .stepc b{font-size:14.5px} .stepc span{display:block;font-size:13.5px;color:var(--muted);margin-top:2px}
+
+  .fit{border-radius:16px;background:var(--ink-panel);color:var(--on-panel);padding:24px;margin-top:6px}
+  .fit h3{margin:0 0 10px;font-size:18px;color:#fff}
+  .fit p{margin:0;font-size:14.5px;color:rgba(234,242,241,.82);max-width:64ch}
+  .fit .map{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-top:16px}
+  @media(max-width:640px){.fit .map{grid-template-columns:1fr}}
+  .fit .map div{background:rgba(255,255,255,.06);border-radius:11px;padding:13px}
+  .fit .map .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#7fd8d2}
+  .fit .map .v{font-size:13.5px;margin-top:5px;color:rgba(234,242,241,.9)}
+
+  footer{padding:34px 0 60px;color:var(--muted);font-family:var(--mono);font-size:11px;line-height:1.75}
+  footer b{color:var(--ink)}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="top">
+  <div class="wrap top-in">
+    <span class="badge">CS</span>
+    <div class="top"><b>Crisis-Signal Study</b><p>Plain-language briefing</p></div>
+    <button class="themebtn" id="theme" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <p class="kick">Research briefing · for the team</p>
+    <h1>Does a chatbot notice when someone is in a crisis — and respond like a trained person would?</h1>
+    <p class="team">A study by <b>Rahmat Malik</b>, <b>Heath Sakusky</b>, and <b>Luis Vasquez</b> · evaluating AI safety in anxiety &amp; crisis conversations.</p>
+    <div class="q">
+      <span class="lab">The one question we're answering</span>
+      <p>"If someone types something that signals they are in a crisis, does the chatbot notice it, and does it respond the way a trained person would?"</p>
+    </div>
+  </section>
+
+  <section class="blk">
+    <div class="h2"><span class="n">01</span><h2>Why this matters</h2></div>
+    <p class="body lede">AI chatbots are already used by millions of people for mental-health support. That's the tension the whole study sits on:</p>
+    <p class="body" style="margin-top:14px">For <b>everyday, mild anxiety</b>, purpose-built therapy chatbots actually work well — trials show they can deliver CBT (a structured, skills-based therapy) and meaningfully reduce symptoms. But for <b>real crises</b> — someone hinting at self-harm — general chatbots become fragile and unsafe. They can <b>sound</b> caring (researchers call this "pseudo-empathy") while completely failing to do the things a trained counselor would: ask a direct safety question, or connect the person to real human help.</p>
+    <div class="callout">
+      <div class="lab">The core problem in one line</div>
+      <p>A chatbot can often <b>tell</b> that a crisis is happening — but its training rewards being agreeable and non-intrusive, so it doesn't <b>act</b> on it. Researchers call this the "bystander effect."</p>
+    </div>
+  </section>
+
+  <section class="blk">
+    <div class="h2"><span class="n">02</span><h2>What we're actually testing</h2></div>
+    <p class="body">Early versions of our plan tried to compare AI against human therapists head-to-head. We dropped that — it would need a huge pool of therapists and scoring tools "that don't really exist yet," and we'd spend the whole project defending the comparison instead of learning from it.</p>
+    <p class="body" style="margin-top:12px">Instead, we compare <b>two ways of using the same AI</b>:</p>
+    <div class="two">
+      <div class="setup">
+        <span class="tag">Setup A</span>
+        <h3>Direct-to-User</h3>
+        <p>The AI talks straight to the person — the normal chatbot you'd download today. It's fully in charge of what gets said.</p>
+      </div>
+      <div class="setup heart">
+        <span class="tag">Setup B</span>
+        <h3>Counselor-Support</h3>
+        <p>The AI doesn't reply to the person. Instead it writes up <b>what it noticed</b> and <b>suggests a response</b> for a human counselor to review and use.</p>
+        <span class="pin">★ This is the heart of the study</span>
+      </div>
+    </div>
+    <p class="body" style="margin-top:16px">The bet: the AI is good at the <b>thinking</b> part (spotting risk, summarizing, suggesting resources) but bad at the <b>feeling</b> part in a real crisis. Setup B lets the AI do the thinking and leaves the human warmth and judgment to a person. If that turns out safer and warmer, it's real evidence for keeping <b>a human in the loop</b> instead of letting chatbots handle crises alone.</p>
+  </section>
+
+  <section class="blk">
+    <div class="h2"><span class="n">03</span><h2>The risk matrix — how we plant the test</h2></div>
+    <p class="body">We write realistic anxiety "vignettes" (short, made-up but believable client cases) and plant risk cues at four intensities. Then we watch whether each setup catches them and responds correctly. Over-reacting to an ordinary worry counts as failing too — just in the other direction.</p>
+    <table class="risk">
+      <thead><tr><th>Risk level</th><th>What the message contains</th><th>What a good response does</th></tr></thead>
+      <tbody>
+        <tr><td><span class="rl none"><i></i>None</span></td><td>Ordinary worry, nothing alarming</td><td class="good">Helps without over-reacting</td></tr>
+        <tr><td><span class="rl subtle"><i></i>Subtle</span></td><td>A faint signal — sleep falling apart, quiet hopelessness</td><td class="good">Notices it and gently asks more</td></tr>
+        <tr><td><span class="rl amb"><i></i>Ambiguous</span></td><td>An unclear hint, like "I just want it to stop"</td><td class="good">Carefully clarifies whether there's real risk</td></tr>
+        <tr><td><span class="rl expl"><i></i>Explicit</span></td><td>A clear statement of danger</td><td class="good">Responds to safety directly and escalates to human care</td></tr>
+      </tbody>
+    </table>
+    <p class="body" style="margin-top:16px">This mirrors the field's leading safety framework, <b>VERA-MH</b>, which grades AI on five things: detecting risk, <b>confirming</b> risk with a direct question, guiding to human care, staying supportive, and respecting its own limits. When VERA-MH was run on ten major chatbots, the gaps were exactly where our matrix points:</p>
+    <div class="stats">
+      <div class="stat warn"><div class="big">61%</div><div class="cap">of high-risk chats where the AI <b>failed to ask</b> a direct follow-up about safety.</div></div>
+      <div class="stat warn"><div class="big">33%</div><div class="cap">of the time it <b>failed to guide</b> the person toward real human care.</div></div>
+      <div class="stat"><div class="big">19.5–84.0</div><div class="cap">range of the <b>same</b> safety test (SIRI-2) across models — expert humans sit at 32.5. Wildly inconsistent.</div></div>
+    </div>
+  </section>
+
+  <section class="blk">
+    <div class="h2"><span class="n">04</span><h2>How we score it fairly</h2></div>
+    <div class="steps">
+      <div class="stepc"><span class="num">1</span><div><b>We stay off the scoring panel.</b><span>The three of us designed the study, so we don't grade it — that removes our bias.</span></div></div>
+      <div class="stepc"><span class="num">2</span><div><b>A blind panel of mental-health professionals scores everything.</b><span>They rate each response on safety, accuracy, and warmth — without knowing which came from a chatbot, which from a person, or which setup produced it.</span></div></div>
+      <div class="stepc"><span class="num">3</span><div><b>A "guess the source" check.</b><span>Scorers try to guess human-vs-AI, which tells us how good the blinding really was.</span></div></div>
+      <div class="stepc"><span class="num">4</span><div><b>We write the plan down first (pre-registration).</b><span>Predictions are public before we run anything, so we can't move the goalposts later.</span></div></div>
+    </div>
+    <div class="callout">
+      <div class="lab">The subtle trap we have to avoid</div>
+      <p>A 2026 study found expert psychiatrists <b>disagree sharply</b> on what a "safe" AI response even is — and they disagree <b>most</b> on the highest-stakes items (suicide, self-harm). One "safety-first" expert rewards an AI for jumping straight to a crisis hotline; an "engagement-first" expert penalizes that same response for abandoning the person. If we just <b>average</b> their scores, we erase real, principled clinical philosophies and get a meaningless number. So our plan treats disagreement as a <b>finding to study</b>, not noise to smooth away.</p>
+    </div>
+  </section>
+
+  <section class="blk">
+    <div class="h2"><span class="n">05</span><h2>Where ANNI fits in</h2></div>
+    <p class="body">ANNI — our annotation tool — isn't a side project. It's the machinery this study needs, and the Counselor-Support setup <b>is</b> ANNI's core idea in action.</p>
+    <div class="fit">
+      <h3>Same principle, two places: <em>AI suggests, humans decide.</em></h3>
+      <p>Setup B asks the AI to analyze and suggest while a human makes the call. That is exactly what ANNI does with patient testimony — the AI offers a second opinion, and a person approves or overrides it, with every decision recorded.</p>
+      <div class="map">
+        <div><div class="k">The study needs</div><div class="v">Realistic vignettes with planted risk cues, tagged and scored consistently.</div></div>
+        <div><div class="k">ANNI provides</div><div class="v">A pipeline to build, tag, and audit those cases — with provenance on every trait.</div></div>
+        <div><div class="k">The study needs</div><div class="v">A human-in-the-loop setup to test against an autonomous one.</div></div>
+        <div><div class="k">ANNI is</div><div class="v">A working human-in-the-loop annotation system — the model the study argues for.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="blk" style="border-bottom:none">
+    <div class="h2"><span class="n">06</span><h2>What's next</h2></div>
+    <div class="steps">
+      <div class="stepc"><span class="num">R</span><div><b>Rahmat</b> — background reading on AI crisis detection, vignette studies, and text-based therapy.</div></div>
+      <div class="stepc"><span class="num">H</span><div><b>Heath</b> — check the clinical transcript-database license and start the IRB (ethics) paperwork.</div></div>
+      <div class="stepc"><span class="num">L</span><div><b>Luis</b> — draft the scoring rubric and the pre-registration plan (and the disagreement-analysis approach above).</div></div>
+    </div>
+  </section>
+
+  <footer>
+    Plain-language briefing distilled from the team's research report,<br>
+    <b>"Evaluating the Safety and Efficacy of Artificial Intelligence in Mental Health Crises and Generalized Anxiety Disorder."</b><br><br>
+    Statistics (VERA-MH 61% / 33%, SIRI-2 19.5–84.0, expert-disagreement findings) are drawn from the cited clinical literature in that report.
+    This document simplifies for a general audience — see the full report for methods, citations, and nuance.
+  </footer>
+</main>
+
+<script>
+  const root=document.documentElement;
+  document.getElementById('theme').addEventListener('click',()=>{
+    const cur=root.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+    root.setAttribute('data-theme',cur==='dark'?'light':'dark');
+  });
+</script>
