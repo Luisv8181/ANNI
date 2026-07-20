@@ -1,9 +1,10 @@
-# Study Protocol (v3, current)
+# Study Protocol (current)
 
-**Title (working):** Evaluating whether AI notices and safely responds to crisis signals in anxiety
-conversations.
+**Title (working):** Comparing AI and Human Responses in Anxiety Conversations — evaluating whether AI
+notices and safely responds to crisis signals.
 **Team:** Rahmat Malik, Heath Sakusky, Luis Vasquez.
-**Status:** design frozen at v3; drafting pre-registration.
+**Program:** Sanofi Biomedical Science Program · Geisinger.
+**Status:** design converging; drafting pre-registration. See [`TRACKER.md`](TRACKER.md) for live status.
 
 This is the short, canonical statement of the design. Background and citations live in the team's
 Gemini deep-research report; the plain-language version is the shared briefing.
@@ -15,22 +16,44 @@ Gemini deep-research report; the plain-language version is the shared briefing.
 > If someone types something that signals they are in a crisis, does the chatbot notice it, and does
 > it respond the way a trained person would?
 
-We deliberately narrowed to **clinical safety and risk handling**. We are **not** trying to prove "is
-AI as good as a human therapist" — that would need a large matched pool of clinicians and text-scoring
-tools that don't reliably exist yet, and we'd spend the project defending the comparison instead of
-learning from it.
+The **core outcome** is **clinical safety and risk handling**, not a head-to-head "is AI as good as a
+human therapist" verdict. A full human-vs-AI comparison would need a large matched pool of clinicians
+and text-scoring tools that don't reliably exist yet — so real therapists come in as a **later-phase**
+comparison (a bonus), while the immediate, fast-moving work is scoring how the AI responders handle
+risk signals.
 
 ## What we compare
 
-The same underlying model under different structures:
+We line up several **responders** against the same simulated client, and score their conversations
+blind. The responder lineup comes from the plain-language study summary (the four responders), plus two
+additions that grew out of the Gemini deep-research review (the counselor-support structure and the AI
+self-assessment layer).
 
-| Condition | Prompt | Role |
-|-----------|--------|------|
-| **A · Direct-to-User** | [`system-prompts/direct-to-user.md`](system-prompts/direct-to-user.md) | Autonomous baseline chatbot |
-| **A′ · "Act like a therapist"** | [`system-prompts/chatgpt-therapist.md`](system-prompts/chatgpt-therapist.md) | Same model told to be a therapist |
-| **B · Counselor-Support** | [`system-prompts/counselor-support.md`](system-prompts/counselor-support.md) | AI advises a human who replies (**heart of the study**) |
+**The four responders (from the study summary):**
 
-Human-therapist responses are an **optional bonus** if resources allow — not the core outcome.
+| # | Responder | Prompt / tool | Role |
+|---|-----------|---------------|------|
+| 1 | **Purpose-built therapy app** — *Wysa* | Wysa app (set up) | Existing CBT app, paid month to test |
+| 2 | **Standard chatbot** | [`system-prompts/direct-to-user.md`](system-prompts/direct-to-user.md) | General model, no special instructions |
+| 3 | **Chatbot told to be a therapist** | [`system-prompts/chatgpt-therapist.md`](system-prompts/chatgpt-therapist.md) | Same general model, "act like a therapist" |
+| 4 | **Real therapists** | — | Licensed clinicians (**later phase** — see timeline) |
+
+**Added structures (test alongside the above):**
+
+- **Counselor-Support** — [`system-prompts/counselor-support.md`](system-prompts/counselor-support.md):
+  the AI advises a human who sends the reply (human-in-the-loop). This directly probes the
+  "cognitive vs. affective" split in the literature and mirrors ANNI's *AI suggests, humans decide*.
+- **AI self-assessment** — [`system-prompts/ai-self-assessment.md`](system-prompts/ai-self-assessment.md):
+  each AI turn rates its own confidence / "mental state," analyzed for calibration (Rahmat's idea).
+
+**Timeline:** testing the AI responders against each other is the immediate priority and runs fast.
+Bringing in **real therapists is a later phase** (Luis recruits via clinical network + media outreach),
+so AI data collection and the student timeline stay on track.
+
+> **Open decision (team):** run all four responders *and* the counselor-support structure, or start with
+> a subset? Everything is drafted so we can go either way — confirm and log it. During the deep-research
+> review one option considered was narrowing to two AI setups (Direct-to-User vs. Counselor-Support)
+> with human therapists as a bonus; we're keeping the fuller lineup unless the team decides to narrow.
 
 ## The client
 

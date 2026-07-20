@@ -3,7 +3,10 @@
 **Evaluating whether AI notices and safely responds to crisis signals in anxiety conversations.**
 
 Team: **Rahmat Malik**, **Heath Sakusky**, **Luis Vasquez**
+Program: **Sanofi Biomedical Science Program · Geisinger**
 Meeting cadence: see [`team/meeting-log.md`](team/meeting-log.md) · Next meeting: **Mon Jul 20, 2:00 PM**
+
+📋 **Live status board:** [`TRACKER.md`](TRACKER.md) — phases, what's set up, what needs setup, and pending decisions. Check it first.
 
 This folder is the working home for the study inside the **ANNI** repository. ANNI (the app, in the
 folders above this one) is the tool we use to annotate testimony and run the human-in-the-loop
@@ -27,7 +30,8 @@ deep-research report. The short version lives in [`PROTOCOL.md`](PROTOCOL.md).
 ```
 research/
 ├── README.md                     ← you are here (project hub + GitHub walkthrough)
-├── PROTOCOL.md                   ← the study design (v3, current)
+├── TRACKER.md                    ← rolling status board (phases, set-up vs needs-setup)
+├── PROTOCOL.md                   ← the study design (current)
 ├── risk-matrix.md                ← the four risk levels we plant in every case
 ├── evaluation-categories.md      ← Rahmat's eval categories + the AI self-assessment idea
 ├── scoring-rubric.md             ← how the blind panel scores, and how we handle disagreement
