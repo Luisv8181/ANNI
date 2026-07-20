@@ -1,0 +1,291 @@
+<title>ANNI — Annotator Playground</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --ground:#f7f5fd;--surface:#fff;--surface-2:#fbfaff;--ink:#17151f;--muted:#6b6575;--faint:#98909f;
+    --line:#e7e2f0;--accent:#7c5cff;--accent-soft:#f2edff;--mint:#e6f6ed;--mint-ink:#177a4d;
+    --amber:#fdf1d8;--amber-ink:#8a5a06;--ink-panel:#17151f;--on-panel:#f3f0fb;
+    --shadow:0 22px 60px rgba(28,20,48,.10);
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:"Inter var",Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  @media(prefers-color-scheme:dark){:root{
+    --ground:#100d1b;--surface:#1a1626;--surface-2:#211c30;--ink:#f3f0fb;--muted:#a59cb5;--faint:#7a7189;
+    --line:#2b2540;--accent:#a48bff;--accent-soft:#241d3a;--mint:#152a20;--mint-ink:#57d295;
+    --amber:#2c2413;--amber-ink:#e0ad55;--ink-panel:#0b0912;--shadow:0 22px 60px rgba(0,0,0,.5);}}
+  :root[data-theme="light"]{--ground:#f7f5fd;--surface:#fff;--surface-2:#fbfaff;--ink:#17151f;--muted:#6b6575;--faint:#98909f;--line:#e7e2f0;--accent:#7c5cff;--accent-soft:#f2edff;--mint:#e6f6ed;--mint-ink:#177a4d;--amber:#fdf1d8;--amber-ink:#8a5a06;--ink-panel:#17151f;--shadow:0 22px 60px rgba(28,20,48,.10);}
+  :root[data-theme="dark"]{--ground:#100d1b;--surface:#1a1626;--surface-2:#211c30;--ink:#f3f0fb;--muted:#a59cb5;--faint:#7a7189;--line:#2b2540;--accent:#a48bff;--accent-soft:#241d3a;--mint:#152a20;--mint-ink:#57d295;--amber:#2c2413;--amber-ink:#e0ad55;--ink-panel:#0b0912;--shadow:0 22px 60px rgba(0,0,0,.5);}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--sans);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;
+    background:radial-gradient(1000px 480px at 12% -8%, color-mix(in srgb,var(--accent) 12%,transparent),transparent 60%),var(--ground);}
+  .wrap{max-width:960px;margin:0 auto;padding:0 20px}
+  header.top{display:flex;align-items:center;gap:13px;padding:16px 0}
+  .mark{width:36px;height:36px;border-radius:10px;background:var(--ink-panel);color:#fff;display:grid;place-items:center}
+  .brand b{font-size:15px;letter-spacing:-.01em}
+  .brand p{margin:0;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+  .top-r{margin-left:auto;display:flex;gap:9px;align-items:center}
+  .themebtn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:9px;width:34px;height:34px;cursor:pointer;font-size:15px}
+  .reset{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:9px;padding:0 12px;height:34px;cursor:pointer;font-size:13px}
+  .reset:hover,.themebtn:hover{border-color:var(--accent)}
+
+  .hero{display:grid;gap:16px;grid-template-columns:1.3fr 1fr;margin:6px 0 8px}
+  @media(max-width:720px){.hero{grid-template-columns:1fr}}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+  .pill{display:inline-flex;align-items:center;gap:7px;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+  h1{font-size:clamp(24px,3.4vw,34px);letter-spacing:-.025em;margin:14px 0 8px;line-height:1.05;text-wrap:balance}
+  .lede{color:var(--muted);font-size:14.5px;margin:0;max-width:46ch}
+  .prog{background:var(--ink-panel);color:#fff;border:none}
+  .prog .top{display:flex;justify-content:space-between;color:rgba(255,255,255,.6);font-size:13px}
+  .big{font-size:44px;font-weight:650;font-variant-numeric:tabular-nums;line-height:1}
+  .track{height:10px;border-radius:6px;background:rgba(255,255,255,.15);overflow:hidden;margin-top:12px}
+  .track i{display:block;height:100%;background:var(--accent);border-radius:6px;transition:width .5s cubic-bezier(.4,1.4,.5,1)}
+  .mini{display:flex;gap:10px;margin-top:14px}
+  .mini div{flex:1;background:rgba(255,255,255,.07);border-radius:11px;padding:11px}
+  .mini b{font-size:20px;font-variant-numeric:tabular-nums}
+  .mini span{display:block;font-size:11px;color:rgba(255,255,255,.55);margin-top:2px}
+
+  .stepper{display:flex;gap:8px;overflow-x:auto;padding:16px 0 4px}
+  .st{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--muted);
+    border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:560;white-space:nowrap}
+  .st .n{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-size:12px}
+  .st.done{background:var(--accent);border-color:var(--accent);color:#fff}
+  .st.done .n{background:rgba(255,255,255,.25);color:#fff}
+  .sep{align-self:center;color:var(--line)}
+
+  section.step{margin-top:16px}
+  .step-h{display:flex;align-items:center;gap:11px;margin-bottom:14px}
+  .step-h .ic{width:30px;height:30px;border-radius:9px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:16px}
+  .step-h h2{font-size:17px;margin:0;letter-spacing:-.01em}
+  .step-h h2 small{color:var(--muted);font-weight:600;margin-right:7px}
+  .lock{margin-left:auto;font-size:12px;color:var(--muted)}
+  .locked .body{opacity:.4;pointer-events:none;user-select:none}
+  .locked{opacity:.75}
+
+  .grid3{display:grid;gap:11px;grid-template-columns:repeat(3,1fr)}
+  @media(max-width:640px){.grid3{grid-template-columns:1fr}}
+  .story{border:1px solid var(--line);background:var(--surface-2);border-radius:13px;padding:15px;cursor:pointer;text-align:left;transition:.15s}
+  .story:hover{border-color:color-mix(in srgb,var(--accent) 50%,transparent)}
+  .story.on{border-color:var(--accent);background:var(--accent-soft)}
+  .story .code{font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.1em}
+  .story b{display:block;margin-top:6px;font-size:15px;letter-spacing:-.01em}
+  .story .chk{margin-top:9px;font-size:12px;color:var(--accent);font-weight:600;display:none}
+  .story.on .chk{display:block}
+
+  .para{border:1px solid var(--line);background:var(--surface-2);border-radius:13px;padding:15px 17px;margin-bottom:11px;font-size:15.5px;line-height:1.75}
+  .para.pick{cursor:text}
+  .para.pick:hover{border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+  .para.active{border-color:var(--accent);background:var(--accent-soft)}
+  mark{background:color-mix(in srgb,var(--accent) 22%,transparent);color:inherit;border-radius:3px;padding:0 1px;
+    text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:2px}
+  .btn{border:none;border-radius:13px;background:var(--ink-panel);color:#fff;font-family:var(--sans);font-size:15px;font-weight:560;padding:13px 20px;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:9px}
+  .btn:hover{background:var(--accent)}
+  .btn.accent{background:var(--accent)}.btn.accent:hover{opacity:.9}
+  .btn:disabled{opacity:.4;cursor:default}
+  .row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:14px}
+  .hint{font-size:13.5px;color:var(--muted)}
+  .picked{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);background:var(--accent-soft);border-radius:13px;padding:14px}
+  .picked .k{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+  .picked .q{margin-top:6px;font-size:15px;font-weight:560}
+
+  .grid2{display:grid;gap:11px;grid-template-columns:1fr 1fr}
+  @media(max-width:640px){.grid2{grid-template-columns:1fr}}
+  .trait{display:flex;gap:12px;border:1px solid var(--line);background:var(--surface-2);border-radius:13px;padding:14px;cursor:pointer;text-align:left;transition:.15s}
+  .trait:hover{border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+  .trait.on{border-color:var(--accent);background:var(--accent-soft)}
+  .trait .em{font-size:23px;line-height:1}
+  .trait b{font-size:14.5px;letter-spacing:-.01em}
+  .trait span{display:block;font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.5}
+
+  .save-grid{display:grid;gap:22px;grid-template-columns:1fr 1fr}
+  @media(max-width:640px){.save-grid{grid-template-columns:1fr}}
+  label.fld{font-size:13.5px;font-weight:560;color:var(--muted)}
+  input[type=range]{width:100%;accent-color:var(--accent);margin-top:12px}
+  .confrow{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:4px}
+  .rel{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:11px 13px;margin-top:8px;cursor:pointer;font-size:13.5px}
+  .rel.on{border-color:var(--accent);background:var(--accent-soft)}
+  .rel small{color:var(--muted);margin-left:6px}
+  textarea{width:100%;border:1px solid var(--line);background:var(--surface-2);border-radius:13px;padding:12px;font-family:var(--sans);font-size:14px;color:var(--ink);resize:vertical;min-height:120px;outline:none}
+  textarea:focus{border-color:var(--accent)}
+
+  h3.tagsh{font-size:16px;margin:26px 0 12px}
+  .tags{display:grid;gap:11px;grid-template-columns:1fr 1fr}
+  @media(max-width:640px){.tags{grid-template-columns:1fr}}
+  .tag{border:1px solid var(--line);background:var(--surface);border-radius:13px;padding:14px;box-shadow:0 2px 10px rgba(28,20,48,.04)}
+  .tag .th{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .chip{background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600}
+  .stat{border-radius:999px;padding:3px 10px;font-size:11px;font-weight:600}
+  .stat.rev{background:var(--amber);color:var(--amber-ink)}.stat.ok{background:var(--mint);color:var(--mint-ink)}
+  .tag .q{margin:9px 0 0;font-size:14px}
+  .tag .ai{margin-top:9px;border-top:1px dashed var(--line);padding-top:9px;font-size:12.5px;color:var(--muted)}
+  .empty{border:1px dashed var(--line);background:var(--surface-2);border-radius:13px;padding:26px;text-align:center;color:var(--muted);font-size:14px}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--ink-panel);color:#fff;border-radius:999px;padding:13px 22px;font-weight:560;box-shadow:var(--shadow);display:flex;gap:10px;align-items:center;opacity:0;pointer-events:none;transition:.3s}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  footer{color:var(--muted);font-family:var(--mono);font-size:11px;line-height:1.7;padding:34px 0 56px}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="mark">✦</div>
+    <div class="brand"><b>ANNI</b><p>Annotator playground</p></div>
+    <div class="top-r">
+      <button class="reset" id="reset">↺ Start over</button>
+      <button class="themebtn" id="theme" aria-label="Toggle theme">◐</button>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="card">
+      <span class="pill">✦ Practice mode</span>
+      <h1>Find the human story in the words.</h1>
+      <p class="lede">Read a real-sounding patient story, highlight a phrase that stands out, and tag what it tells you.
+        ANNI takes a second look — but you decide. Nothing is sent anywhere; your tags stay in this browser.</p>
+    </div>
+    <div class="card prog">
+      <div class="top"><span>Your progress</span><span>🏆</span></div>
+      <div style="display:flex;align-items:flex-end;gap:8px;margin-top:8px">
+        <span class="big" id="count">0</span><span style="color:rgba(255,255,255,.6);margin-bottom:6px">/ 5 tags</span>
+      </div>
+      <div class="track"><i id="bar" style="width:0%"></i></div>
+      <div class="mini">
+        <div><b id="traitsCount">0</b><span>traits explored</span></div>
+        <div><b id="nstories">0</b><span>stories available</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stepper" id="stepper"></div>
+
+  <section class="step" id="s1"><div class="step-h"><span class="ic">📖</span><h2><small>Step 1</small>Choose a story to read</h2></div>
+    <div class="body"><div class="grid3" id="stories"></div></div></section>
+
+  <section class="step" id="s2"><div class="step-h"><span class="ic">📖</span><h2><small>Step 2</small>Read it carefully</h2></div>
+    <div class="body"><div id="readParas"></div>
+      <div class="row"><button class="btn" id="readBtn">I've read this whole story</button>
+        <span class="hint" id="readHint">This unlocks the highlighting step.</span></div></div></section>
+
+  <section class="step locked" id="s3"><div class="step-h"><span class="ic">🖊️</span><h2><small>Step 3</small>Highlight the evidence</h2><span class="lock">Finish the step above</span></div>
+    <div class="body"><p class="hint" style="margin:0 0 11px">Use your mouse to <b>select the exact words</b> that show something about this person.</p>
+      <div id="pickParas"></div><div id="pickedWrap"></div></div></section>
+
+  <section class="step locked" id="s4"><div class="step-h"><span class="ic">🏷️</span><h2><small>Step 4</small>What does it tell you?</h2><span class="lock">Finish the step above</span></div>
+    <div class="body"><div class="grid2" id="traits"></div></div></section>
+
+  <section class="step locked" id="s5"><div class="step-h"><span class="ic">✓</span><h2><small>Step 5</small>How sure are you — and why?</h2><span class="lock">Finish the step above</span></div>
+    <div class="body"><div class="save-grid">
+      <div>
+        <div style="display:flex;justify-content:space-between"><label class="fld">How confident are you?</label><span id="confLbl" style="font-size:13.5px;font-weight:600">🌟 Very confident</span></div>
+        <input type="range" min="0" max="100" value="75" id="conf">
+        <div class="confrow"><span>Not sure</span><span id="confNum">75%</span><span>Certain</span></div>
+        <p class="fld" style="margin:18px 0 0">Does the quote show the trait, or go against it?</p>
+        <div id="rels"></div>
+      </div>
+      <div style="display:flex;flex-direction:column">
+        <label class="fld">Why did you pick this? <span style="color:var(--faint)">(optional)</span></label>
+        <textarea id="note" placeholder="In your own words, what made you notice this?" style="margin-top:8px;flex:1"></textarea>
+        <button class="btn accent" id="saveBtn" style="margin-top:12px;justify-content:center" disabled>Save my tag &amp; let ANNI review it</button>
+      </div>
+    </div></div></section>
+
+  <h3 class="tagsh">Tags you've made</h3>
+  <div id="tags"></div>
+
+  <footer>
+    All testimony is <b>synthetic</b> — composite, illustrative text, not from any real person.
+    Practice mode · your tags stay in this browser (nothing is uploaded). Design mirrors the live ANNI annotator.
+  </footer>
+</div>
+<div class="toast" id="toast">🎉 <span>Nice! Your tag is saved — ANNI is taking a look.</span></div>
+
+<script id="d" type="application/json">{"sources": [{"id": "T-DEMO-001", "title": "Reluctant Discloser", "paragraphs": ["I waited until the pain was bad before I told anyone. I kept thinking it would sound dramatic if I complained again, so I smiled and said I was fine.", "When the nurse asked direct questions I answered, but I did not know how to explain what scared me most. My sister noticed and helped me ask about the next steps.", "The printed instructions were full of words I had heard before but did not really understand. I wanted someone to slow down and make sure I could repeat the plan back."]}, {"id": "T-DEMO-002", "title": "Guarded Navigator", "paragraphs": ["The last time I felt like a person and not a chart was a long time ago. Now I ask a lot of questions before I agree to anything, and I know some of the staff find it tiring.", "I am not trying to be difficult. I just need to understand the reason, and I need to be the one who makes the final decision. When someone explains why and leaves the choice to me, I almost always say yes.", "I keep my own notes now — every medication, every date, every name. If something does not match what I am told, I say so. It is the only way I feel safe in there."]}, {"id": "T-DEMO-003", "title": "Plain-Language Seeker", "paragraphs": ["My daughter comes to every appointment because the words go by too fast for me. She writes them down and at home we look them up together until they make sense.", "The first time, I stopped the medication when I started to feel better. I thought that was the instruction. Nobody asked me to repeat the plan back, so nobody knew I had it wrong.", "I am not slow. I just need it in plain language and a little time. When the pharmacist drew a simple picture, the whole thing finally made sense."]}], "ontology": [{"id": "emotion-hesitation", "label": "Hesitates to disclose symptoms", "emoji": "😟", "look": "They hold back, downplay, or delay sharing how they really feel."}, {"id": "communication-indirect", "label": "Indirect communication", "emoji": "🌫️", "look": "They hint, soften, or talk around the point instead of saying it plainly."}, {"id": "healthcare-trust", "label": "Healthcare trust barrier", "emoji": "🛡️", "look": "They doubt or feel let down by doctors, hospitals, or the system."}, {"id": "support-family", "label": "Family support system", "emoji": "🤝", "look": "A family member helps them cope, decide, or ask questions."}, {"id": "literacy-medical", "label": "Medical literacy gap", "emoji": "📖", "look": "Medical words or instructions are confusing or hard to follow."}, {"id": "goals-autonomy", "label": "Autonomy goal", "emoji": "🧭", "look": "They want to stay in control of their own care and choices."}, {"id": "values-dignity", "label": "Dignity in care", "emoji": "💜", "look": "They want to be treated with respect, privacy, and as a whole person."}, {"id": "education-objective", "label": "Learner objective", "emoji": "🎯", "look": "A lesson or skill a student could practice from this moment."}], "ai": {"emotion-hesitation": {"conf": 70, "line": "Looks like hesitates to disclose symptoms to me too — good eye."}, "communication-indirect": {"conf": 73, "line": "Looks like indirect communication to me too — good eye."}, "healthcare-trust": {"conf": 76, "line": "Looks like healthcare trust barrier to me too — good eye."}, "support-family": {"conf": 79, "line": "Looks like family support system to me too — good eye."}, "literacy-medical": {"conf": 82, "line": "Looks like medical literacy gap to me too — good eye."}, "goals-autonomy": {"conf": 85, "line": "Looks like autonomy goal to me too — good eye."}, "values-dignity": {"conf": 88, "line": "Looks like dignity in care to me too — good eye."}, "education-objective": {"conf": 91, "line": "Looks like learner objective to me too — good eye."}}}</script>
+<script>
+const DATA=JSON.parse(document.getElementById('d').textContent);
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const RELS=[["supports","It's an example of the trait","The quote shows this trait happening."],
+  ["contradicts","It works against the trait","The quote pushes the other way."],
+  ["qualifies","It depends / it's mixed","True in some ways, not others."]];
+const KEY="anni_playground_tags";
+let state={source:DATA.sources[0], read:false, sel:null, trait:null, rel:"supports", conf:75, note:""};
+let tags=JSON.parse(localStorage.getItem(KEY)||"[]");
+
+// theme
+const root=document.documentElement;
+$('#theme').onclick=()=>{const c=root.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');root.setAttribute('data-theme',c==='dark'?'light':'dark');};
+$('#reset').onclick=()=>{ if(confirm('Clear all your practice tags?')){tags=[];save();resetWork();renderAll();} };
+
+function esc(t){return t.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+function save(){localStorage.setItem(KEY,JSON.stringify(tags));}
+function confMeta(v){return v<40?["🤔","Just a hunch"]:v<65?["🙂","Fairly sure"]:v<88?["😃","Pretty confident"]:["🌟","Very confident"];}
+
+function resetWork(){state.read=false;state.sel=null;state.trait=null;state.note="";state.conf=75;$('#note').value="";$('#conf').value=75;}
+
+function renderStepper(){
+  const steps=[["Read",state.read],["Highlight",!!state.sel],["Tag",!!state.trait],["Save",false]];
+  $('#stepper').innerHTML=steps.map((s,i)=>`<div class="st ${s[1]?'done':''}"><span class="n">${s[1]?'✓':i+1}</span>${s[0]}</div>`+(i<3?'<span class="sep">—</span>':'')).join('');
+}
+function renderStories(){
+  $('#stories').innerHTML=DATA.sources.map(s=>`<button class="story ${s.id===state.source.id?'on':''}" data-id="${s.id}">
+    <span class="code">${s.id}</span><b>${esc(s.title)}</b><span class="chk">✓ Reading this one</span></button>`).join('');
+  $$('#stories .story').forEach(b=>b.onclick=()=>{state.source=DATA.sources.find(x=>x.id===b.dataset.id);resetWork();renderAll();});
+}
+function renderRead(){
+  $('#readParas').innerHTML=state.source.paragraphs.map(t=>`<div class="para">${esc(t)}</div>`).join('');
+  const btn=$('#readBtn');
+  btn.innerHTML=state.read?'✓ Thanks for reading!':'I\'ve read this whole story';
+  btn.disabled=state.read;
+  $('#readHint').textContent=state.read?'Now highlight the part that stood out.':'This unlocks the highlighting step.';
+  btn.onclick=()=>{state.read=true;renderAll();};
+}
+function renderPick(){
+  $('#s3').classList.toggle('locked',!state.read);
+  $('#s3 .lock').style.display=state.read?'none':'';
+  $('#pickParas').innerHTML=state.source.paragraphs.map((t,i)=>{
+    if(state.sel&&state.sel.pi===i){const{a,b}=state.sel;return `<p class="para pick active" data-i="${i}">${esc(t.slice(0,a))}<mark>${esc(t.slice(a,b))}</mark>${esc(t.slice(b))}</p>`;}
+    return `<p class="para pick" data-i="${i}">${esc(t)}</p>`;}).join('');
+  $$('#pickParas .para').forEach(p=>p.onmouseup=()=>{
+    const sel=window.getSelection();const txt=(sel?sel.toString():"").replace(/\s+/g,' ').trim();
+    if(txt.length<3||!p.contains(sel.anchorNode))return;
+    const i=+p.dataset.i, full=state.source.paragraphs[i], a=full.indexOf(txt);
+    if(a<0)return; state.sel={pi:i,quote:txt,a,b:a+txt.length}; renderAll();
+  });
+  $('#pickedWrap').innerHTML=state.sel?`<div class="picked"><div class="k">You highlighted</div><div class="q">“${esc(state.sel.quote)}”</div></div>`:'';
+}
+function renderTraits(){
+  $('#s4').classList.toggle('locked',!state.sel);
+  $('#s4 .lock').style.display=state.sel?'none':'';
+  $('#traits').innerHTML=DATA.ontology.map(o=>`<button class="trait ${state.trait===o.id?'on':''}" data-id="${o.id}">
+    <span class="em">${o.emoji}</span><span><b>${esc(o.label)}</b><span>${esc(o.look)}</span></span></button>`).join('');
+  $$('#traits .trait').forEach(b=>b.onclick=()=>{state.trait=b.dataset.id;renderAll();});
+}
+function renderSave(){
+  $('#s5').classList.toggle('locked',!state.trait);
+  $('#s5 .lock').style.display=state.trait?'none':'';
+  $('#rels').innerHTML=RELS.map(r=>`<button class="rel ${state.rel===r[0]?'on':''}" data-v="${r[0]}"><b>${r[1]}</b><small>${r[2]}</small></button>`).join('');
+  $$('#rels .rel').forEach(b=>b.onclick=()=>{state.rel=b.dataset.v;renderSave();});
+  const cm=confMeta(state.conf);$('#confLbl').textContent=cm[0]+' '+cm[1];$('#confNum').textContent=state.conf+'%';
+  $('#saveBtn').disabled=!(state.read&&state.sel&&state.trait);
+}
+$('#conf').oninput=e=>{state.conf=+e.target.value;renderSave();};
+$('#note').oninput=e=>{state.note=e.target.value;};
+$('#saveBtn').onclick=()=>{
+  if(!(state.read&&state.sel&&state.trait))return;
+  const o=DATA.ontology.find(x=>x.id===state.trait), a=DATA.ai[state.trait];
+  tags.unshift({id:Date.now(),trait:o.label,quote:state.sel.quote,conf:state.conf,ai:a.line,aiconf:a.conf});
+  save();
+  const t=$('#toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);
+  const keepSrc=state.source;resetWork();state.source=keepSrc;renderAll();
+};
+function renderTags(){
+  $('#count').textContent=tags.length;
+  $('#bar').style.width=Math.min(100,tags.length/5*100)+'%';
+  $('#nstories').textContent=DATA.sources.length;
+  $('#traitsCount').textContent=new Set(tags.map(t=>t.trait)).size;
+  const box=$('#tags');
+  if(!tags.length){box.innerHTML='<div class="empty">None yet — finish the steps above to make your first one. 🎉</div>';return;}
+  box.className='tags';
+  box.innerHTML=tags.map(t=>`<div class="tag"><div class="th"><span class="chip">${esc(t.trait)}</span><span class="stat ok">Saved ✓</span></div>
+    <p class="q">“${esc(t.quote)}”</p><p class="ai">✦ ANNI (${t.aiconf}%): ${esc(t.ai)} · you were ${t.conf}% sure</p></div>`).join('');
+}
+function renderAll(){renderStepper();renderStories();renderRead();renderPick();renderTraits();renderSave();renderTags();}
+renderAll();
+</script>

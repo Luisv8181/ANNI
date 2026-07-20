@@ -26,6 +26,14 @@ export function useProjects() {
 
 // ── Sources & paragraphs ──────────────────────────────────────────────────────
 
+export function useSources(projectId?: string) {
+  return useQuery({
+    queryKey: ["sources", projectId],
+    queryFn: () => api.getSources(projectId),
+    staleTime: 60_000,
+  });
+}
+
 export function useParagraphs(sourceId: string) {
   return useQuery({
     queryKey: ["paragraphs", sourceId],

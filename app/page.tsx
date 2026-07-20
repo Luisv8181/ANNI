@@ -13,6 +13,7 @@ import {
   Lock,
   Network,
   ShieldCheck,
+  Sparkles,
   Users,
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -69,9 +70,17 @@ export default function Home() {
             <p className="text-xs uppercase tracking-[0.22em] text-muted">Artificial Neural Annotation Intelligence</p>
           </div>
         </div>
-        <div className="hidden items-center gap-2 rounded-full border border-line bg-white/80 px-3 py-2 text-sm text-muted shadow-sm md:flex">
-          <Lock size={15} />
-          Local-first review pipeline
+        <div className="flex items-center gap-2">
+          <a
+            href="/annotate"
+            className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-2 text-sm font-medium text-white shadow-sm transition hover:opacity-90"
+          >
+            <Sparkles size={15} /> Annotator mode
+          </a>
+          <div className="hidden items-center gap-2 rounded-full border border-line bg-white/80 px-3 py-2 text-sm text-muted shadow-sm md:flex">
+            <Lock size={15} />
+            Local-first review pipeline
+          </div>
         </div>
       </header>
 
