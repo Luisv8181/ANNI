@@ -33,8 +33,11 @@ export type Source = {
   id: string;
   project_id: string;
   title: string;
+  author: string | null;
+  publication: string | null;
   canonical_url: string | null;
   license_status: string;
+  allow_list_status: string;
   version: string;
 };
 
@@ -117,6 +120,26 @@ export type LabChatResponse = {
   outcome_mode: string;
 };
 
+export type IngestResult = {
+  source: Source;
+  paragraphs: Paragraph[];
+  content_hash: string;
+};
+
+export type TraitCount = { ontology_node_id: string; label: string; count: number };
+export type LabeledCount = { label: string; count: number };
+export type AnnotationStats = {
+  total: number;
+  approved: number;
+  submitted: number;
+  avg_confidence: number;
+  reviewers: number;
+  ai_reviewed: number;
+  ai_agreements: number;
+  by_trait: TraitCount[];
+  by_decision: LabeledCount[];
+};
+
 // ── API calls ────────────────────────────────────────────────────────────────
 
 export const api = {
@@ -132,6 +155,19 @@ export const api = {
 
   getParagraphs: (sourceId: string) =>
     request<Paragraph[]>(`/sources/${sourceId}/paragraphs`),
+
+  ingestSource: (body: {
+    project_id: string;
+    title: string;
+    author?: string | null;
+    publication?: string | null;
+    canonical_url?: string | null;
+    license_status?: string;
+    raw_text: string;
+  }) => request<IngestResult>("/sources/ingest", { method: "POST", body: JSON.stringify(body) }),
+
+  getAnnotationStats: (projectId?: string) =>
+    request<AnnotationStats>(`/annotation-stats${projectId ? `?project_id=${projectId}` : ""}`),
 
   // Read confirmations
   createReadConfirmation: (body: { source_id: string; reviewer_id: string }) =>

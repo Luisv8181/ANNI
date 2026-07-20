@@ -43,6 +43,24 @@ export function useParagraphs(sourceId: string) {
   });
 }
 
+export function useIngestSource() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: api.ingestSource,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["sources"] }),
+  });
+}
+
+// ── Annotation tracker ────────────────────────────────────────────────────────
+
+export function useAnnotationStats(projectId?: string) {
+  return useQuery({
+    queryKey: ["annotation-stats", projectId],
+    queryFn: () => api.getAnnotationStats(projectId),
+    staleTime: 0,
+  });
+}
+
 // ── Read confirmation ─────────────────────────────────────────────────────────
 
 export function useSubmitReadConfirmation() {

@@ -3,6 +3,7 @@
 import {
   ArrowRight,
   BookOpenCheck,
+  BookOpenText,
   Bot,
   Check,
   CircleDot,
@@ -77,6 +78,12 @@ export default function Home() {
             className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-2 text-sm font-medium text-white shadow-sm transition hover:opacity-90"
           >
             <Sparkles size={15} /> Annotator mode
+          </a>
+          <a
+            href="/reader"
+            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3.5 py-2 text-sm font-medium text-ink shadow-sm transition hover:border-accent hover:text-accent"
+          >
+            <BookOpenText size={15} /> Lab Reader
           </a>
           <a
             href="/lab"

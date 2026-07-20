@@ -24,6 +24,7 @@ from app.models import (
     ReadConfirmation,
     Source,
 )
+from app.ingest import compute_content_hash, segment_into_paragraphs
 from app.ollama import run_ollama_review
 from app.provenance import COMPILER_VERSION, citation_report, compile_system_prompt, write_audit_event
 from app.synthetic_lab import (
@@ -38,7 +39,10 @@ from app.schemas import (
     AISuggestionOut,
     AnnotationCreate,
     AnnotationOut,
+    AnnotationStatsOut,
     AuditLogOut,
+    IngestResult,
+    LabeledCount,
     DecisionOut,
     OntologyNodeOut,
     ParagraphOut,
@@ -54,7 +58,9 @@ from app.schemas import (
     ReadConfirmationCreate,
     ReadConfirmationOut,
     ReviewDecision,
+    SourceIngest,
     SourceOut,
+    TraitCount,
 )
 from app.seed import seed_demo_data
 
@@ -140,6 +146,46 @@ def list_paragraphs(source_id: str, db: Session = Depends(get_db)):
     ).all()
 
 
+@app.post("/sources/ingest", response_model=IngestResult)
+def ingest_source(payload: SourceIngest, db: Session = Depends(get_db)):
+    """Ingest a raw source: cite it, segment it into paragraphs, and store it for the Lab Reader."""
+    paragraphs_text = segment_into_paragraphs(payload.raw_text)
+    if not paragraphs_text:
+        raise HTTPException(status_code=422, detail="No readable text found in the source.")
+
+    content_hash = compute_content_hash(payload.raw_text)
+    source = Source(
+        project_id=payload.project_id,
+        title=payload.title,
+        author=payload.author,
+        publication=payload.publication,
+        canonical_url=payload.canonical_url,
+        license_status=payload.license_status,
+        allow_list_status="pending",
+        content_hash=content_hash,
+        version="1",
+    )
+    db.add(source)
+    db.flush()
+
+    paragraph_rows = []
+    for index, text in enumerate(paragraphs_text, start=1):
+        paragraph = Paragraph(source_id=source.id, order_index=index, text=text)
+        db.add(paragraph)
+        paragraph_rows.append(paragraph)
+    db.flush()
+
+    write_audit_event(
+        db, "ingestion", "source", source.id, "ingested",
+        {"title": payload.title, "paragraphs": len(paragraph_rows), "content_hash": content_hash, "license_status": payload.license_status},
+    )
+    db.commit()
+    db.refresh(source)
+    for paragraph in paragraph_rows:
+        db.refresh(paragraph)
+    return IngestResult(source=source, paragraphs=paragraph_rows, content_hash=content_hash)
+
+
 # ── Read confirmations ────────────────────────────────────────────────────────
 
 @app.post("/read-confirmations", response_model=ReadConfirmationOut)
@@ -194,6 +240,59 @@ def list_annotations(project_id: str | None = Query(None), db: Session = Depends
         query = query.where(Annotation.project_id == project_id)
     annotations = db.scalars(query.order_by(Annotation.created_at.desc())).all()
     return [_annotation_out(a, db) for a in annotations]
+
+
+@app.get("/annotation-stats", response_model=AnnotationStatsOut)
+def annotation_stats(project_id: str | None = Query(None), db: Session = Depends(get_db)):
+    """How we annotate: trait distribution, confidence, decisions, and AI agreement."""
+    query = select(Annotation)
+    if project_id:
+        query = query.where(Annotation.project_id == project_id)
+    annotations = db.scalars(query).all()
+
+    total = len(annotations)
+    approved = sum(1 for a in annotations if a.status == "approved")
+    submitted = total - approved
+    avg_confidence = round(sum(a.confidence for a in annotations) / total, 1) if total else 0.0
+    reviewers = len({a.reviewer_id for a in annotations})
+
+    trait_counts: dict[str, int] = {}
+    for annotation in annotations:
+        trait_counts[annotation.ontology_node_id] = trait_counts.get(annotation.ontology_node_id, 0) + 1
+    by_trait = []
+    for node_id, count in sorted(trait_counts.items(), key=lambda item: item[1], reverse=True):
+        node = db.get(OntologyNode, node_id)
+        by_trait.append(TraitCount(ontology_node_id=node_id, label=node.label if node else node_id, count=count))
+
+    decision_counts: dict[str, int] = {}
+    ai_reviewed = 0
+    ai_agreements = 0
+    for annotation in annotations:
+        for decision in db.scalars(
+            select(AnnotationDecision).where(AnnotationDecision.annotation_id == annotation.id)
+        ).all():
+            decision_counts[decision.decision] = decision_counts.get(decision.decision, 0) + 1
+        suggestion = db.scalar(select(AISuggestion).where(AISuggestion.annotation_id == annotation.id))
+        if suggestion:
+            ai_reviewed += 1
+            if suggestion.ontology_node_id == annotation.ontology_node_id:
+                ai_agreements += 1
+    by_decision = [
+        LabeledCount(label=label, count=count)
+        for label, count in sorted(decision_counts.items(), key=lambda item: item[1], reverse=True)
+    ]
+
+    return AnnotationStatsOut(
+        total=total,
+        approved=approved,
+        submitted=submitted,
+        avg_confidence=avg_confidence,
+        reviewers=reviewers,
+        ai_reviewed=ai_reviewed,
+        ai_agreements=ai_agreements,
+        by_trait=by_trait,
+        by_decision=by_decision,
+    )
 
 
 @app.post("/annotations", response_model=AnnotationOut)

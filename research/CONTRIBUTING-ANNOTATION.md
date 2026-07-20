@@ -28,7 +28,14 @@ The friendly, guided flow. No expert UI to learn.
   `annotator-playground.html`) runs in any browser with nothing to install. Perfect for learning; tags
   stay in your browser and don't save to the project.
 
-### Option 2 — Expert workspace
+### Option 2 — Lab Reader (import + smart highlighter)
+The on-ramp for **real sources**. Open **Lab Reader** (`/reader`) → **Import a source**: paste the text
+with its title/author/URL/license. ANNI cites it, content-hashes it, and formats it into paragraphs.
+Then confirm you read it, **highlight** a phrase, and the **smart highlighter** suggests the most likely
+trait (you confirm or override). A live **"How we annotate"** tracker shows the trait distribution,
+average confidence, decisions, and how often you agree with the AI. Only paste text you're cleared to use.
+
+### Option 3 — Expert workspace
 The full pipeline (read gate, ontology browser, AI suggestions, citation engine, compiled profiles).
 Use this once you're comfortable.
 

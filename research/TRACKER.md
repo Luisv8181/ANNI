@@ -144,6 +144,10 @@ either way. Log the decision in the meeting log.
 
 Add newest at the top: `YYYY-MM-DD — what changed — who`.
 
+- **2026-07-20 (post-meeting)** — Built the **document ingestion pipeline + Lab Reader** (`/reader`):
+  paste/cite a source → segmented + content-hashed into paragraphs → **smart highlighter** suggests
+  traits on selection → **"How we annotate" tracker** (trait distribution, confidence, decisions, AI
+  agreement). New endpoints `POST /sources/ingest` and `GET /annotation-stats`. — Luis
 - **2026-07-20 (post-meeting)** — Wired **DSM-5 GAD baseline + open/closed outcome mode** into the lab
   (backend + `/lab` selector, recorded in transcript export). Added a draft **Heath update email** and a
   ready-to-paste **Antigravity setup prompt** for Rahmat. — Luis

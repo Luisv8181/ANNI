@@ -94,6 +94,12 @@ class ParagraphOut(BaseModel):
         from_attributes = True
 
 
+class IngestResult(BaseModel):
+    source: SourceOut
+    paragraphs: list[ParagraphOut]
+    content_hash: str
+
+
 class DecisionOut(BaseModel):
     id: str
     decision: str
@@ -161,6 +167,39 @@ class PromptCompilationOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class SourceIngest(BaseModel):
+    project_id: str
+    title: str
+    author: str | None = None
+    publication: str | None = None
+    canonical_url: str | None = None
+    license_status: str = "unverified"
+    raw_text: str
+
+
+class TraitCount(BaseModel):
+    ontology_node_id: str
+    label: str
+    count: int
+
+
+class LabeledCount(BaseModel):
+    label: str
+    count: int
+
+
+class AnnotationStatsOut(BaseModel):
+    total: int
+    approved: int
+    submitted: int
+    avg_confidence: float
+    reviewers: int
+    ai_reviewed: int
+    ai_agreements: int
+    by_trait: list[TraitCount]
+    by_decision: list[LabeledCount]
 
 
 class LabMessage(BaseModel):
