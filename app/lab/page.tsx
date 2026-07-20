@@ -5,6 +5,9 @@ import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
+  Check,
+  Copy,
+  Download,
   FlaskConical,
   Loader2,
   RotateCcw,
@@ -25,6 +28,14 @@ const RISK_STYLE: Record<string, string> = {
   explicit: "text-[#b23b32] bg-[#f8e0de]",
 };
 
+// The responder you relay each patient message to. Wysa is a phone app (no API),
+// so it's always manual copy-paste; ChatGPT can be manual too (or API later).
+const RESPONDERS = [
+  { id: "wysa", label: "Wysa (app)", short: "wysa" },
+  { id: "chatgpt", label: "ChatGPT (base)", short: "chatgpt" },
+  { id: "therapist", label: "ChatGPT (therapist role)", short: "therapist" },
+];
+
 export default function LabPage() {
   const { data: config } = useLabConfig(PROJECT_ID);
   const send = useLabMessage();
@@ -32,10 +43,13 @@ export default function LabPage() {
   const [profileId, setProfileId] = useState("");
   const [risk, setRisk] = useState("none");
   const [cue, setCue] = useState("");
+  const [responder, setResponder] = useState("wysa");
   const [messages, setMessages] = useState<LabMessage[]>([]);
   const [draft, setDraft] = useState("");
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const responderLabel = RESPONDERS.find((r) => r.id === responder)?.label ?? responder;
 
   useEffect(() => {
     if (!profileId && config?.profiles.length) setProfileId(config.profiles[0].id);
@@ -82,6 +96,35 @@ export default function LabPage() {
   function patientOpens() {
     if (send.isPending || !profileId) return;
     turn([]);
+  }
+
+  function exportTranscript() {
+    if (!messages.length) return;
+    const stamp = new Date().toISOString().slice(0, 10);
+    const respShort = RESPONDERS.find((r) => r.id === responder)?.short ?? responder;
+    // Working copy: includes the hidden header block for our analysis. A blinded
+    // copy for the panel would strip PROFILE / RESPONDER / RISK before scoring.
+    const header = [
+      "=== WORKING COPY — includes labels; strip before blind scoring ===",
+      `PROFILE:   ${activeProfile?.name ?? profileId}`,
+      `RESPONDER: ${responderLabel}`,
+      `PATIENT MODEL: ${config?.model_name ?? "ollama"} (synthetic patient)`,
+      `RISK (hidden): ${activeRisk?.label ?? risk}${cue.trim() ? ` — cue: "${cue.trim()}"` : ""}`,
+      `DATE: ${stamp}`,
+      `TURNS: ${messages.length}`,
+      "--- conversation below (patient = synthetic; responder = " + responderLabel + ") ---",
+      "",
+    ].join("\n");
+    const body = messages
+      .map((m) => `${m.role === "assistant" ? "PATIENT" : "RESPONDER"}: ${m.content}`)
+      .join("\n\n");
+    const blob = new Blob([header + body + "\n"], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${respShort}__${risk}__${stamp}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   return (
@@ -172,6 +215,32 @@ export default function LabPage() {
               />
             </label>
           </section>
+
+          <section className="rounded-2xl border border-line bg-white p-5 shadow-soft">
+            <h2 className="font-semibold tracking-tight">Relaying to</h2>
+            <p className="mt-1 text-xs text-muted">
+              Who you paste the patient&apos;s messages into. Wysa is a phone app — copy each patient
+              message into it, then paste its reply back here.
+            </p>
+            <div className="mt-3 space-y-2">
+              {RESPONDERS.map((r) => (
+                <button
+                  key={r.id}
+                  onClick={() => setResponder(r.id)}
+                  className={`w-full rounded-lg border p-2.5 text-left text-sm transition ${
+                    responder === r.id ? "border-accent bg-lilac font-medium" : "border-line bg-panel hover:border-accent/50"
+                  }`}
+                >
+                  {r.label}
+                </button>
+              ))}
+            </div>
+            <div className="mt-3 rounded-lg bg-panel p-3 text-[11px] leading-5 text-muted">
+              <b className="text-ink">Relay loop:</b> copy the patient message → paste into {responderLabel} →
+              copy its reply → paste below → repeat (~20 turns) → <b className="text-ink">Export</b> for the
+              blind panel.
+            </div>
+          </section>
         </aside>
 
         {/* ── Right: conversation ── */}
@@ -182,7 +251,7 @@ export default function LabPage() {
             </div>
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold">{activeProfile?.name ?? "Pick a profile"}</p>
-              <p className="text-xs text-muted">You are the responder · the patient is the AI</p>
+              <p className="text-xs text-muted">patient (AI) ↔ {responderLabel}</p>
             </div>
             {activeRisk && (
               <span className={`ml-auto rounded-full px-2.5 py-1 text-xs font-medium ${RISK_STYLE[risk] ?? "bg-panel text-muted"}`}>
@@ -190,8 +259,15 @@ export default function LabPage() {
               </span>
             )}
             <button
+              onClick={exportTranscript}
+              disabled={!messages.length}
+              className="ml-2 inline-flex items-center gap-1.5 rounded-lg border border-line px-2.5 py-1.5 text-xs text-muted transition hover:border-accent hover:text-accent disabled:opacity-40"
+            >
+              <Download size={13} /> Export
+            </button>
+            <button
               onClick={resetSession}
-              className="ml-2 inline-flex items-center gap-1.5 rounded-lg border border-line px-2.5 py-1.5 text-xs text-muted transition hover:border-accent hover:text-accent"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-line px-2.5 py-1.5 text-xs text-muted transition hover:border-accent hover:text-accent"
             >
               <RotateCcw size={13} /> New session
             </button>
@@ -203,9 +279,10 @@ export default function LabPage() {
                 <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-xl bg-lilac text-accent">
                   <FlaskConical size={22} />
                 </div>
-                <p className="font-medium">Start a session with the synthetic patient</p>
+                <p className="font-medium">Start a relay session with the synthetic patient</p>
                 <p className="mt-1.5 text-sm text-muted">
-                  Type a message as the responder, or let the patient open the conversation.
+                  Let the patient open, copy its message into {responderLabel}, then paste the reply back —
+                  or paste {responderLabel}&apos;s first message below.
                 </p>
                 <button
                   onClick={patientOpens}
@@ -218,7 +295,7 @@ export default function LabPage() {
             )}
 
             {messages.map((m, i) => (
-              <Bubble key={i} role={m.role} content={m.content} />
+              <Bubble key={i} role={m.role} content={m.content} responderLabel={responderLabel} />
             ))}
 
             {send.isPending && (
@@ -254,7 +331,7 @@ export default function LabPage() {
                   }
                 }}
                 rows={2}
-                placeholder="Respond as the therapist / counselor…  (Enter to send, Shift+Enter for newline)"
+                placeholder={`Paste ${responderLabel}'s reply…  (Enter to send, Shift+Enter for newline)`}
                 className="flex-1 resize-none rounded-xl border border-line bg-panel px-3.5 py-2.5 text-sm outline-none focus:border-accent"
               />
               <button
@@ -277,17 +354,36 @@ export default function LabPage() {
   );
 }
 
-function Bubble({ role, content }: { role: "user" | "assistant"; content: string }) {
+function Bubble({ role, content, responderLabel }: { role: "user" | "assistant"; content: string; responderLabel: string }) {
   const isPatient = role === "assistant";
+  const [copied, setCopied] = useState(false);
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1400);
+    } catch {
+      /* clipboard blocked */
+    }
+  }
   return (
     <div className={`flex ${isPatient ? "justify-start" : "justify-end"}`}>
       <div
-        className={`max-w-[78%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-sm leading-6 ${
+        className={`group max-w-[78%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-sm leading-6 ${
           isPatient ? "rounded-tl-sm bg-panel text-ink" : "rounded-tr-sm bg-ink text-white"
         }`}
       >
-        <span className={`mb-1 block text-[10px] font-medium uppercase tracking-wider ${isPatient ? "text-accent" : "text-white/50"}`}>
-          {isPatient ? "Patient" : "You (responder)"}
+        <span className={`mb-1 flex items-center gap-2 text-[10px] font-medium uppercase tracking-wider ${isPatient ? "text-accent" : "text-white/50"}`}>
+          {isPatient ? "Patient" : responderLabel}
+          {isPatient && (
+            <button
+              onClick={copy}
+              title="Copy to paste into the responder"
+              className="ml-auto inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] text-muted opacity-0 transition hover:bg-white group-hover:opacity-100"
+            >
+              {copied ? <Check size={11} /> : <Copy size={11} />} {copied ? "Copied" : "Copy"}
+            </button>
+          )}
         </span>
         {content}
       </div>
