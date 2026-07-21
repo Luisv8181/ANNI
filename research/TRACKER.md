@@ -144,6 +144,10 @@ either way. Log the decision in the meeting log.
 
 Add newest at the top: `YYYY-MM-DD — what changed — who`.
 
+- **2026-07-21** — Gap-analysis pass. Added the **annotation codebook** (+ IAA protocol), the **blind
+  scoring kit** (`scoring/` guide + CSV form), and the **IRB/ethics starter pack** (`ethics/`: IRB
+  outline, data-management plan, consent template). Recorded the AI assistant used —
+  **Claude Opus 4.8 (Anthropic)** — in the methods/AI-use docs. — Luis
 - **2026-07-21** — Added **clone-with-gh-cli.md** (GitHub CLI clone guide for a person or a coding
   agent; includes a paste-to-agent block). — Luis
 - **2026-07-21** — Decision: **local-only** deployment for now. Added

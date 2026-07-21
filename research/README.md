@@ -35,7 +35,11 @@ research/
 ├── risk-matrix.md                ← the four risk levels we plant in every case
 ├── evaluation-categories.md      ← Rahmat's eval categories + the AI self-assessment idea
 ├── scoring-rubric.md             ← how the blind panel scores, and how we handle disagreement
+├── annotation-codebook.md        ← per-trait rules + inter-annotator agreement protocol
 ├── pre-registration.md           ← the plan + predictions we publish before running (Luis)
+│
+├── scoring/                      ← blind scoring kit (guide + form template)
+├── ethics/                       ← IRB outline, data-management plan, consent templates (Heath)
 │
 ├── METHODS-AND-DECISIONS.md      ← running log of methods + decisions (feeds the manuscript)
 ├── manuscript-methods-ai-use.md  ← drop-in Methods paragraph documenting AI use (SCRIP)

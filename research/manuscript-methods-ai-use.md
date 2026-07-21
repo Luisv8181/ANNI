@@ -10,9 +10,10 @@ documented in Methods). Edit tone/length to match the manuscript. Fill the brack
 
 > **Use of artificial intelligence.** Artificial intelligence tools were used in several defined,
 > human-supervised roles in this study; no large language model (LLM) met authorship criteria, and none
-> is listed as an author. The study's annotation and simulation platform (ANNI) was developed with the
-> assistance of an AI coding assistant (Claude, Anthropic), and all code, data models, and interfaces
-> were reviewed and approved by the authors. Behavioral characteristics were extracted from licensed,
+> is listed as an author. The study's annotation and simulation platform (ANNI), its GitHub repository,
+> and the research documentation were developed with the assistance of an AI coding assistant (Claude
+> Opus 4.8, Anthropic), and all code, data models, and interfaces were reviewed and approved by the
+> authors. Behavioral characteristics were extracted from licensed,
 > publicly available patient testimony by human annotators; a locally hosted LLM (Ollama running
 > `llama3`) provided non-binding trait suggestions that a human annotator accepted, rejected, or
 > modified, with each decision recorded in a tamper-evident audit log. Simulated patients were generated

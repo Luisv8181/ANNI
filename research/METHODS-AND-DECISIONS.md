@@ -66,9 +66,10 @@ Newest decisions are added at the top of each section. Dates are when a decision
 ## 6. How AI was used (for the manuscript Methods section)
 
 Documented per SCRIP guidance (LLMs are **not** authors; all AI output was reviewed by the human team):
-- **Study infrastructure & code (ANNI):** an AI coding assistant (Claude) helped build the annotation
-  platform, the Lab Reader, the Synthetic Patient Lab, and the supporting scripts; all code and design
-  were reviewed by the team.
+- **Study infrastructure & code (ANNI):** an AI coding assistant — **Claude Opus 4.8 (Anthropic)** —
+  helped build the annotation platform, the Lab Reader, the Synthetic Patient Lab, and the supporting
+  scripts, and helped set up and organize the **GitHub repository** and the research documentation; all
+  code, structure, and design were reviewed and approved by the team.
 - **Annotation assistance:** a local model (Ollama, e.g., `llama3`) provides *suggestions* only; a human
   reviewer accepts/rejects/modifies every one.
 - **Synthetic patient:** a local model role-plays the patient from a human-annotated, cited profile
