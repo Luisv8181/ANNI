@@ -144,6 +144,8 @@ either way. Log the decision in the meeting log.
 
 Add newest at the top: `YYYY-MM-DD — what changed — who`.
 
+- **2026-07-21** — Added **clone-with-gh-cli.md** (GitHub CLI clone guide for a person or a coding
+  agent; includes a paste-to-agent block). — Luis
 - **2026-07-21** — Decision: **local-only** deployment for now. Added
   **METHODS-AND-DECISIONS.md** (full decision log + AI-use documentation for the manuscript), a
   step-by-step **Antigravity setup tutorial** for Rahmat, and documented the **Google AI Studio (Gemini)**

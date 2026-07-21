@@ -39,6 +39,7 @@ research/
 │
 ├── METHODS-AND-DECISIONS.md      ← running log of methods + decisions (feeds the manuscript)
 ├── ONBOARDING-github.md          ← clone/access guide (for Rahmat)
+├── clone-with-gh-cli.md          ← clone via GitHub CLI (you or a coding agent)
 ├── ollama-setup.md               ← run the synthetic patient locally
 ├── rahmat-antigravity-tutorial.md ← step-by-step local setup via an Antigravity agent
 ├── DEPLOYMENT.md                 ← local-only now; cloud options if ever needed
