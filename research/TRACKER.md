@@ -144,6 +144,10 @@ either way. Log the decision in the meeting log.
 
 Add newest at the top: `YYYY-MM-DD — what changed — who`.
 
+- **2026-07-21** — Decision: **local-only** deployment for now. Added
+  **METHODS-AND-DECISIONS.md** (full decision log + AI-use documentation for the manuscript), a
+  step-by-step **Antigravity setup tutorial** for Rahmat, and documented the **Google AI Studio (Gemini)**
+  free API as the future cloud-model path (Firestore ruled out as a DB mismatch). — Luis
 - **2026-07-21** — Reader upgrades: **session summary** (timing + per-annotation log) and a **synthetic-
   profile prompt generator** (`POST /synthetic-lab/generate-prompt`); **model-backed smart highlighter**
   (`POST /annotation-assist`, graceful offline fallback); **URL + PDF ingestion**

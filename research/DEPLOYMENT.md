@@ -1,8 +1,33 @@
 # Deployment — making ANNI a live site the team can just visit
 
+> **Current decision (2026-07-21): LOCAL-ONLY.** Each member runs ANNI on their own machine; Luis runs
+> and records the simulations. This keeps testimony and model runs private (Ollama stays on-device).
+> For Rahmat's local setup, see [`rahmat-antigravity-tutorial.md`](rahmat-antigravity-tutorial.md) and
+> [`ollama-setup.md`](ollama-setup.md). The cloud material below is a **future option**, not the plan.
+
 Right now ANNI runs locally (each person starts the backend + frontend on their machine). To get a
 single URL everyone opens, you deploy the two pieces to the cloud. Here's the honest picture and the
 recommended path.
+
+## About Firebase / Netlify / Google AI Studio (you asked)
+
+- **Netlify** — good for the **frontend** (like Vercel; it hosts the Next.js app). ✅ Fine choice.
+- **Firebase Hosting + Firestore (database)** — ⚠️ **not a clean fit.** Firestore is a NoSQL document
+  store; ANNI's backend is **relational** (SQLAlchemy, foreign keys, a chained-hash audit log). Moving
+  to Firestore means **rewriting the data layer** — not worth it. Firebase Hosting also can't run our
+  FastAPI backend directly (you'd need Cloud Run or 2nd-gen Functions). So: skip Firestore for the DB.
+- **Better DB if we go cloud:** managed **Postgres** on a free tier — **Supabase** or **Neon**
+  (both Postgres; both have generous free tiers). The backend already speaks SQL, so it's a config
+  change, not a rewrite.
+- **Google AI Studio (Gemini) — the recommended *cloud model* path.** If we ever want the model features
+  (smart-highlighter suggestions, live patient chat) in the cloud, use the **free Google AI Studio /
+  Gemini API** instead of hosting Ollama: create a key at https://aistudio.google.com, and we point the
+  backend's model calls at Gemini (a small adapter next to the existing Ollama client). Keeps it in the
+  Google ecosystem, free tier to start. Note: this sends that text to Google's API, so weigh it against
+  the privacy stance — fine for synthetic patients and non-sensitive text, not for anything unlicensed.
+
+**Net recommendation if/when cloud:** Netlify (frontend) + a small backend host (Cloud Run or Render) +
+Supabase/Neon Postgres + Google AI Studio for the model. **Not** Firestore.
 
 ## The pieces
 - **Frontend** — the Next.js app (the reader, lab, annotator, dashboards).

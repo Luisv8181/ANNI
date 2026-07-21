@@ -37,8 +37,11 @@ research/
 ├── scoring-rubric.md             ← how the blind panel scores, and how we handle disagreement
 ├── pre-registration.md           ← the plan + predictions we publish before running (Luis)
 │
+├── METHODS-AND-DECISIONS.md      ← running log of methods + decisions (feeds the manuscript)
 ├── ONBOARDING-github.md          ← clone/access guide (for Rahmat)
 ├── ollama-setup.md               ← run the synthetic patient locally
+├── rahmat-antigravity-tutorial.md ← step-by-step local setup via an Antigravity agent
+├── DEPLOYMENT.md                 ← local-only now; cloud options if ever needed
 │
 ├── system-prompts/               ← every prompt the study uses
 │   ├── README.md
