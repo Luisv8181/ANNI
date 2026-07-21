@@ -38,6 +38,7 @@ research/
 ├── pre-registration.md           ← the plan + predictions we publish before running (Luis)
 │
 ├── METHODS-AND-DECISIONS.md      ← running log of methods + decisions (feeds the manuscript)
+├── manuscript-methods-ai-use.md  ← drop-in Methods paragraph documenting AI use (SCRIP)
 ├── ONBOARDING-github.md          ← clone/access guide (for Rahmat)
 ├── clone-with-gh-cli.md          ← clone via GitHub CLI (you or a coding agent)
 ├── ollama-setup.md               ← run the synthetic patient locally
@@ -79,10 +80,10 @@ Everyone on the team should be able to do these six things. Walk through them li
 Go to the repo on GitHub → `luisv8181/ANNI`. Everything for the study is inside the `research/`
 folder. Click into it. This README is the map.
 
-**2. Switch to our working branch.**
-Near the top-left of the file list there's a branch dropdown (it usually says `main`). Click it and
-choose **`claude/next-steps-835mcw`** — that's where the current work lives. (We'll merge to `main`
-once things settle.)
+**2. You're on the default branch — that's the right one.**
+Everything is merged into **`master`** (the default), so you don't need to switch branches to see it.
+To set up on your own machine, use [`clone-with-gh-cli.md`](clone-with-gh-cli.md) or
+[`rahmat-antigravity-tutorial.md`](rahmat-antigravity-tutorial.md).
 
 **3. Read the protocol and the risk matrix.**
 Open [`PROTOCOL.md`](PROTOCOL.md) and [`risk-matrix.md`](risk-matrix.md). These two files are the
