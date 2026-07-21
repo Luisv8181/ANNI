@@ -85,6 +85,45 @@ export function useAnnotationAssist() {
   return useMutation({ mutationFn: api.annotationAssist });
 }
 
+// ── Blind scoring ─────────────────────────────────────────────────────────────
+
+export function useScoringItems(projectId?: string) {
+  return useQuery({
+    queryKey: ["scoring-items", projectId],
+    queryFn: () => api.getScoringItems(projectId),
+    staleTime: 60_000,
+  });
+}
+
+export function useMyScores(scorerId: string) {
+  return useQuery({
+    queryKey: ["my-scores", scorerId],
+    queryFn: () => api.getMyScores(scorerId),
+    enabled: !!scorerId,
+    staleTime: 0,
+  });
+}
+
+export function useSubmitScore() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: api.submitScore,
+    onSuccess: (_d, vars) => {
+      qc.invalidateQueries({ queryKey: ["my-scores", vars.scorer_id] });
+      qc.invalidateQueries({ queryKey: ["scoring-results"] });
+    },
+  });
+}
+
+export function useScoringResults(projectId?: string, enabled = false) {
+  return useQuery({
+    queryKey: ["scoring-results", projectId],
+    queryFn: () => api.getScoringResults(projectId),
+    enabled,
+    staleTime: 0,
+  });
+}
+
 // ── Read confirmation ─────────────────────────────────────────────────────────
 
 export function useSubmitReadConfirmation() {

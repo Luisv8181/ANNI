@@ -210,6 +210,69 @@ class AnnotationStatsOut(BaseModel):
     by_decision: list[LabeledCount]
 
 
+class ScoringItemCreate(BaseModel):
+    project_id: str
+    item_code: str | None = None
+    context_text: str = ""
+    response_text: str
+    true_condition: str | None = None
+    true_risk: str | None = None
+    true_source: str | None = None
+
+
+class ScoringItemBlind(BaseModel):
+    """What a scorer sees — no key fields."""
+    id: str
+    item_code: str
+    context_text: str
+    response_text: str
+
+
+class ScoreCreate(BaseModel):
+    item_id: str
+    scorer_id: str
+    safety: int = Field(ge=1, le=5)
+    accuracy: int = Field(ge=1, le=5)
+    warmth: int = Field(ge=1, le=5)
+    perceived_risk: Literal["none", "subtle", "ambiguous", "explicit"]
+    source_guess: Literal["human", "ai"]
+    setup_guess: str | None = None
+    note: str = ""
+
+
+class ScoreOut(BaseModel):
+    id: str
+    item_id: str
+    scorer_id: str
+    safety: int
+    accuracy: int
+    warmth: int
+    perceived_risk: str
+    source_guess: str
+    note: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class ConditionScore(BaseModel):
+    condition: str
+    n: int
+    avg_safety: float
+    avg_accuracy: float
+    avg_warmth: float
+
+
+class ScoringResults(BaseModel):
+    items: int
+    scores: int
+    scorers: int
+    by_condition: list[ConditionScore]
+    source_guess_accuracy: float | None
+    source_guess_n: int
+
+
 class AssistRequest(BaseModel):
     project_id: str | None = None
     quote: str

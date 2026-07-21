@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 import httpx
 from fastapi import BackgroundTasks, Depends, FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
@@ -22,6 +22,8 @@ from app.models import (
     PromptCompilation,
     PromptCompilationAnnotation,
     ReadConfirmation,
+    Score,
+    ScoringItem,
     Source,
 )
 from app.assist import suggest_trait
@@ -69,6 +71,12 @@ from app.schemas import (
     ReadConfirmationCreate,
     ReadConfirmationOut,
     ReviewDecision,
+    ScoreCreate,
+    ScoreOut,
+    ScoringItemBlind,
+    ScoringItemCreate,
+    ScoringResults,
+    ConditionScore,
     SourceIngest,
     SourceIngestUrl,
     SourceOut,
@@ -665,6 +673,108 @@ def synthetic_lab_message(payload: LabChatRequest, db: Session = Depends(get_db)
         persona_name=compilation.name,
         risk_level=payload.risk_level,
         outcome_mode=payload.outcome_mode,
+    )
+
+
+# ── Blind scoring ─────────────────────────────────────────────────────────────
+
+@app.post("/scoring-items", response_model=ScoringItemBlind)
+def create_scoring_item(payload: ScoringItemCreate, db: Session = Depends(get_db)):
+    """Add an item to the blind scoring queue (team side). Hidden key stays server-side."""
+    count = db.scalar(select(func.count()).select_from(ScoringItem)) or 0
+    item = ScoringItem(
+        project_id=payload.project_id,
+        item_code=payload.item_code or f"ITEM-{count + 1:03d}",
+        context_text=payload.context_text,
+        response_text=payload.response_text,
+        true_condition=payload.true_condition,
+        true_risk=payload.true_risk,
+        true_source=payload.true_source,
+    )
+    db.add(item)
+    db.commit()
+    db.refresh(item)
+    return ScoringItemBlind(id=item.id, item_code=item.item_code, context_text=item.context_text, response_text=item.response_text)
+
+
+@app.get("/scoring-items", response_model=list[ScoringItemBlind])
+def list_scoring_items(project_id: str | None = Query(None), db: Session = Depends(get_db)):
+    """Blinded queue — no condition/risk/source labels ever leave the server here."""
+    query = select(ScoringItem)
+    if project_id:
+        query = query.where(ScoringItem.project_id == project_id)
+    items = db.scalars(query.order_by(ScoringItem.created_at)).all()
+    return [
+        ScoringItemBlind(id=i.id, item_code=i.item_code, context_text=i.context_text, response_text=i.response_text)
+        for i in items
+    ]
+
+
+@app.post("/scores", response_model=ScoreOut)
+def submit_score(payload: ScoreCreate, db: Session = Depends(get_db)):
+    item = db.get(ScoringItem, payload.item_id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Scoring item not found.")
+    score = Score(**payload.model_dump())
+    db.add(score)
+    db.flush()
+    write_audit_event(db, payload.scorer_id, "score", score.id, "submitted", {"item_id": payload.item_id})
+    db.commit()
+    db.refresh(score)
+    return score
+
+
+@app.get("/scores", response_model=list[ScoreOut])
+def list_scores(scorer_id: str | None = Query(None), db: Session = Depends(get_db)):
+    query = select(Score)
+    if scorer_id:
+        query = query.where(Score.scorer_id == scorer_id)
+    return db.scalars(query.order_by(Score.created_at)).all()
+
+
+@app.get("/scoring-results", response_model=ScoringResults)
+def scoring_results(project_id: str | None = Query(None), db: Session = Depends(get_db)):
+    """Team view: joins scores to the hidden key. Not for the blind panel."""
+    item_query = select(ScoringItem)
+    if project_id:
+        item_query = item_query.where(ScoringItem.project_id == project_id)
+    items = {i.id: i for i in db.scalars(item_query).all()}
+    scores = db.scalars(select(Score).where(Score.item_id.in_(items.keys()))).all() if items else []
+
+    by_cond: dict[str, list[Score]] = {}
+    correct = 0
+    guessed = 0
+    for score in scores:
+        item = items.get(score.item_id)
+        if not item:
+            continue
+        cond = item.true_condition or "unlabeled"
+        by_cond.setdefault(cond, []).append(score)
+        if item.true_source in ("human", "ai"):
+            guessed += 1
+            if score.source_guess == item.true_source:
+                correct += 1
+
+    by_condition = []
+    for cond, group in sorted(by_cond.items()):
+        n = len(group)
+        by_condition.append(
+            ConditionScore(
+                condition=cond,
+                n=n,
+                avg_safety=round(sum(s.safety for s in group) / n, 2),
+                avg_accuracy=round(sum(s.accuracy for s in group) / n, 2),
+                avg_warmth=round(sum(s.warmth for s in group) / n, 2),
+            )
+        )
+
+    return ScoringResults(
+        items=len(items),
+        scores=len(scores),
+        scorers=len({s.scorer_id for s in scores}),
+        by_condition=by_condition,
+        source_guess_accuracy=round(correct / guessed, 2) if guessed else None,
+        source_guess_n=guessed,
     )
 
 

@@ -153,3 +153,36 @@ class PromptCompilationAnnotation(Base):
 
     compilation_id: Mapped[str] = mapped_column(ForeignKey("prompt_compilations.id"), primary_key=True)
     annotation_id: Mapped[str] = mapped_column(ForeignKey("annotations.id"), primary_key=True)
+
+
+class ScoringItem(Base):
+    """A single responder message (in context) to be blind-scored by the panel."""
+
+    __tablename__ = "scoring_items"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True, default=uuid)
+    project_id: Mapped[str] = mapped_column(ForeignKey("projects.id"))
+    item_code: Mapped[str] = mapped_column(String, index=True)  # opaque code shown to scorers
+    context_text: Mapped[str] = mapped_column(Text)  # conversation up to this point
+    response_text: Mapped[str] = mapped_column(Text)  # the response being scored
+    # Hidden key — never sent to scorers:
+    true_condition: Mapped[str | None] = mapped_column(String, nullable=True)
+    true_risk: Mapped[str | None] = mapped_column(String, nullable=True)
+    true_source: Mapped[str | None] = mapped_column(String, nullable=True)  # "human" | "ai"
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class Score(Base):
+    __tablename__ = "scores"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True, default=uuid)
+    item_id: Mapped[str] = mapped_column(ForeignKey("scoring_items.id"), index=True)
+    scorer_id: Mapped[str] = mapped_column(String, index=True)
+    safety: Mapped[int] = mapped_column(Integer)
+    accuracy: Mapped[int] = mapped_column(Integer)
+    warmth: Mapped[int] = mapped_column(Integer)
+    perceived_risk: Mapped[str] = mapped_column(String)
+    source_guess: Mapped[str] = mapped_column(String)  # "human" | "ai"
+    setup_guess: Mapped[str | None] = mapped_column(String, nullable=True)
+    note: Mapped[str] = mapped_column(Text, default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

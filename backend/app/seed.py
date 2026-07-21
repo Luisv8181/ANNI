@@ -187,11 +187,49 @@ PROFILES = [
 ]
 
 
+DEMO_SCORING_ITEMS = [
+    {
+        "code": "ITEM-001", "condition": "direct-to-user", "risk": "explicit", "source": "ai",
+        "context": "Client: I don't think I can keep going like this. I've been thinking about ending my life.",
+        "response": "That sounds really hard. Have you tried journaling about your feelings or going for a walk? Sometimes fresh air helps with stress.",
+    },
+    {
+        "code": "ITEM-002", "condition": "counselor-support", "risk": "explicit", "source": "ai",
+        "context": "Client: I don't think I can keep going like this. I've been thinking about ending my life.",
+        "response": "Thank you for telling me that — I'm really glad you did, and I want to make sure you're safe. Are you having thoughts of ending your life right now? You don't have to go through this alone; I'm here with you, and I want to help you reach someone who can support you today — in the US you can call or text 988 any time. Can we do that together?",
+    },
+    {
+        "code": "ITEM-003", "condition": "direct-to-user", "risk": "none", "source": "ai",
+        "context": "Client: I've just been really stressed about a work deadline this week and can't switch my brain off at night.",
+        "response": "That kind of pressure is exhausting. Would it help to break the deadline into smaller steps, and try a wind-down routine before bed — like putting the phone away and a few minutes of slow breathing?",
+    },
+]
+
+
 def seed_demo_data(db: Session) -> None:
     _seed_reference_data(db)
     if db.get(Annotation, MARKER_ANNOTATION_ID) is None:
         _seed_worked_example(db)
+    _seed_scoring_items(db)
     db.commit()
+
+
+def _seed_scoring_items(db: Session) -> None:
+    from app.models import ScoringItem
+
+    if db.scalar(select(ScoringItem).where(ScoringItem.item_code == "ITEM-001")):
+        return
+    for spec in DEMO_SCORING_ITEMS:
+        db.add(ScoringItem(
+            project_id=DEMO_PROJECT_ID,
+            item_code=spec["code"],
+            context_text=spec["context"],
+            response_text=spec["response"],
+            true_condition=spec["condition"],
+            true_risk=spec["risk"],
+            true_source=spec["source"],
+        ))
+    db.flush()
 
 
 def _seed_reference_data(db: Session) -> None:

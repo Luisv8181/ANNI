@@ -144,6 +144,10 @@ either way. Log the decision in the meeting log.
 
 Add newest at the top: `YYYY-MM-DD — what changed — who`.
 
+- **2026-07-21** — Built the **in-app blind scoring view** (`/score`): blinded queue, safety/accuracy/
+  warmth + perceived-risk + human-vs-AI guess, per-scorer progress, and a team results view (reveals the
+  key). New models/endpoints (`scoring_items`, `scores`, `/scoring-items`, `/scores`, `/scoring-results`)
+  + migration + demo items. Added the **pipeline diagram** (Mermaid) and the **analysis/statistics plan**. — Luis
 - **2026-07-21** — Gap-analysis pass. Added the **annotation codebook** (+ IAA protocol), the **blind
   scoring kit** (`scoring/` guide + CSV form), and the **IRB/ethics starter pack** (`ethics/`: IRB
   outline, data-management plan, consent template). Recorded the AI assistant used —

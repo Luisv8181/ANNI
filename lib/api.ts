@@ -156,6 +156,17 @@ export type AnnotationStats = {
   by_decision: LabeledCount[];
 };
 
+export type ScoringItem = { id: string; item_code: string; context_text: string; response_text: string };
+export type Score = {
+  id: string; item_id: string; scorer_id: string; safety: number; accuracy: number; warmth: number;
+  perceived_risk: string; source_guess: string; note: string; created_at: string;
+};
+export type ConditionScore = { condition: string; n: number; avg_safety: number; avg_accuracy: number; avg_warmth: number };
+export type ScoringResults = {
+  items: number; scores: number; scorers: number;
+  by_condition: ConditionScore[]; source_guess_accuracy: number | null; source_guess_n: number;
+};
+
 // ── API calls ────────────────────────────────────────────────────────────────
 
 export const api = {
@@ -278,6 +289,17 @@ export const api = {
     cue?: string | null;
     messages: LabMessage[];
   }) => request<LabChatResponse>("/synthetic-lab/message", { method: "POST", body: JSON.stringify(body) }),
+
+  // Blind scoring
+  getScoringItems: (projectId?: string) =>
+    request<ScoringItem[]>(`/scoring-items${projectId ? `?project_id=${projectId}` : ""}`),
+  getMyScores: (scorerId: string) => request<Score[]>(`/scores?scorer_id=${scorerId}`),
+  submitScore: (body: {
+    item_id: string; scorer_id: string; safety: number; accuracy: number; warmth: number;
+    perceived_risk: string; source_guess: string; setup_guess?: string | null; note?: string;
+  }) => request<Score>("/scores", { method: "POST", body: JSON.stringify(body) }),
+  getScoringResults: (projectId?: string) =>
+    request<ScoringResults>(`/scoring-results${projectId ? `?project_id=${projectId}` : ""}`),
 
   // Audit log
   getAuditLog: (limit = 50) => request<unknown[]>(`/audit-log?limit=${limit}`),
