@@ -124,6 +124,14 @@ export function useScoringResults(projectId?: string, enabled = false) {
   });
 }
 
+export function useSendToScoring() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: api.scoringItemsFromConversation,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["scoring-items"] }),
+  });
+}
+
 // ── Read confirmation ─────────────────────────────────────────────────────────
 
 export function useSubmitReadConfirmation() {

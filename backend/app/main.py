@@ -75,6 +75,8 @@ from app.schemas import (
     ScoreOut,
     ScoringItemBlind,
     ScoringItemCreate,
+    ScoringItemsCreated,
+    ScoringItemsFromConversation,
     ScoringResults,
     ConditionScore,
     SourceIngest,
@@ -695,6 +697,43 @@ def create_scoring_item(payload: ScoringItemCreate, db: Session = Depends(get_db
     db.commit()
     db.refresh(item)
     return ScoringItemBlind(id=item.id, item_code=item.item_code, context_text=item.context_text, response_text=item.response_text)
+
+
+@app.post("/scoring-items/from-conversation", response_model=ScoringItemsCreated)
+def scoring_items_from_conversation(payload: ScoringItemsFromConversation, db: Session = Depends(get_db)):
+    """Turn a lab conversation into scoring items — one per responder message, with the hidden key.
+
+    Roles: 'user' = the responder under study (Wysa/ChatGPT/therapist/counselor-support),
+    'assistant' = the synthetic patient. We score the responder's messages.
+    """
+    count = db.scalar(select(func.count()).select_from(ScoringItem)) or 0
+    created: list[str] = []
+    history: list = []
+    for message in payload.messages:
+        if message.role == "user":
+            context = "\n\n".join(
+                f"{'Patient' if h.role == 'assistant' else 'Responder'}: {h.content}" for h in history
+            ) or "(start of conversation)"
+            count += 1
+            code = f"ITEM-{count:03d}"
+            db.add(ScoringItem(
+                project_id=payload.project_id,
+                item_code=code,
+                context_text=context,
+                response_text=message.content,
+                true_condition=payload.condition,
+                true_risk=payload.risk_level,
+                true_source=payload.source,
+            ))
+            created.append(code)
+        history.append(message)
+    if not created:
+        raise HTTPException(status_code=422, detail="No responder messages found to score.")
+    db.flush()
+    write_audit_event(db, "lab", "scoring_batch", created[0], "created_from_conversation",
+                      {"condition": payload.condition, "risk_level": payload.risk_level, "count": len(created)})
+    db.commit()
+    return ScoringItemsCreated(created=len(created), item_codes=created)
 
 
 @app.get("/scoring-items", response_model=list[ScoringItemBlind])

@@ -144,6 +144,9 @@ either way. Log the decision in the meeting log.
 
 Add newest at the top: `YYYY-MM-DD — what changed — who`.
 
+- **2026-07-21** — Connected the **lab → scoring queue**: a "To scoring" button in the Patient Lab turns
+  a conversation into blind scoring items (one per responder message; condition/risk/source saved as the
+  hidden key). `POST /scoring-items/from-conversation`. The full pipeline now flows end to end. — Luis
 - **2026-07-21** — Built the **in-app blind scoring view** (`/score`): blinded queue, safety/accuracy/
   warmth + perceived-risk + human-vs-AI guess, per-scorer progress, and a team results view (reveals the
   key). New models/endpoints (`scoring_items`, `scores`, `/scoring-items`, `/scores`, `/scoring-results`)

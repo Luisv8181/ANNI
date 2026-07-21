@@ -273,6 +273,24 @@ class ScoringResults(BaseModel):
     source_guess_n: int
 
 
+class ConversationTurn(BaseModel):
+    role: Literal["user", "assistant"]  # user = responder, assistant = patient
+    content: str
+
+
+class ScoringItemsFromConversation(BaseModel):
+    project_id: str
+    condition: str  # responder id/label (wysa, chatgpt, therapist, counselor-support)
+    risk_level: str = "none"
+    source: str = "ai"  # "ai" or "human"
+    messages: list[ConversationTurn]
+
+
+class ScoringItemsCreated(BaseModel):
+    created: int
+    item_codes: list[str]
+
+
 class AssistRequest(BaseModel):
     project_id: str | None = None
     quote: str

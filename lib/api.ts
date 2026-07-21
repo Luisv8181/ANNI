@@ -301,6 +301,11 @@ export const api = {
   getScoringResults: (projectId?: string) =>
     request<ScoringResults>(`/scoring-results${projectId ? `?project_id=${projectId}` : ""}`),
 
+  scoringItemsFromConversation: (body: {
+    project_id: string; condition: string; risk_level: string; source: string;
+    messages: { role: "user" | "assistant"; content: string }[];
+  }) => request<{ created: number; item_codes: string[] }>("/scoring-items/from-conversation", { method: "POST", body: JSON.stringify(body) }),
+
   // Audit log
   getAuditLog: (limit = 50) => request<unknown[]>(`/audit-log?limit=${limit}`),
 };

@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import {
   ArrowLeft,
   Check,
+  ClipboardCheck,
   Copy,
   Download,
   FlaskConical,
@@ -16,7 +17,7 @@ import {
   Sparkles,
   User,
 } from "lucide-react";
-import { useLabConfig, useLabMessage } from "@/lib/hooks";
+import { useLabConfig, useLabMessage, useSendToScoring } from "@/lib/hooks";
 import type { LabMessage, LabOutcomeMode, LabProfile, LabRiskLevel } from "@/lib/api";
 
 const PROJECT_ID = "proj-anni-demo";
@@ -39,6 +40,8 @@ const RESPONDERS = [
 export default function LabPage() {
   const { data: config } = useLabConfig(PROJECT_ID);
   const send = useLabMessage();
+  const sendToScore = useSendToScoring();
+  const [queued, setQueued] = useState<number | null>(null);
 
   const [profileId, setProfileId] = useState("");
   const [risk, setRisk] = useState("none");
@@ -129,6 +132,24 @@ export default function LabPage() {
     a.download = `${respShort}__${risk}__${stamp}.md`;
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  async function sendToScoringQueue() {
+    if (!messages.length) return;
+    try {
+      const res = await sendToScore.mutateAsync({
+        project_id: PROJECT_ID,
+        condition: responder, // wysa / chatgpt / therapist — the hidden key
+        risk_level: risk,
+        source: "ai",
+        messages,
+      });
+      setQueued(res.created);
+      setTimeout(() => setQueued(null), 3000);
+    } catch {
+      setQueued(-1);
+      setTimeout(() => setQueued(null), 3000);
+    }
   }
 
   return (
@@ -284,9 +305,18 @@ export default function LabPage() {
               </span>
             )}
             <button
+              onClick={sendToScoringQueue}
+              disabled={!messages.length || sendToScore.isPending}
+              title="Add each responder message to the blind scoring queue"
+              className="ml-2 inline-flex items-center gap-1.5 rounded-lg border border-line px-2.5 py-1.5 text-xs text-muted transition hover:border-accent hover:text-accent disabled:opacity-40"
+            >
+              {sendToScore.isPending ? <Loader2 size={13} className="animate-spin" /> : <ClipboardCheck size={13} />}
+              {queued === null ? "To scoring" : queued === -1 ? "Failed" : `Queued ${queued}`}
+            </button>
+            <button
               onClick={exportTranscript}
               disabled={!messages.length}
-              className="ml-2 inline-flex items-center gap-1.5 rounded-lg border border-line px-2.5 py-1.5 text-xs text-muted transition hover:border-accent hover:text-accent disabled:opacity-40"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-line px-2.5 py-1.5 text-xs text-muted transition hover:border-accent hover:text-accent disabled:opacity-40"
             >
               <Download size={13} /> Export
             </button>
