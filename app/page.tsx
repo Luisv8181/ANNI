@@ -98,6 +98,12 @@ export default function Home() {
           >
             <ClipboardCheck size={15} /> Score
           </a>
+          <a
+            href="/ontology"
+            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3.5 py-2 text-sm font-medium text-ink shadow-sm transition hover:border-accent hover:text-accent"
+          >
+            <Network size={15} /> Ontology
+          </a>
           <div className="hidden items-center gap-2 rounded-full border border-line bg-white/80 px-3 py-2 text-sm text-muted shadow-sm md:flex">
             <Lock size={15} />
             Local-first review pipeline

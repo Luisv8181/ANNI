@@ -24,6 +24,22 @@ export function useProjects() {
   });
 }
 
+export function useCreateProject() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: api.createProject,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["projects"] }),
+  });
+}
+
+export function useCreateOntologyNode() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: api.createOntologyNode,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["ontology-nodes"] }),
+  });
+}
+
 // ── Sources & paragraphs ──────────────────────────────────────────────────────
 
 export function useSources(projectId?: string) {

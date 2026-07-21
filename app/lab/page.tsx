@@ -18,9 +18,11 @@ import {
   User,
 } from "lucide-react";
 import { useLabConfig, useLabMessage, useSendToScoring } from "@/lib/hooks";
+import { getCurrentProjectId } from "@/lib/project";
+import { ProjectPicker } from "@/components/project-picker";
 import type { LabMessage, LabOutcomeMode, LabProfile, LabRiskLevel } from "@/lib/api";
 
-const PROJECT_ID = "proj-anni-demo";
+const PROJECT_ID = getCurrentProjectId();
 
 const RISK_STYLE: Record<string, string> = {
   none: "text-[#177a4d] bg-mint",
@@ -166,12 +168,15 @@ export default function LabPage() {
             </p>
           </div>
         </div>
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3.5 py-2 text-sm text-muted shadow-sm transition hover:border-accent hover:text-accent"
-        >
-          <ArrowLeft size={15} /> Workspace
-        </Link>
+        <div className="flex items-center gap-3">
+          <ProjectPicker />
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3.5 py-2 text-sm text-muted shadow-sm transition hover:border-accent hover:text-accent"
+          >
+            <ArrowLeft size={15} /> Workspace
+          </Link>
+        </div>
       </header>
 
       <div className="mx-auto grid max-w-6xl gap-5 px-5 pb-12 lg:grid-cols-[340px_1fr]">

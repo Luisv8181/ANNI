@@ -69,6 +69,19 @@ class ProjectOut(BaseModel):
         from_attributes = True
 
 
+class ProjectCreate(BaseModel):
+    name: str
+    description: str = ""
+
+
+class OntologyNodeCreate(BaseModel):
+    label: str
+    group: str
+    description: str
+    version: str = "0.1"
+    id: str | None = None
+
+
 class SourceOut(BaseModel):
     id: str
     project_id: str

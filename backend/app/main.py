@@ -1,4 +1,5 @@
 import logging
+import re
 from contextlib import asynccontextmanager
 
 import httpx
@@ -57,6 +58,7 @@ from app.schemas import (
     IngestResult,
     LabeledCount,
     DecisionOut,
+    OntologyNodeCreate,
     OntologyNodeOut,
     ParagraphOut,
     LabChatRequest,
@@ -65,6 +67,7 @@ from app.schemas import (
     LabOutcomeModeOut,
     LabProfileOut,
     LabRiskLevelOut,
+    ProjectCreate,
     ProjectOut,
     PromptCompilationCreate,
     PromptCompilationOut,
@@ -144,6 +147,33 @@ def list_ontology_nodes(db: Session = Depends(get_db)):
     return db.scalars(select(OntologyNode).order_by(OntologyNode.group, OntologyNode.label)).all()
 
 
+def _slugify(text: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+    return slug or "trait"
+
+
+@app.post("/ontology-nodes", response_model=OntologyNodeOut)
+def create_ontology_node(payload: OntologyNodeCreate, db: Session = Depends(get_db)):
+    """Add a trait to the ontology. Deliberate + audited — the codebook must be updated to match."""
+    node_id = payload.id or _slugify(f"{payload.group}-{payload.label}")
+    if db.get(OntologyNode, node_id):
+        raise HTTPException(status_code=409, detail=f"A trait with id '{node_id}' already exists.")
+    node = OntologyNode(
+        id=node_id,
+        label=payload.label,
+        group=payload.group,
+        description=payload.description,
+        version=payload.version,
+    )
+    db.add(node)
+    db.flush()
+    write_audit_event(db, "ontology-admin", "ontology_node", node_id, "created",
+                      {"label": payload.label, "group": payload.group, "version": payload.version})
+    db.commit()
+    db.refresh(node)
+    return node
+
+
 @app.post("/annotation-assist", response_model=AssistResponse)
 def annotation_assist(payload: AssistRequest, db: Session = Depends(get_db)):
     """Model-backed trait suggestion for a highlight. Returns available=false if Ollama is down."""
@@ -167,6 +197,17 @@ def annotation_assist(payload: AssistRequest, db: Session = Depends(get_db)):
 @app.get("/projects", response_model=list[ProjectOut])
 def list_projects(db: Session = Depends(get_db)):
     return db.scalars(select(Project).order_by(Project.created_at)).all()
+
+
+@app.post("/projects", response_model=ProjectOut)
+def create_project(payload: ProjectCreate, db: Session = Depends(get_db)):
+    project = Project(name=payload.name, description=payload.description)
+    db.add(project)
+    db.flush()
+    write_audit_event(db, "project-admin", "project", project.id, "created", {"name": payload.name})
+    db.commit()
+    db.refresh(project)
+    return project
 
 
 # ── Sources ──────────────────────────────────────────────────────────────────

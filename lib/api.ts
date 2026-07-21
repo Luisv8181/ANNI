@@ -175,6 +175,12 @@ export const api = {
 
   // Projects
   getProjects: () => request<Project[]>("/projects"),
+  createProject: (body: { name: string; description?: string }) =>
+    request<Project>("/projects", { method: "POST", body: JSON.stringify(body) }),
+
+  // Ontology editing
+  createOntologyNode: (body: { label: string; group: string; description: string; version?: string }) =>
+    request<OntologyNode>("/ontology-nodes", { method: "POST", body: JSON.stringify(body) }),
 
   // Sources
   getSources: (projectId?: string) =>

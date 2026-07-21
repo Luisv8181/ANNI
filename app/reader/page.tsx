@@ -33,9 +33,11 @@ import {
   useSubmitReadConfirmation,
 } from "@/lib/hooks";
 import { suggestTraits, suggestedConfidence, type Suggestion } from "@/lib/smart-highlight";
+import { getCurrentProjectId } from "@/lib/project";
+import { ProjectPicker } from "@/components/project-picker";
 import type { AssistResponse, OntologyNode, Paragraph, Source } from "@/lib/api";
 
-const PROJECT_ID = "proj-anni-demo";
+const PROJECT_ID = getCurrentProjectId();
 type Sel = { paragraphId: string; quote: string; start: number; end: number };
 type LogEntry = { id: string; trait: string; confidence: number; quote: string; source: string; at: number };
 
@@ -180,12 +182,15 @@ export default function ReaderPage() {
             <p className="text-[11px] uppercase tracking-[0.2em] text-muted">Ingest · cite · smart-annotate</p>
           </div>
         </div>
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3.5 py-2 text-sm text-muted shadow-sm transition hover:border-accent hover:text-accent"
-        >
-          <ArrowLeft size={15} /> Workspace
-        </Link>
+        <div className="flex items-center gap-3">
+          <ProjectPicker />
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3.5 py-2 text-sm text-muted shadow-sm transition hover:border-accent hover:text-accent"
+          >
+            <ArrowLeft size={15} /> Workspace
+          </Link>
+        </div>
       </header>
 
       {/* source bar */}

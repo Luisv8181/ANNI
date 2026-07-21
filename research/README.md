@@ -39,6 +39,7 @@ research/
 ├── pre-registration.md           ← the plan + predictions we publish before running (Luis)
 ├── analysis-plan.md              ← the concrete statistics behind the pre-registration
 ├── pipeline-diagram.md           ← one-picture flow of the whole study (Mermaid)
+├── glossary.md                   ← all the terms in one place (study · tool · clinical)
 │
 ├── scoring/                      ← blind scoring kit (guide + form template)
 ├── ethics/                       ← IRB outline, data-management plan, consent templates (Heath)

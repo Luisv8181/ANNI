@@ -144,6 +144,10 @@ either way. Log the decision in the meeting log.
 
 Add newest at the top: `YYYY-MM-DD — what changed — who`.
 
+- **2026-07-21** — Added **in-app ontology editing** (`/ontology`: view + add traits, audited, with a
+  codebook reminder), **multi-project support** (project picker + create; reader/lab/score follow the
+  selected project — keeps real study data separate from the demo), and a **consolidated glossary**
+  (`glossary.md`). New endpoints `POST /ontology-nodes`, `POST /projects`. — Luis
 - **2026-07-21** — Connected the **lab → scoring queue**: a "To scoring" button in the Patient Lab turns
   a conversation into blind scoring items (one per responder message; condition/risk/source saved as the
   hidden key). `POST /scoring-items/from-conversation`. The full pipeline now flows end to end. — Luis
