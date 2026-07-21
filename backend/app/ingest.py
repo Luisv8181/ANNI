@@ -6,7 +6,33 @@ and annotated in ANNI. Every ingested source is content-hashed for provenance.
 """
 
 import hashlib
+import html as html_lib
 import re
+
+
+def strip_html(raw: str) -> str:
+    """Very light HTML → text: drop scripts/nav, turn <p>/<br> into breaks, unescape."""
+    raw = re.sub(r"(?is)<(script|style|head|nav|footer|aside)[^>]*>.*?</\1>", " ", raw)
+    text = re.sub(r"(?is)<br\s*/?>", "\n", raw)
+    text = re.sub(r"(?is)</(p|div|h[1-6]|li)>", "\n\n", text)
+    text = re.sub(r"(?is)<[^>]+>", " ", text)
+    text = html_lib.unescape(text)
+    text = re.sub(r"[ \t]+", " ", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
+
+
+def extract_html_title(raw: str) -> str | None:
+    match = re.search(r"(?is)<title[^>]*>(.*?)</title>", raw)
+    return html_lib.unescape(match.group(1)).strip() if match else None
+
+
+def extract_pdf_text(data: bytes) -> str:
+    """Extract text from a PDF byte stream (requires pymupdf)."""
+    import fitz  # pymupdf
+
+    with fitz.open(stream=data, filetype="pdf") as doc:
+        return "\n\n".join(page.get_text() for page in doc)
 
 
 def compute_content_hash(text: str) -> str:

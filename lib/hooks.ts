@@ -51,6 +51,22 @@ export function useIngestSource() {
   });
 }
 
+export function useIngestUrl() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: api.ingestSourceUrl,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["sources"] }),
+  });
+}
+
+export function useIngestFile() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: api.ingestSourceFile,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["sources"] }),
+  });
+}
+
 // ── Annotation tracker ────────────────────────────────────────────────────────
 
 export function useAnnotationStats(projectId?: string) {
@@ -63,6 +79,10 @@ export function useAnnotationStats(projectId?: string) {
 
 export function useGeneratePrompt() {
   return useMutation({ mutationFn: api.generateProfilePrompt });
+}
+
+export function useAnnotationAssist() {
+  return useMutation({ mutationFn: api.annotationAssist });
 }
 
 // ── Read confirmation ─────────────────────────────────────────────────────────

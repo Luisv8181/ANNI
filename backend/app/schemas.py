@@ -94,6 +94,14 @@ class ParagraphOut(BaseModel):
         from_attributes = True
 
 
+class SourceIngestUrl(BaseModel):
+    project_id: str
+    url: str
+    title: str | None = None
+    author: str | None = None
+    license_status: str = "unverified"
+
+
 class IngestResult(BaseModel):
     source: SourceOut
     paragraphs: list[ParagraphOut]
@@ -200,6 +208,21 @@ class AnnotationStatsOut(BaseModel):
     ai_agreements: int
     by_trait: list[TraitCount]
     by_decision: list[LabeledCount]
+
+
+class AssistRequest(BaseModel):
+    project_id: str | None = None
+    quote: str
+    paragraph: str = ""
+
+
+class AssistResponse(BaseModel):
+    available: bool
+    ontology_node_id: str | None = None
+    label: str | None = None
+    confidence: int | None = None
+    rationale: str | None = None
+    model_name: str | None = None
 
 
 class LabMessage(BaseModel):

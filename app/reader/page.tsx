@@ -19,10 +19,13 @@ import {
 } from "lucide-react";
 import { useCurrentUser } from "@/lib/identity";
 import {
+  useAnnotationAssist,
   useAnnotationStats,
   useAnnotations,
   useGeneratePrompt,
+  useIngestFile,
   useIngestSource,
+  useIngestUrl,
   useOntologyNodes,
   useParagraphs,
   useSources,
@@ -30,7 +33,7 @@ import {
   useSubmitReadConfirmation,
 } from "@/lib/hooks";
 import { suggestTraits, suggestedConfidence, type Suggestion } from "@/lib/smart-highlight";
-import type { OntologyNode, Paragraph, Source } from "@/lib/api";
+import type { AssistResponse, OntologyNode, Paragraph, Source } from "@/lib/api";
 
 const PROJECT_ID = "proj-anni-demo";
 type Sel = { paragraphId: string; quote: string; start: number; end: number };
@@ -49,10 +52,11 @@ export default function ReaderPage() {
   const { data: ontology = [] } = useOntologyNodes();
   const { data: annotations = [] } = useAnnotations(PROJECT_ID);
   const { data: stats } = useAnnotationStats(PROJECT_ID);
-  const ingest = useIngestSource();
   const confirmRead = useSubmitReadConfirmation();
   const submit = useSubmitAnnotation(PROJECT_ID);
   const generate = useGeneratePrompt();
+  const assist = useAnnotationAssist();
+  const [modelSuggestion, setModelSuggestion] = useState<AssistResponse | null>(null);
 
   const [sourceId, setSourceId] = useState("");
   const [confBySource, setConfBySource] = useState<Record<string, string>>({});
@@ -91,6 +95,7 @@ export default function ReaderPage() {
     setOntologyId("");
     setNote("");
     setConfidence(75);
+    setModelSuggestion(null);
   }
 
   function pickSource(id: string) {
@@ -117,12 +122,18 @@ export default function ReaderPage() {
     setSel({ paragraphId: p.id, quote: text, start, end: start + text.length });
     setOntologyId("");
     setNote("");
-    // pre-fill from the top smart suggestion
+    setModelSuggestion(null);
+    // instant offline heuristic
     const sugg = suggestTraits(text, p.text, ontology);
     if (sugg.length) {
       setOntologyId(sugg[0].node.id);
       setConfidence(suggestedConfidence(sugg));
     }
+    // ask the model too (used if Ollama is up; ignored otherwise)
+    assist
+      .mutateAsync({ project_id: PROJECT_ID, quote: text, paragraph: p.text })
+      .then((res) => setModelSuggestion(res.available ? res : null))
+      .catch(() => setModelSuggestion(null));
   }
 
   async function addAnnotation() {
@@ -205,13 +216,10 @@ export default function ReaderPage() {
         <AnimatePresence>
           {showImport && (
             <ImportForm
-              onIngest={async (body) => {
-                const res = await ingest.mutateAsync(body);
+              onIngested={(id) => {
                 setShowImport(false);
-                pickSource(res.source.id);
+                pickSource(id);
               }}
-              pending={ingest.isPending}
-              error={ingest.isError}
             />
           )}
         </AnimatePresence>
@@ -268,6 +276,8 @@ export default function ReaderPage() {
           <SmartAssistant
             sel={sel}
             suggestions={suggestions}
+            modelSuggestion={modelSuggestion}
+            modelPending={assist.isPending}
             ontology={ontology}
             ontologyId={ontologyId}
             setOntologyId={setOntologyId}
@@ -297,82 +307,142 @@ export default function ReaderPage() {
 
 // ── Import form ───────────────────────────────────────────────────────────────
 
-function ImportForm({
-  onIngest,
-  pending,
-  error,
-}: {
-  onIngest: (body: {
-    project_id: string;
-    title: string;
-    author?: string | null;
-    canonical_url?: string | null;
-    license_status?: string;
-    raw_text: string;
-  }) => void;
-  pending: boolean;
-  error: boolean;
-}) {
+function ImportForm({ onIngested }: { onIngested: (sourceId: string) => void }) {
+  const ingest = useIngestSource();
+  const ingestUrl = useIngestUrl();
+  const ingestFile = useIngestFile();
+
+  const [mode, setMode] = useState<"paste" | "url" | "file">("paste");
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
   const [license, setLicense] = useState("unverified — check before use");
   const [raw, setRaw] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+
+  const pending = ingest.isPending || ingestUrl.isPending || ingestFile.isPending;
+
+  async function run() {
+    setErr(null);
+    try {
+      if (mode === "paste") {
+        const res = await ingest.mutateAsync({
+          project_id: PROJECT_ID,
+          title: title.trim(),
+          author: author.trim() || null,
+          canonical_url: url.trim() || null,
+          license_status: license.trim() || "unverified",
+          raw_text: raw,
+        });
+        onIngested(res.source.id);
+      } else if (mode === "url") {
+        const res = await ingestUrl.mutateAsync({
+          project_id: PROJECT_ID,
+          url: url.trim(),
+          title: title.trim() || null,
+          author: author.trim() || null,
+          license_status: license.trim() || "unverified",
+        });
+        onIngested(res.source.id);
+      } else {
+        if (!file) return;
+        const form = new FormData();
+        form.append("project_id", PROJECT_ID);
+        if (title.trim()) form.append("title", title.trim());
+        if (author.trim()) form.append("author", author.trim());
+        form.append("license_status", license.trim() || "unverified");
+        form.append("file", file);
+        const res = await ingestFile.mutateAsync(form);
+        onIngested(res.source.id);
+      }
+    } catch (e) {
+      setErr(e instanceof Error ? shortErr(e.message) : "Ingest failed — is the backend running?");
+    }
+  }
+
+  const canRun =
+    mode === "paste" ? title.trim() && raw.trim().length >= 10 : mode === "url" ? url.trim().length > 6 : !!file;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: "auto" }}
-      exit={{ opacity: 0, height: 0 }}
-      className="overflow-hidden"
-    >
+    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
       <div className="mt-3 rounded-2xl border border-line bg-white p-5 shadow-soft">
         <h2 className="flex items-center gap-2 font-semibold tracking-tight">
           <FilePlus2 size={16} className="text-accent" /> Ingest &amp; cite a source
         </h2>
         <p className="mt-1 text-xs text-muted">
-          Paste the text; ANNI cites it, content-hashes it, and formats it into paragraphs for the reader.
-          <b> Only paste text you&apos;re cleared to use.</b>
+          ANNI cites it, content-hashes it, and formats it into paragraphs. <b>Only ingest sources you&apos;re cleared to use.</b>
         </p>
+
+        <div className="mt-3 inline-flex rounded-lg border border-line bg-panel p-0.5 text-sm">
+          {(["paste", "url", "file"] as const).map((m) => (
+            <button
+              key={m}
+              onClick={() => setMode(m)}
+              className={`rounded-md px-3 py-1.5 font-medium capitalize transition ${mode === m ? "bg-accent text-white" : "text-muted hover:text-ink"}`}
+            >
+              {m === "url" ? "From URL" : m === "file" ? "PDF / file" : "Paste text"}
+            </button>
+          ))}
+        </div>
+
         <div className="mt-4 grid gap-3 md:grid-cols-2">
-          <Field label="Title *" value={title} onChange={setTitle} placeholder="My experience with GAD therapy" />
+          <Field label={mode === "paste" ? "Title *" : "Title (optional — auto-detected)"} value={title} onChange={setTitle} placeholder="My experience with GAD therapy" />
           <Field label="Author" value={author} onChange={setAuthor} placeholder="Anonymous blogger" />
-          <Field label="Source URL" value={url} onChange={setUrl} placeholder="https://…" />
+          {mode !== "file" && <Field label={mode === "url" ? "Source URL *" : "Source URL"} value={url} onChange={setUrl} placeholder="https://…" />}
           <Field label="License / terms" value={license} onChange={setLicense} placeholder="CC-BY / permission…" />
         </div>
-        <label className="mt-3 block">
-          <span className="text-xs font-medium text-muted">Source text *</span>
-          <textarea
-            value={raw}
-            onChange={(e) => setRaw(e.target.value)}
-            rows={6}
-            placeholder="Paste the testimony or case text here. Blank lines become paragraph breaks."
-            className="mt-1.5 w-full rounded-xl border border-line bg-panel p-3 text-sm outline-none focus:border-accent"
-          />
-        </label>
+
+        {mode === "paste" && (
+          <label className="mt-3 block">
+            <span className="text-xs font-medium text-muted">Source text *</span>
+            <textarea
+              value={raw}
+              onChange={(e) => setRaw(e.target.value)}
+              rows={6}
+              placeholder="Paste the testimony or case text here. Blank lines become paragraph breaks."
+              className="mt-1.5 w-full rounded-xl border border-line bg-panel p-3 text-sm outline-none focus:border-accent"
+            />
+          </label>
+        )}
+        {mode === "url" && (
+          <p className="mt-3 rounded-lg bg-panel p-3 text-xs leading-5 text-muted">
+            ANNI fetches the page and extracts the readable text. Messy pages may need cleanup — you can
+            switch to <b>Paste text</b> and fix it by hand. The license gate still applies.
+          </p>
+        )}
+        {mode === "file" && (
+          <label className="mt-3 block">
+            <span className="text-xs font-medium text-muted">PDF or .txt file *</span>
+            <input
+              type="file"
+              accept=".pdf,.txt,application/pdf,text/plain"
+              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+              className="mt-1.5 block w-full text-sm text-muted file:mr-3 file:rounded-lg file:border-0 file:bg-lilac file:px-3 file:py-2 file:text-sm file:font-medium file:text-accent"
+            />
+            <span className="mt-1 block text-[11px] text-muted">Scanned (image-only) PDFs won&apos;t extract — paste the text instead.</span>
+          </label>
+        )}
+
         <div className="mt-3 flex items-center gap-3">
           <button
-            onClick={() =>
-              onIngest({
-                project_id: PROJECT_ID,
-                title: title.trim(),
-                author: author.trim() || null,
-                canonical_url: url.trim() || null,
-                license_status: license.trim() || "unverified",
-                raw_text: raw,
-              })
-            }
-            disabled={pending || !title.trim() || raw.trim().length < 10}
+            onClick={run}
+            disabled={pending || !canRun}
             className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-40"
           >
             {pending ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
-            Ingest into the reader
+            {mode === "url" ? "Fetch & ingest" : mode === "file" ? "Upload & ingest" : "Ingest into the reader"}
           </button>
-          {error && <span className="text-sm text-red-600">Ingest failed — is the backend running?</span>}
+          {err && <span className="text-sm text-red-600">{err}</span>}
         </div>
       </div>
     </motion.div>
   );
+}
+
+function shortErr(msg: string): string {
+  const m = msg.match(/"detail":"([^"]+)"/);
+  return m ? m[1] : msg.length > 120 ? "Ingest failed — is the backend running?" : msg;
 }
 
 function Field({ label, value, onChange, placeholder }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string }) {
@@ -425,6 +495,8 @@ function ReaderParagraph({ paragraph, sel, onSelect }: { paragraph: Paragraph; s
 function SmartAssistant({
   sel,
   suggestions,
+  modelSuggestion,
+  modelPending,
   ontology,
   ontologyId,
   setOntologyId,
@@ -438,6 +510,8 @@ function SmartAssistant({
 }: {
   sel: Sel | null;
   suggestions: Suggestion[];
+  modelSuggestion: AssistResponse | null;
+  modelPending: boolean;
   ontology: OntologyNode[];
   ontologyId: string;
   setOntologyId: (id: string) => void;
@@ -466,9 +540,35 @@ function SmartAssistant({
             <p className="mt-1 text-sm font-medium">“{sel.quote}”</p>
           </div>
 
+          {modelPending && (
+            <div className="flex items-center gap-2 text-xs text-muted">
+              <Loader2 size={12} className="animate-spin" /> asking the model…
+            </div>
+          )}
+          {modelSuggestion?.available && modelSuggestion.ontology_node_id && (
+            <div className="rounded-xl border border-accent/40 bg-lilac p-3">
+              <p className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider text-accent">
+                <Wand2 size={12} /> Model suggestion · {modelSuggestion.model_name}
+              </p>
+              <p className="mt-1 text-sm font-medium">
+                {modelSuggestion.label} · {modelSuggestion.confidence}%
+              </p>
+              {modelSuggestion.rationale && <p className="mt-1 text-xs leading-5 text-muted">{modelSuggestion.rationale}</p>}
+              <button
+                onClick={() => {
+                  setOntologyId(modelSuggestion.ontology_node_id!);
+                  if (modelSuggestion.confidence) setConfidence(modelSuggestion.confidence);
+                }}
+                className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-accent px-2.5 py-1.5 text-xs font-medium text-white transition hover:opacity-90"
+              >
+                <Check size={12} /> Use this
+              </button>
+            </div>
+          )}
+
           <div>
             <p className="mb-2 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted">
-              <Sparkles size={12} /> Suggested traits
+              <Sparkles size={12} /> Suggested traits <span className="text-faint" style={{ color: "#98909f" }}>(offline)</span>
             </p>
             {suggestions.length === 0 ? (
               <p className="text-sm text-muted">No confident suggestion — pick a trait below.</p>

@@ -144,6 +144,11 @@ either way. Log the decision in the meeting log.
 
 Add newest at the top: `YYYY-MM-DD — what changed — who`.
 
+- **2026-07-21** — Reader upgrades: **session summary** (timing + per-annotation log) and a **synthetic-
+  profile prompt generator** (`POST /synthetic-lab/generate-prompt`); **model-backed smart highlighter**
+  (`POST /annotation-assist`, graceful offline fallback); **URL + PDF ingestion**
+  (`/sources/ingest-url`, `/sources/ingest-file`). Added `DEPLOYMENT.md` and made the API URL
+  configurable (`ANNI_API_URL`) for hosting. — Luis
 - **2026-07-20 (post-meeting)** — Built the **document ingestion pipeline + Lab Reader** (`/reader`):
   paste/cite a source → segmented + content-hashed into paragraphs → **smart highlighter** suggests
   traits on selection → **"How we annotate" tracker** (trait distribution, confidence, decisions, AI

@@ -1,9 +1,12 @@
 /** @type {import('next').NextConfig} */
+// Backend URL: defaults to local dev, overridable for deployment.
+const API_URL = process.env.ANNI_API_URL || "http://localhost:8000";
+
 const nextConfig = {
   reactStrictMode: true,
   async rewrites() {
     return [
-      { source: '/api/:path*', destination: 'http://localhost:8000/:path*' }
+      { source: '/api/:path*', destination: `${API_URL}/:path*` }
     ];
   }
 };

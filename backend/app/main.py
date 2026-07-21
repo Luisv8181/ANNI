@@ -2,7 +2,7 @@ import logging
 from contextlib import asynccontextmanager
 
 import httpx
-from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Query
+from fastapi import BackgroundTasks, Depends, FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -24,7 +24,14 @@ from app.models import (
     ReadConfirmation,
     Source,
 )
-from app.ingest import compute_content_hash, segment_into_paragraphs
+from app.assist import suggest_trait
+from app.ingest import (
+    compute_content_hash,
+    extract_html_title,
+    extract_pdf_text,
+    segment_into_paragraphs,
+    strip_html,
+)
 from app.ollama import run_ollama_review
 from app.provenance import COMPILER_VERSION, citation_report, compile_system_prompt, write_audit_event
 from app.synthetic_lab import (
@@ -40,6 +47,8 @@ from app.schemas import (
     AnnotationCreate,
     AnnotationOut,
     AnnotationStatsOut,
+    AssistRequest,
+    AssistResponse,
     AuditLogOut,
     GeneratePromptRequest,
     GeneratePromptResponse,
@@ -61,6 +70,7 @@ from app.schemas import (
     ReadConfirmationOut,
     ReviewDecision,
     SourceIngest,
+    SourceIngestUrl,
     SourceOut,
     TraitCount,
 )
@@ -124,6 +134,24 @@ def list_ontology_nodes(db: Session = Depends(get_db)):
     return db.scalars(select(OntologyNode).order_by(OntologyNode.group, OntologyNode.label)).all()
 
 
+@app.post("/annotation-assist", response_model=AssistResponse)
+def annotation_assist(payload: AssistRequest, db: Session = Depends(get_db)):
+    """Model-backed trait suggestion for a highlight. Returns available=false if Ollama is down."""
+    ontology = db.scalars(select(OntologyNode)).all()
+    result = suggest_trait(payload.quote, payload.paragraph, list(ontology))
+    if not result:
+        return AssistResponse(available=False)
+    node = db.get(OntologyNode, result["ontology_node_id"])
+    return AssistResponse(
+        available=True,
+        ontology_node_id=result["ontology_node_id"],
+        label=node.label if node else result["ontology_node_id"],
+        confidence=result["confidence"],
+        rationale=result["rationale"],
+        model_name=cfg.ollama_model,
+    )
+
+
 # ── Projects ─────────────────────────────────────────────────────────────────
 
 @app.get("/projects", response_model=list[ProjectOut])
@@ -148,21 +176,29 @@ def list_paragraphs(source_id: str, db: Session = Depends(get_db)):
     ).all()
 
 
-@app.post("/sources/ingest", response_model=IngestResult)
-def ingest_source(payload: SourceIngest, db: Session = Depends(get_db)):
-    """Ingest a raw source: cite it, segment it into paragraphs, and store it for the Lab Reader."""
-    paragraphs_text = segment_into_paragraphs(payload.raw_text)
+def _ingest_text(
+    db: Session,
+    *,
+    project_id: str,
+    title: str,
+    raw_text: str,
+    author: str | None = None,
+    publication: str | None = None,
+    canonical_url: str | None = None,
+    license_status: str = "unverified",
+) -> IngestResult:
+    paragraphs_text = segment_into_paragraphs(raw_text)
     if not paragraphs_text:
         raise HTTPException(status_code=422, detail="No readable text found in the source.")
 
-    content_hash = compute_content_hash(payload.raw_text)
+    content_hash = compute_content_hash(raw_text)
     source = Source(
-        project_id=payload.project_id,
-        title=payload.title,
-        author=payload.author,
-        publication=payload.publication,
-        canonical_url=payload.canonical_url,
-        license_status=payload.license_status,
+        project_id=project_id,
+        title=title,
+        author=author,
+        publication=publication,
+        canonical_url=canonical_url,
+        license_status=license_status,
         allow_list_status="pending",
         content_hash=content_hash,
         version="1",
@@ -179,13 +215,83 @@ def ingest_source(payload: SourceIngest, db: Session = Depends(get_db)):
 
     write_audit_event(
         db, "ingestion", "source", source.id, "ingested",
-        {"title": payload.title, "paragraphs": len(paragraph_rows), "content_hash": content_hash, "license_status": payload.license_status},
+        {"title": title, "paragraphs": len(paragraph_rows), "content_hash": content_hash, "license_status": license_status},
     )
     db.commit()
     db.refresh(source)
     for paragraph in paragraph_rows:
         db.refresh(paragraph)
     return IngestResult(source=source, paragraphs=paragraph_rows, content_hash=content_hash)
+
+
+@app.post("/sources/ingest", response_model=IngestResult)
+def ingest_source(payload: SourceIngest, db: Session = Depends(get_db)):
+    """Ingest pasted text: cite it, segment it into paragraphs, store it for the Lab Reader."""
+    return _ingest_text(
+        db,
+        project_id=payload.project_id,
+        title=payload.title,
+        raw_text=payload.raw_text,
+        author=payload.author,
+        publication=payload.publication,
+        canonical_url=payload.canonical_url,
+        license_status=payload.license_status,
+    )
+
+
+@app.post("/sources/ingest-url", response_model=IngestResult)
+def ingest_source_url(payload: SourceIngestUrl, db: Session = Depends(get_db)):
+    """Fetch a URL, extract readable text, and ingest it. License gate still applies."""
+    try:
+        resp = httpx.get(payload.url, timeout=20.0, follow_redirects=True, headers={"User-Agent": "ANNI/0.2 research ingester"})
+        resp.raise_for_status()
+        raw_html = resp.text
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"Couldn't fetch the URL: {exc}") from exc
+    text = strip_html(raw_html)
+    if len(text) < 40:
+        raise HTTPException(status_code=422, detail="Fetched page had little readable text — paste the text instead.")
+    title = payload.title or extract_html_title(raw_html) or payload.url
+    return _ingest_text(
+        db,
+        project_id=payload.project_id,
+        title=title,
+        raw_text=text,
+        author=payload.author,
+        canonical_url=payload.url,
+        license_status=payload.license_status,
+    )
+
+
+@app.post("/sources/ingest-file", response_model=IngestResult)
+async def ingest_source_file(
+    project_id: str = Form(...),
+    title: str | None = Form(None),
+    author: str | None = Form(None),
+    license_status: str = Form("unverified"),
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
+    """Upload a PDF (or .txt), extract its text, and ingest it."""
+    data = await file.read()
+    name = file.filename or "uploaded"
+    try:
+        if name.lower().endswith(".pdf") or (file.content_type or "").endswith("pdf"):
+            text = extract_pdf_text(data)
+        else:
+            text = data.decode("utf-8", errors="ignore")
+    except Exception as exc:
+        raise HTTPException(status_code=422, detail=f"Couldn't read the file: {exc}") from exc
+    if len(text.strip()) < 40:
+        raise HTTPException(status_code=422, detail="No extractable text found (scanned PDF?). Paste the text instead.")
+    return _ingest_text(
+        db,
+        project_id=project_id,
+        title=title or name,
+        raw_text=text,
+        author=author,
+        license_status=license_status,
+    )
 
 
 # ── Read confirmations ────────────────────────────────────────────────────────

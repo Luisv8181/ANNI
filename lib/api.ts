@@ -133,6 +133,15 @@ export type IngestResult = {
   content_hash: string;
 };
 
+export type AssistResponse = {
+  available: boolean;
+  ontology_node_id?: string | null;
+  label?: string | null;
+  confidence?: number | null;
+  rationale?: string | null;
+  model_name?: string | null;
+};
+
 export type TraitCount = { ontology_node_id: string; label: string; count: number };
 export type LabeledCount = { label: string; count: number };
 export type AnnotationStats = {
@@ -173,8 +182,25 @@ export const api = {
     raw_text: string;
   }) => request<IngestResult>("/sources/ingest", { method: "POST", body: JSON.stringify(body) }),
 
+  ingestSourceUrl: (body: {
+    project_id: string;
+    url: string;
+    title?: string | null;
+    author?: string | null;
+    license_status?: string;
+  }) => request<IngestResult>("/sources/ingest-url", { method: "POST", body: JSON.stringify(body) }),
+
+  ingestSourceFile: async (form: FormData): Promise<IngestResult> => {
+    const res = await fetch("/api/sources/ingest-file", { method: "POST", body: form });
+    if (!res.ok) throw new Error(`${res.status} ${res.statusText}: ${await res.text()}`);
+    return res.json() as Promise<IngestResult>;
+  },
+
   getAnnotationStats: (projectId?: string) =>
     request<AnnotationStats>(`/annotation-stats${projectId ? `?project_id=${projectId}` : ""}`),
+
+  annotationAssist: (body: { project_id?: string; quote: string; paragraph: string }) =>
+    request<AssistResponse>("/annotation-assist", { method: "POST", body: JSON.stringify(body) }),
 
   generateProfilePrompt: (body: {
     persona_name: string;
