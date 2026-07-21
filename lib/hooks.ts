@@ -61,6 +61,10 @@ export function useAnnotationStats(projectId?: string) {
   });
 }
 
+export function useGeneratePrompt() {
+  return useMutation({ mutationFn: api.generateProfilePrompt });
+}
+
 // ── Read confirmation ─────────────────────────────────────────────────────────
 
 export function useSubmitReadConfirmation() {

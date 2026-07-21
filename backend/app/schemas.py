@@ -248,6 +248,23 @@ class LabConfigOut(BaseModel):
     model_name: str
 
 
+class GeneratePromptRequest(BaseModel):
+    persona_name: str = "Synthetic Patient"
+    annotation_ids: list[str]
+    outcome_mode: str = "open"
+    risk_level: str = "none"
+    cue: str | None = None
+    include_dsm5: bool = True
+
+
+class GeneratePromptResponse(BaseModel):
+    persona_name: str
+    system_prompt: str
+    trait_count: int
+    outcome_mode: str
+    risk_level: str
+
+
 class AuditLogOut(BaseModel):
     id: str
     actor_id: str

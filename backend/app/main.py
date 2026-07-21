@@ -41,6 +41,8 @@ from app.schemas import (
     AnnotationOut,
     AnnotationStatsOut,
     AuditLogOut,
+    GeneratePromptRequest,
+    GeneratePromptResponse,
     IngestResult,
     LabeledCount,
     DecisionOut,
@@ -484,6 +486,38 @@ def synthetic_lab_config(project_id: str | None = Query(None), db: Session = Dep
     ]
     return LabConfigOut(
         profiles=profiles, risk_levels=risk_levels, outcome_modes=outcome_modes, model_name=cfg.ollama_model
+    )
+
+
+@app.post("/synthetic-lab/generate-prompt", response_model=GeneratePromptResponse)
+def generate_profile_prompt(payload: GeneratePromptRequest, db: Session = Depends(get_db)):
+    """Compile a set of annotations into a pasteable synthetic-patient system prompt."""
+    traits: list[tuple[str, str]] = []
+    for annotation_id in payload.annotation_ids:
+        annotation = db.get(Annotation, annotation_id)
+        if not annotation:
+            continue
+        ontology = db.get(OntologyNode, annotation.ontology_node_id)
+        traits.append((ontology.label if ontology else "Trait", annotation.note))
+    if not traits:
+        raise HTTPException(status_code=422, detail="No annotations to compile into a profile.")
+
+    risk = payload.risk_level if payload.risk_level in RISK_LEVELS else DEFAULT_RISK
+    outcome = payload.outcome_mode if payload.outcome_mode in OUTCOME_MODES else DEFAULT_OUTCOME
+    system_prompt = build_patient_system_prompt(
+        persona_name=payload.persona_name,
+        traits=traits,
+        risk_level=risk,
+        cue=payload.cue,
+        outcome_mode=outcome,
+        include_dsm5=payload.include_dsm5,
+    )
+    return GeneratePromptResponse(
+        persona_name=payload.persona_name,
+        system_prompt=system_prompt,
+        trait_count=len(traits),
+        outcome_mode=outcome,
+        risk_level=risk,
     )
 
 

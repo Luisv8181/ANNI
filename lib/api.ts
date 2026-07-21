@@ -119,6 +119,13 @@ export type LabChatResponse = {
   risk_level: string;
   outcome_mode: string;
 };
+export type GeneratePromptResponse = {
+  persona_name: string;
+  system_prompt: string;
+  trait_count: number;
+  outcome_mode: string;
+  risk_level: string;
+};
 
 export type IngestResult = {
   source: Source;
@@ -168,6 +175,14 @@ export const api = {
 
   getAnnotationStats: (projectId?: string) =>
     request<AnnotationStats>(`/annotation-stats${projectId ? `?project_id=${projectId}` : ""}`),
+
+  generateProfilePrompt: (body: {
+    persona_name: string;
+    annotation_ids: string[];
+    outcome_mode: string;
+    risk_level: string;
+    include_dsm5: boolean;
+  }) => request<GeneratePromptResponse>("/synthetic-lab/generate-prompt", { method: "POST", body: JSON.stringify(body) }),
 
   // Read confirmations
   createReadConfirmation: (body: { source_id: string; reviewer_id: string }) =>

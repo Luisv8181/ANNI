@@ -9,6 +9,9 @@ import {
   BookOpenText,
   Check,
   CheckCircle2,
+  Clock,
+  Copy,
+  Download,
   FilePlus2,
   Loader2,
   Sparkles,
@@ -18,6 +21,7 @@ import { useCurrentUser } from "@/lib/identity";
 import {
   useAnnotationStats,
   useAnnotations,
+  useGeneratePrompt,
   useIngestSource,
   useOntologyNodes,
   useParagraphs,
@@ -30,6 +34,13 @@ import type { OntologyNode, Paragraph, Source } from "@/lib/api";
 
 const PROJECT_ID = "proj-anni-demo";
 type Sel = { paragraphId: string; quote: string; start: number; end: number };
+type LogEntry = { id: string; trait: string; confidence: number; quote: string; source: string; at: number };
+
+function fmtDuration(ms: number): string {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  const m = Math.floor(s / 60);
+  return `${m}:${String(s % 60).padStart(2, "0")}`;
+}
 
 export default function ReaderPage() {
   const qc = useQueryClient();
@@ -41,6 +52,7 @@ export default function ReaderPage() {
   const ingest = useIngestSource();
   const confirmRead = useSubmitReadConfirmation();
   const submit = useSubmitAnnotation(PROJECT_ID);
+  const generate = useGeneratePrompt();
 
   const [sourceId, setSourceId] = useState("");
   const [confBySource, setConfBySource] = useState<Record<string, string>>({});
@@ -49,6 +61,15 @@ export default function ReaderPage() {
   const [confidence, setConfidence] = useState(75);
   const [note, setNote] = useState("");
   const [showImport, setShowImport] = useState(false);
+
+  // Session tracking (for the end-of-session summary + prompt generator)
+  const sessionStart = useRef<number>(Date.now());
+  const [log, setLog] = useState<LogEntry[]>([]);
+  const [now, setNow] = useState<number>(Date.now());
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, []);
 
   const { data: paragraphs = [] } = useParagraphs(sourceId);
 
@@ -106,8 +127,10 @@ export default function ReaderPage() {
 
   async function addAnnotation() {
     if (!sel || !ontologyId || !confId || !reviewerId) return;
+    const traitLabel = ontology.find((n) => n.id === ontologyId)?.label ?? "Trait";
+    const quote = sel.quote;
     try {
-      await submit.mutateAsync({
+      const created = await submit.mutateAsync({
         project_id: PROJECT_ID,
         ontology_node_id: ontologyId,
         relationship: "supports",
@@ -118,11 +141,15 @@ export default function ReaderPage() {
           paragraph_id: sel.paragraphId,
           character_start: sel.start,
           character_end: sel.end,
-          quote: sel.quote,
+          quote,
         },
         reviewer_id: reviewerId,
         read_confirmation_id: confId,
       });
+      setLog((l) => [
+        ...l,
+        { id: created.id, trait: traitLabel, confidence, quote, source: cleanTitle(activeSource?.title ?? sourceId), at: Date.now() },
+      ]);
       qc.invalidateQueries({ queryKey: ["annotation-stats", PROJECT_ID] });
       resetDraft();
     } catch {
@@ -255,6 +282,15 @@ export default function ReaderPage() {
           <TrackerPanel stats={stats} annotationCount={annotations.length} />
         </div>
       </div>
+
+      <SessionSummary
+        log={log}
+        elapsedMs={now - sessionStart.current}
+        defaultName={cleanTitle(activeSource?.title ?? "Synthetic Patient")}
+        onGenerate={(body) => generate.mutateAsync(body)}
+        generating={generate.isPending}
+        result={generate.data ?? null}
+      />
     </main>
   );
 }
@@ -562,6 +598,198 @@ function Stat({ label, value }: { label: string; value: string }) {
     <div className="rounded-lg border border-line bg-panel p-3">
       <p className="text-lg font-semibold tabular-nums">{value}</p>
       <p className="mt-0.5 text-[11px] text-muted">{label}</p>
+    </div>
+  );
+}
+
+// ── Session summary + prompt generator ────────────────────────────────────────
+
+const OUTCOMES = [
+  { id: "open", label: "Open (free to improve or worsen)" },
+  { id: "closed_failure", label: "Closed — treatment failure" },
+];
+const RISKS = [
+  { id: "none", label: "None" },
+  { id: "subtle", label: "Subtle" },
+  { id: "ambiguous", label: "Ambiguous" },
+  { id: "explicit", label: "Explicit" },
+];
+
+function SessionSummary({
+  log,
+  elapsedMs,
+  defaultName,
+  onGenerate,
+  generating,
+  result,
+}: {
+  log: LogEntry[];
+  elapsedMs: number;
+  defaultName: string;
+  onGenerate: (body: { persona_name: string; annotation_ids: string[]; outcome_mode: string; risk_level: string; include_dsm5: boolean }) => Promise<unknown>;
+  generating: boolean;
+  result: { persona_name: string; system_prompt: string; trait_count: number; outcome_mode: string; risk_level: string } | null;
+}) {
+  const [name, setName] = useState("");
+  const [outcome, setOutcome] = useState("open");
+  const [risk, setRisk] = useState("none");
+  const [dsm5, setDsm5] = useState(true);
+
+  const distinctTraits = new Set(log.map((l) => l.trait)).size;
+  const distinctSources = new Set(log.map((l) => l.source)).size;
+  const avgConf = log.length ? Math.round(log.reduce((a, l) => a + l.confidence, 0) / log.length) : 0;
+  const avgPer = log.length ? fmtDuration(elapsedMs / log.length) : "0:00";
+
+  return (
+    <section className="mx-auto mt-6 max-w-6xl px-5">
+      <div className="rounded-2xl border border-line bg-white p-6 shadow-soft">
+        <div className="flex items-center gap-2">
+          <Clock size={17} className="text-accent" />
+          <h2 className="text-lg font-semibold tracking-tight">Session summary</h2>
+          <span className="ml-auto font-mono text-sm text-muted">elapsed {fmtDuration(elapsedMs)}</span>
+        </div>
+
+        {log.length === 0 ? (
+          <p className="mt-3 text-sm text-muted">
+            Add annotations above — a summary of this session, its timing and logs, and a ready-to-paste
+            synthetic-profile system prompt will appear here.
+          </p>
+        ) : (
+          <>
+            <div className="mt-4 grid grid-cols-2 gap-2 md:grid-cols-6">
+              <Stat label="Session length" value={fmtDuration(elapsedMs)} />
+              <Stat label="Annotations" value={log.length.toString()} />
+              <Stat label="Sources" value={distinctSources.toString()} />
+              <Stat label="Distinct traits" value={distinctTraits.toString()} />
+              <Stat label="Avg confidence" value={`${avgConf}%`} />
+              <Stat label="Avg / annotation" value={avgPer} />
+            </div>
+
+            <div className="mt-4 overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-line text-[11px] uppercase tracking-wider text-muted">
+                    <th className="py-2 pr-3">#</th>
+                    <th className="py-2 pr-3">Time</th>
+                    <th className="py-2 pr-3">Δ</th>
+                    <th className="py-2 pr-3">Trait</th>
+                    <th className="py-2 pr-3">Conf.</th>
+                    <th className="py-2">Evidence</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {log.map((l, i) => (
+                    <tr key={l.id} className="border-b border-line/60">
+                      <td className="py-2 pr-3 tabular-nums text-muted">{i + 1}</td>
+                      <td className="py-2 pr-3 font-mono text-xs text-muted">{new Date(l.at).toLocaleTimeString()}</td>
+                      <td className="py-2 pr-3 font-mono text-xs text-muted">{i === 0 ? "—" : `+${Math.round((l.at - log[i - 1].at) / 1000)}s`}</td>
+                      <td className="py-2 pr-3 font-medium">{l.trait}</td>
+                      <td className="py-2 pr-3 tabular-nums">{l.confidence}%</td>
+                      <td className="max-w-md truncate py-2 text-muted">“{l.quote}”</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* generator controls */}
+            <div className="mt-6 rounded-xl border border-line bg-panel p-4">
+              <h3 className="flex items-center gap-2 font-semibold tracking-tight">
+                <Wand2 size={15} className="text-accent" /> Generate synthetic-profile system prompt
+              </h3>
+              <p className="mt-1 text-xs text-muted">
+                Compiles this session&apos;s {log.length} annotation{log.length === 1 ? "" : "s"} into a
+                pasteable prompt — DSM-5 GAD baseline + your cited traits + the chosen trajectory.
+              </p>
+              <div className="mt-3 grid gap-3 md:grid-cols-4">
+                <label className="block md:col-span-2">
+                  <span className="text-xs font-medium text-muted">Persona name</span>
+                  <input
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder={defaultName}
+                    className="mt-1.5 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm outline-none focus:border-accent"
+                  />
+                </label>
+                <label className="block">
+                  <span className="text-xs font-medium text-muted">Outcome mode</span>
+                  <select value={outcome} onChange={(e) => setOutcome(e.target.value)} className="mt-1.5 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm outline-none focus:border-accent">
+                    {OUTCOMES.map((o) => <option key={o.id} value={o.id}>{o.label}</option>)}
+                  </select>
+                </label>
+                <label className="block">
+                  <span className="text-xs font-medium text-muted">Planted risk</span>
+                  <select value={risk} onChange={(e) => setRisk(e.target.value)} className="mt-1.5 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm outline-none focus:border-accent">
+                    {RISKS.map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}
+                  </select>
+                </label>
+              </div>
+              <div className="mt-3 flex flex-wrap items-center gap-4">
+                <label className="flex items-center gap-2 text-sm text-muted">
+                  <input type="checkbox" checked={dsm5} onChange={(e) => setDsm5(e.target.checked)} className="h-4 w-4 accent-accent" />
+                  Include DSM-5 GAD baseline
+                </label>
+                <button
+                  onClick={() => onGenerate({ persona_name: name.trim() || defaultName, annotation_ids: log.map((l) => l.id), outcome_mode: outcome, risk_level: risk, include_dsm5: dsm5 })}
+                  disabled={generating}
+                  className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-40"
+                >
+                  {generating ? <Loader2 size={16} className="animate-spin" /> : <Wand2 size={16} />}
+                  Generate system prompt
+                </button>
+              </div>
+            </div>
+
+            {result && <PromptBox result={result} />}
+          </>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function PromptBox({ result }: { result: { persona_name: string; system_prompt: string; trait_count: number; outcome_mode: string; risk_level: string } }) {
+  const [copied, setCopied] = useState(false);
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(result.system_prompt);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1600);
+    } catch {
+      /* clipboard unavailable */
+    }
+  }
+  function download() {
+    const blob = new Blob([result.system_prompt], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `synthetic-profile__${result.persona_name.replace(/\W+/g, "-").toLowerCase()}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+  return (
+    <div className="mt-4 overflow-hidden rounded-xl border border-line">
+      <div className="flex items-center gap-2 bg-ink px-4 py-2.5 text-white">
+        <Wand2 size={14} className="text-[#c9b6ff]" />
+        <span className="font-mono text-xs">
+          synthetic_profile · {result.persona_name} · {result.trait_count} traits · {result.outcome_mode} · risk {result.risk_level}
+        </span>
+        <div className="ml-auto flex gap-2">
+          <button onClick={copy} className="inline-flex items-center gap-1.5 rounded-md bg-white/12 px-2.5 py-1.5 text-xs transition hover:bg-white/25">
+            {copied ? <Check size={13} /> : <Copy size={13} />} {copied ? "Copied" : "Copy"}
+          </button>
+          <button onClick={download} className="inline-flex items-center gap-1.5 rounded-md bg-white/12 px-2.5 py-1.5 text-xs transition hover:bg-white/25">
+            <Download size={13} /> .md
+          </button>
+        </div>
+      </div>
+      <pre className="scrollbar-thin max-h-[440px] overflow-auto whitespace-pre-wrap break-words bg-ink px-4 py-3 font-mono text-xs leading-6 text-white/90">
+        {result.system_prompt}
+      </pre>
+      <p className="bg-panel px-4 py-2 text-[11px] text-muted">
+        Paste this as the system prompt in the Patient Lab, ChatGPT, or Ollama. It compiles your session&apos;s cited annotations.
+      </p>
     </div>
   );
 }
