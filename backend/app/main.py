@@ -36,7 +36,13 @@ from app.ingest import (
     strip_html,
 )
 from app.ollama import run_ollama_review
-from app.provenance import COMPILER_VERSION, citation_report, compile_system_prompt, write_audit_event
+from app.provenance import (
+    COMPILER_VERSION,
+    citation_report,
+    compile_system_prompt,
+    profile_provenance_footer,
+    write_audit_event,
+)
 from app.synthetic_lab import (
     DEFAULT_OUTCOME,
     DEFAULT_RISK,
@@ -649,11 +655,13 @@ def synthetic_lab_config(project_id: str | None = Query(None), db: Session = Dep
 @app.post("/synthetic-lab/generate-prompt", response_model=GeneratePromptResponse)
 def generate_profile_prompt(payload: GeneratePromptRequest, db: Session = Depends(get_db)):
     """Compile a set of annotations into a pasteable synthetic-patient system prompt."""
+    annotations: list[Annotation] = []
     traits: list[tuple[str, str]] = []
     for annotation_id in payload.annotation_ids:
         annotation = db.get(Annotation, annotation_id)
         if not annotation:
             continue
+        annotations.append(annotation)
         ontology = db.get(OntologyNode, annotation.ontology_node_id)
         traits.append((ontology.label if ontology else "Trait", annotation.note))
     if not traits:
@@ -669,7 +677,13 @@ def generate_profile_prompt(payload: GeneratePromptRequest, db: Session = Depend
         outcome_mode=outcome,
         include_dsm5=payload.include_dsm5,
     )
+    # Embed provenance so every generated profile carries its citation trail.
+    provenance = profile_provenance_footer(db, annotations)
+    system_prompt = f"{system_prompt}\n\n{provenance}"
+    citations = [citation_report(db, a) for a in annotations]
     return GeneratePromptResponse(
+        provenance=provenance,
+        citations=citations,
         persona_name=payload.persona_name,
         system_prompt=system_prompt,
         trait_count=len(traits),
@@ -859,6 +873,23 @@ def scoring_results(project_id: str | None = Query(None), db: Session = Depends(
 
 
 # ── Audit log ─────────────────────────────────────────────────────────────────
+
+@app.get("/audit-log/verify")
+def verify_audit_chain(db: Session = Depends(get_db)) -> dict:
+    """Recompute the chained-hash audit log and report whether it's intact (tamper-evident)."""
+    import hashlib
+
+    events = db.scalars(select(AuditLog).order_by(AuditLog.created_at)).all()
+    previous: str | None = None
+    for event in events:
+        recomputed = hashlib.sha256(
+            f"{previous or ''}|{event.created_at.isoformat()}|{event.actor_id}|{event.entity_type}|{event.entity_id}|{event.action}|{event.details}".encode()
+        ).hexdigest()
+        if recomputed != event.event_hash or event.previous_hash != previous:
+            return {"valid": False, "events": len(events), "broken_at": event.id, "tip": None}
+        previous = event.event_hash
+    return {"valid": True, "events": len(events), "broken_at": None, "tip": previous}
+
 
 @app.get("/audit-log", response_model=list[AuditLogOut])
 def list_audit_log(limit: int = Query(50, le=200), offset: int = Query(0), db: Session = Depends(get_db)):

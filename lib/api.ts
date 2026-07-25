@@ -119,13 +119,28 @@ export type LabChatResponse = {
   risk_level: string;
   outcome_mode: string;
 };
+export type Citation = {
+  annotation_id: string;
+  source: { id: string | null; title: string | null; url: string | null; license_status: string | null; content_hash: string | null; version: string | null };
+  evidence: { paragraph_id: string; paragraph_order: number | null; character_start: number; character_end: number; quote: string };
+  ontology: { id: string | null; label: string | null; version: string | null };
+  human_annotation: { reviewer_id: string; confidence: number; note: string; status: string; created_at: string };
+  decisions: { id: string; decision: string; note: string; by: string; at: string }[];
+};
 export type GeneratePromptResponse = {
   persona_name: string;
   system_prompt: string;
   trait_count: number;
   outcome_mode: string;
   risk_level: string;
+  provenance: string;
+  citations: Citation[];
 };
+export type AuditEvent = {
+  id: string; actor_id: string; entity_type: string; entity_id: string; action: string;
+  event_hash: string; previous_hash: string | null; created_at: string;
+};
+export type AuditVerify = { valid: boolean; events: number; broken_at: string | null; tip: string | null };
 
 export type IngestResult = {
   source: Source;
@@ -312,6 +327,8 @@ export const api = {
     messages: { role: "user" | "assistant"; content: string }[];
   }) => request<{ created: number; item_codes: string[] }>("/scoring-items/from-conversation", { method: "POST", body: JSON.stringify(body) }),
 
-  // Audit log
-  getAuditLog: (limit = 50) => request<unknown[]>(`/audit-log?limit=${limit}`),
+  // Audit log / provenance
+  getAuditLog: (limit = 100) => request<AuditEvent[]>(`/audit-log?limit=${limit}`),
+  verifyAuditChain: () => request<AuditVerify>("/audit-log/verify"),
+  getAnnotationCitation: (annotationId: string) => request<Citation>(`/annotations/${annotationId}/citation`),
 };

@@ -380,6 +380,8 @@ class GeneratePromptResponse(BaseModel):
     trait_count: int
     outcome_mode: str
     risk_level: str
+    provenance: str = ""
+    citations: list[dict] = []
 
 
 class AuditLogOut(BaseModel):

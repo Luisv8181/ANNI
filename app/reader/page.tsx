@@ -35,7 +35,7 @@ import {
 import { suggestTraits, suggestedConfidence, type Suggestion } from "@/lib/smart-highlight";
 import { getCurrentProjectId } from "@/lib/project";
 import { ProjectPicker } from "@/components/project-picker";
-import type { AssistResponse, OntologyNode, Paragraph, Source } from "@/lib/api";
+import type { AssistResponse, Citation, GeneratePromptResponse, OntologyNode, Paragraph, Source } from "@/lib/api";
 
 const PROJECT_ID = getCurrentProjectId();
 type Sel = { paragraphId: string; quote: string; start: number; end: number };
@@ -733,7 +733,7 @@ function SessionSummary({
   defaultName: string;
   onGenerate: (body: { persona_name: string; annotation_ids: string[]; outcome_mode: string; risk_level: string; include_dsm5: boolean }) => Promise<unknown>;
   generating: boolean;
-  result: { persona_name: string; system_prompt: string; trait_count: number; outcome_mode: string; risk_level: string } | null;
+  result: GeneratePromptResponse | null;
 }) {
   const [name, setName] = useState("");
   const [outcome, setOutcome] = useState("open");
@@ -853,7 +853,7 @@ function SessionSummary({
   );
 }
 
-function PromptBox({ result }: { result: { persona_name: string; system_prompt: string; trait_count: number; outcome_mode: string; risk_level: string } }) {
+function PromptBox({ result }: { result: GeneratePromptResponse }) {
   const [copied, setCopied] = useState(false);
   async function copy() {
     try {
@@ -893,8 +893,61 @@ function PromptBox({ result }: { result: { persona_name: string; system_prompt: 
         {result.system_prompt}
       </pre>
       <p className="bg-panel px-4 py-2 text-[11px] text-muted">
-        Paste this as the system prompt in the Patient Lab, ChatGPT, or Ollama. It compiles your session&apos;s cited annotations.
+        Paste this as the system prompt in the Patient Lab, ChatGPT, or Ollama. The provenance footer + citations below trace every trait to a cited quote.
       </p>
+      {result.citations.length > 0 && <CitationsBlock citations={result.citations} />}
+    </div>
+  );
+}
+
+function CitationsBlock({ citations }: { citations: Citation[] }) {
+  const [open, setOpen] = useState(false);
+  function download() {
+    const lines = citations.map((c, i) => {
+      const s = c.source;
+      return [
+        `## [${i + 1}] ${c.ontology.label ?? "Trait"}`,
+        `Quote: "${c.evidence.quote}"`,
+        `Source: ${s.title ?? s.id ?? "?"}${s.url ? ` <${s.url}>` : ""}`,
+        `License: ${s.license_status ?? "?"} · version ${s.version ?? "?"} · sha256:${(s.content_hash ?? "none").slice(0, 16)}`,
+        `Evidence: paragraph ${c.evidence.paragraph_order ?? "?"}, chars ${c.evidence.character_start}–${c.evidence.character_end}`,
+        `Reviewer: ${c.human_annotation.reviewer_id.slice(0, 8)} · confidence ${c.human_annotation.confidence}% · status ${c.human_annotation.status}`,
+        c.decisions.length ? `Decisions: ${c.decisions.map((d) => d.decision).join(", ")}` : "",
+        "",
+      ].filter(Boolean).join("\n");
+    });
+    const blob = new Blob([`# Citations & provenance\n\n${lines.join("\n")}`], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "profile-citations.md"; a.click();
+    URL.revokeObjectURL(url);
+  }
+  return (
+    <div className="border-t border-line bg-white">
+      <button onClick={() => setOpen((v) => !v)} className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-medium transition hover:bg-panel">
+        <Sparkles size={14} className="text-accent" /> Citations &amp; provenance ({citations.length})
+        <button onClick={(e) => { e.stopPropagation(); download(); }} className="ml-auto inline-flex items-center gap-1.5 rounded-md border border-line px-2 py-1 text-xs text-muted transition hover:border-accent hover:text-accent">
+          <Download size={12} /> .md
+        </button>
+      </button>
+      {open && (
+        <div className="space-y-2 px-4 pb-4">
+          {citations.map((c, i) => (
+            <div key={c.annotation_id} className="rounded-lg border border-line bg-panel p-3 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="grid h-4 w-4 place-items-center rounded bg-accent text-[9px] font-bold text-white">{i + 1}</span>
+                <span className="font-semibold">{c.ontology.label}</span>
+                <span className="ml-auto text-muted">conf {c.human_annotation.confidence}% · {c.human_annotation.status}</span>
+              </div>
+              <p className="mt-1.5 italic text-muted">“{c.evidence.quote}”</p>
+              <p className="mt-1.5 font-mono text-[10px] leading-5 text-faint" style={{ color: "#98909f" }}>
+                {c.source.title ?? c.source.id} · {c.source.license_status ?? "?"} · v{c.source.version ?? "?"} · sha256:{(c.source.content_hash ?? "none").slice(0, 12)} · ¶{c.evidence.paragraph_order ?? "?"} [{c.evidence.character_start}–{c.evidence.character_end}]
+                {c.decisions.length ? ` · ${c.decisions.map((d) => d.decision).join("/")}` : ""}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

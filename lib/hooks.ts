@@ -97,6 +97,16 @@ export function useGeneratePrompt() {
   return useMutation({ mutationFn: api.generateProfilePrompt });
 }
 
+// ── Provenance / audit ────────────────────────────────────────────────────────
+
+export function useAuditLog() {
+  return useQuery({ queryKey: ["audit-log"], queryFn: () => api.getAuditLog(100), staleTime: 0 });
+}
+
+export function useAuditVerify() {
+  return useQuery({ queryKey: ["audit-verify"], queryFn: api.verifyAuditChain, staleTime: 0 });
+}
+
 export function useAnnotationAssist() {
   return useMutation({ mutationFn: api.annotationAssist });
 }

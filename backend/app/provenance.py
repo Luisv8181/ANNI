@@ -74,6 +74,37 @@ def citation_report(db: Session, annotation: Annotation) -> dict:
     }
 
 
+def profile_provenance_footer(db: Session, annotations: list[Annotation]) -> str:
+    """A citation/provenance footer embedded in a compiled synthetic-patient prompt.
+
+    Records the compiler + ontology versions, the exact annotation IDs, and each
+    source with its version and content hash — so any profile traces back to
+    cited, human-approved evidence.
+    """
+    onto_versions: set[str] = set()
+    sources: dict[str, tuple[str, str | None]] = {}
+    for annotation in annotations:
+        ontology = db.get(OntologyNode, annotation.ontology_node_id)
+        if ontology:
+            onto_versions.add(ontology.version)
+        paragraph = db.get(Paragraph, annotation.paragraph_id)
+        source = db.get(Source, paragraph.source_id) if paragraph else None
+        if source:
+            sources[source.id] = (source.version, source.content_hash)
+    source_str = ", ".join(
+        f"{sid} v{ver} sha256:{(h or 'none')[:12]}" for sid, (ver, h) in sorted(sources.items())
+    ) or "n/a"
+    return "\n".join(
+        [
+            "— ANNI provenance —",
+            "This profile compiles cited, human-approved annotations. Every trait traces to a quote.",
+            f"compiler v{COMPILER_VERSION} | ontology v{', '.join(sorted(onto_versions)) or 'unversioned'}",
+            f"annotations: {', '.join(a.id for a in annotations)}",
+            f"sources: {source_str}",
+        ]
+    )
+
+
 def compile_system_prompt(db: Session, annotations: list[Annotation], scenario: str, learning_objective: str) -> tuple[str, str]:
     if not annotations:
         raise ValueError("At least one approved annotation is required.")
