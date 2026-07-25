@@ -924,12 +924,16 @@ function CitationsBlock({ citations }: { citations: Citation[] }) {
   }
   return (
     <div className="border-t border-line bg-white">
-      <button onClick={() => setOpen((v) => !v)} className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-medium transition hover:bg-panel">
-        <Sparkles size={14} className="text-accent" /> Citations &amp; provenance ({citations.length})
-        <button onClick={(e) => { e.stopPropagation(); download(); }} className="ml-auto inline-flex items-center gap-1.5 rounded-md border border-line px-2 py-1 text-xs text-muted transition hover:border-accent hover:text-accent">
+      {/* Siblings, not nested — a button inside a button is invalid HTML and the
+          browser re-parents it, which silently breaks the toggle. */}
+      <div className="flex w-full items-center gap-2 px-4 py-2.5 text-sm font-medium">
+        <button onClick={() => setOpen((v) => !v)} className="flex flex-1 items-center gap-2 text-left transition hover:text-accent">
+          <Sparkles size={14} className="text-accent" /> Citations &amp; provenance ({citations.length})
+        </button>
+        <button onClick={download} className="inline-flex items-center gap-1.5 rounded-md border border-line px-2 py-1 text-xs text-muted transition hover:border-accent hover:text-accent">
           <Download size={12} /> .md
         </button>
-      </button>
+      </div>
       {open && (
         <div className="space-y-2 px-4 pb-4">
           {citations.map((c, i) => (

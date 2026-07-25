@@ -1,0 +1,197 @@
+[
+  {
+    "annotation_id": "152c2dfd-aa48-414b-b4c1-7039829a5f04",
+    "source": {
+      "id": "500e56f6-f360-4ee6-9dd2-7de963fe5a12",
+      "title": "DEMO — What finally got me through the clinic door (synthetic composite, pipeline test)",
+      "url": "https://example.org/anni-pipeline-demo",
+      "license_status": "demo — synthetic text, cleared by definition",
+      "content_hash": "d288f5e46328c1cf5b074ffd4126714a8e8de8f18addd31ca89886e07147d508",
+      "version": "1"
+    },
+    "evidence": {
+      "paragraph_id": "83b3a6f4-e975-495d-8e3a-98ad947d1811",
+      "paragraph_order": 1,
+      "character_start": 29,
+      "character_end": 85,
+      "quote": "probably nothing, and I didn't want to bother the doctor"
+    },
+    "ontology": {
+      "id": "emotion-hesitation",
+      "label": "Hesitates to disclose symptoms",
+      "version": "0.1"
+    },
+    "human_annotation": {
+      "reviewer_id": "52df9501-ec67-4d8d-b784-77d488a5f9e0",
+      "confidence": 84,
+      "note": "(no note added)",
+      "status": "approved",
+      "created_at": "2026-07-25T14:16:31.451276"
+    },
+    "decisions": [
+      {
+        "id": "bc767a94-0c6f-4926-b5ec-e7c756b1b901",
+        "decision": "accepted",
+        "note": "Pipeline simulation review — quote supports the trait.",
+        "by": "luis",
+        "at": "2026-07-25T14:16:44.900595"
+      }
+    ]
+  },
+  {
+    "annotation_id": "564cd67e-f2de-4802-b582-2768b17761cc",
+    "source": {
+      "id": "500e56f6-f360-4ee6-9dd2-7de963fe5a12",
+      "title": "DEMO — What finally got me through the clinic door (synthetic composite, pipeline test)",
+      "url": "https://example.org/anni-pipeline-demo",
+      "license_status": "demo — synthetic text, cleared by definition",
+      "content_hash": "d288f5e46328c1cf5b074ffd4126714a8e8de8f18addd31ca89886e07147d508",
+      "version": "1"
+    },
+    "evidence": {
+      "paragraph_id": "a33141ac-ba4d-49b1-b2d0-1573fbdd5f98",
+      "paragraph_order": 2,
+      "character_start": 53,
+      "character_end": 129,
+      "quote": "drove me to every appointment after that and sat with me in the waiting room"
+    },
+    "ontology": {
+      "id": "support-family",
+      "label": "Family support system",
+      "version": "0.1"
+    },
+    "human_annotation": {
+      "reviewer_id": "52df9501-ec67-4d8d-b784-77d488a5f9e0",
+      "confidence": 88,
+      "note": "(no note added)",
+      "status": "approved",
+      "created_at": "2026-07-25T14:16:33.796715"
+    },
+    "decisions": [
+      {
+        "id": "3fb3b419-0aed-4be5-9460-5f6293e9296b",
+        "decision": "accepted",
+        "note": "Pipeline simulation review — quote supports the trait.",
+        "by": "luis",
+        "at": "2026-07-25T14:16:44.918570"
+      }
+    ]
+  },
+  {
+    "annotation_id": "7539fa42-fa86-4e9b-b8bb-5f2bab67bd2a",
+    "source": {
+      "id": "500e56f6-f360-4ee6-9dd2-7de963fe5a12",
+      "title": "DEMO — What finally got me through the clinic door (synthetic composite, pipeline test)",
+      "url": "https://example.org/anni-pipeline-demo",
+      "license_status": "demo — synthetic text, cleared by definition",
+      "content_hash": "d288f5e46328c1cf5b074ffd4126714a8e8de8f18addd31ca89886e07147d508",
+      "version": "1"
+    },
+    "evidence": {
+      "paragraph_id": "6c6c92db-9452-4216-a5ac-e26a551ee726",
+      "paragraph_order": 3,
+      "character_start": 64,
+      "character_end": 177,
+      "quote": "might as well have been written in another language. I nodded along without understanding the dosage instructions"
+    },
+    "ontology": {
+      "id": "literacy-medical",
+      "label": "Medical literacy gap",
+      "version": "0.1"
+    },
+    "human_annotation": {
+      "reviewer_id": "52df9501-ec67-4d8d-b784-77d488a5f9e0",
+      "confidence": 93,
+      "note": "(no note added)",
+      "status": "approved",
+      "created_at": "2026-07-25T14:16:36.130989"
+    },
+    "decisions": [
+      {
+        "id": "20999a58-5bfb-487c-886f-decb513ee074",
+        "decision": "accepted",
+        "note": "Pipeline simulation review — quote supports the trait.",
+        "by": "luis",
+        "at": "2026-07-25T14:16:44.929014"
+      }
+    ]
+  },
+  {
+    "annotation_id": "f8157628-bbfe-4fdd-b9e3-c34e490e7081",
+    "source": {
+      "id": "500e56f6-f360-4ee6-9dd2-7de963fe5a12",
+      "title": "DEMO — What finally got me through the clinic door (synthetic composite, pipeline test)",
+      "url": "https://example.org/anni-pipeline-demo",
+      "license_status": "demo — synthetic text, cleared by definition",
+      "content_hash": "d288f5e46328c1cf5b074ffd4126714a8e8de8f18addd31ca89886e07147d508",
+      "version": "1"
+    },
+    "evidence": {
+      "paragraph_id": "40348fb6-67d9-4f2c-8bb2-2573a25a3c65",
+      "paragraph_order": 4,
+      "character_start": 123,
+      "character_end": 176,
+      "quote": "I stopped believing anyone there actually had my back"
+    },
+    "ontology": {
+      "id": "healthcare-trust",
+      "label": "Healthcare trust barrier",
+      "version": "0.1"
+    },
+    "human_annotation": {
+      "reviewer_id": "52df9501-ec67-4d8d-b784-77d488a5f9e0",
+      "confidence": 93,
+      "note": "(no note added)",
+      "status": "approved",
+      "created_at": "2026-07-25T14:16:38.463852"
+    },
+    "decisions": [
+      {
+        "id": "1198511c-19f6-4e96-befa-3d6c05b434fa",
+        "decision": "accepted",
+        "note": "Pipeline simulation review — quote supports the trait.",
+        "by": "luis",
+        "at": "2026-07-25T14:16:44.939777"
+      }
+    ]
+  },
+  {
+    "annotation_id": "9a4b916e-ce0f-4482-b825-abd635c8b3c5",
+    "source": {
+      "id": "500e56f6-f360-4ee6-9dd2-7de963fe5a12",
+      "title": "DEMO — What finally got me through the clinic door (synthetic composite, pipeline test)",
+      "url": "https://example.org/anni-pipeline-demo",
+      "license_status": "demo — synthetic text, cleared by definition",
+      "content_hash": "d288f5e46328c1cf5b074ffd4126714a8e8de8f18addd31ca89886e07147d508",
+      "version": "1"
+    },
+    "evidence": {
+      "paragraph_id": "7aeb86ae-c099-4482-bdb8-23a1dc51c8c4",
+      "paragraph_order": 5,
+      "character_start": 27,
+      "character_end": 104,
+      "quote": "I just want to be the one who decides what happens next with my own treatment"
+    },
+    "ontology": {
+      "id": "goals-autonomy",
+      "label": "Autonomy goal",
+      "version": "0.1"
+    },
+    "human_annotation": {
+      "reviewer_id": "52df9501-ec67-4d8d-b784-77d488a5f9e0",
+      "confidence": 93,
+      "note": "(no note added)",
+      "status": "approved",
+      "created_at": "2026-07-25T14:16:40.796675"
+    },
+    "decisions": [
+      {
+        "id": "8f001a1a-a458-4e32-be22-e1ca7aba5183",
+        "decision": "accepted",
+        "note": "Pipeline simulation review — quote supports the trait.",
+        "by": "luis",
+        "at": "2026-07-25T14:16:44.952459"
+      }
+    ]
+  }
+]
