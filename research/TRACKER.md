@@ -56,6 +56,7 @@ either way. Log the decision in the meeting log.
 |------|--------|-------|
 | ANNI app (annotation pipeline) | ✅ built | Backend + frontend + provenance + audit log |
 | Provenance viewer (`/provenance`) | ✅ built | Audit chain + recompute-and-verify badge; citations on every compiled profile |
+| Synthetic presence (`/presence`) | ✅ built | Patient's visual language; **must not** appear in blind scoring — see [`synthetic-presence.md`](synthetic-presence.md) |
 | Annotator mode (`/annotate`) | ✅ built | Guided flow for the team |
 | Annotator Playground (no-setup) | ✅ built | `annotator-playground.html` — practice in any browser |
 | Synthetic patient profiles (library) | ✅ built | 3 worked profiles seeded; extensible library — new approved profiles auto-appear |
@@ -145,6 +146,13 @@ either way. Log the decision in the meeting log.
 
 Add newest at the top: `YYYY-MM-DD — what changed — who`.
 
+- **2026-07-25** — Gave the synthetic patient a **visual presence** (`/lab` + `/presence` studio): an
+  abstract animated form whose breath rate/depth, guard ring, colour, and dimming encode the planted
+  risk level, withdrawal, and outcome mode. Deliberately **not a face** (likeness ethics + scorer bias)
+  and **barred from the blind scoring view** because it encodes the hidden key — rules written up in
+  [`synthetic-presence.md`](synthetic-presence.md). Also refreshed the handoff docs (Rahmat's Antigravity
+  tutorial + GitHub onboarding now cover all seven app surfaces; Heath's email now points at the
+  `ethics/` pack and the AI-use disclosure draft). — Luis
 - **2026-07-25** — **Provenance & citation pass.** The generated synthetic-profile prompt now carries an
   **ANNI provenance footer** (compiler + ontology versions, annotation IDs, source hashes) and returns a
   **per-annotation citation report** (source, license, sha256, quote, char offsets, reviewer, decisions),

@@ -32,10 +32,20 @@ GitHub side together.
   and an integrated ACT+CBT case). They're logged in `research/sources/INTAKE-REGISTER.md` as
   links-only, marked "license-check." Could you review them for reuse terms?
 - Start the **IRB** paperwork and check the **transcript-database license** and **Wysa's terms of use**
-  for research use.
+  for research use. I've drafted a starting point for you in **`research/ethics/`** — an IRB protocol
+  outline, a data-management plan, and a consent template for the scoring panel. They're drafts meant
+  to save you a blank page, not to pre-empt your judgment; rewrite whatever doesn't fit.
 - One thing to flag for the manuscript: the SCRIP guidelines say LLMs can't be authors and any AI use
   must be documented in the Methods — worth planning that paragraph early given how much AI this study
-  involves.
+  involves. I've kept a running record in **`research/METHODS-AND-DECISIONS.md`** (every decision and
+  why), and drafted the disclosure paragraph itself in
+  **`research/manuscript-methods-ai-use.md`** — including naming the AI assistant that helped build the
+  tooling. Please sanity-check that language against what SCRIP actually requires.
+
+**Also worth a look when you have time:** the tool now keeps a tamper-evident audit trail — every trait
+in a synthetic profile traces back to a cited quote, a reviewer, and a timestamp, and the chain can be
+re-verified on demand (the `/provenance` page). That's the part I'd lean on hardest if a reviewer asks
+how we know the synthetic patient isn't just made up.
 
 **Links:**
 - GitHub: https://github.com/luisv8181/ANNI (start at `research/README.md` and `research/TRACKER.md`)

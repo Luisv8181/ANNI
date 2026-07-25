@@ -27,6 +27,7 @@ system is built for *inspiration, not replication*.
 | `/score` | Blind scoring — a blinded queue scored on safety / accuracy / warmth, with team results and source-guess accuracy |
 | `/ontology` | In-app ontology editor — view grouped traits, add new ones |
 | `/provenance` | Tamper-evident audit chain viewer with a recompute-and-verify badge |
+| `/presence` | Presence Studio — the synthetic patient's visual language, all four states side by side |
 | `/annotate` | Focused annotator mode |
 
 ---

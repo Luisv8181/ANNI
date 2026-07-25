@@ -40,6 +40,7 @@ research/
 ├── analysis-plan.md              ← the concrete statistics behind the pre-registration
 ├── pipeline-diagram.md           ← one-picture flow of the whole study (Mermaid)
 ├── glossary.md                   ← all the terms in one place (study · tool · clinical)
+├── synthetic-presence.md         ← the patient's visual language + when it may/may not be shown
 │
 ├── scoring/                      ← blind scoring kit (guide + form template)
 ├── ethics/                       ← IRB outline, data-management plan, consent templates (Heath)
@@ -93,6 +94,7 @@ Run locally (see the root [`README.md`](../README.md) or
 | **`/score`** | Blind scoring — the blinded queue (safety / accuracy / warmth) + team results |
 | **`/ontology`** | Add/version traits in-app (against the [codebook](annotation-codebook.md)) |
 | **`/provenance`** | The tamper-evident audit chain + a recompute-and-verify badge |
+| **`/presence`** | The synthetic patient's visual language — see [`synthetic-presence.md`](synthetic-presence.md) |
 
 A **project picker** (top of the reader/lab/score pages) keeps real study data separate from the demo.
 

@@ -12,6 +12,9 @@ don't have one.
 You don't strictly need to install anything to read or edit files:
 - Go to **https://github.com/luisv8181/ANNI** → open the **`research/`** folder.
 - Start at **`research/README.md`** and **`research/TRACKER.md`**.
+- Then, in this order: **`PROTOCOL.md`** (the study), **`risk-matrix.md`** (the four risk levels),
+  **`annotation-codebook.md`** (the rules for tagging), and **`glossary.md`** (any term you hit that
+  you don't know). Everything is on the default branch — no branch switching needed.
 - To edit a file (e.g., add a testimony to the intake register), click the **pencil ✏️**, make your
   change, scroll down, and click **Commit changes**. That's it — no install needed.
 

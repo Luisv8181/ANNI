@@ -56,9 +56,19 @@ Node) is in one sentence the first time you use it.
   longest part.
 
 ## Step 5 — Open the app
-- When the agent says it's ready, open a browser and go to **http://localhost:3000**.
-- You'll see ANNI. Click **Lab Reader** to import and annotate a source, or **Patient Lab** to talk to
-  the synthetic patient.
+When the agent says it's ready, open a browser and go to **http://localhost:3000**. Here's what's there:
+
+| Where | What it's for |
+|-------|---------------|
+| **Lab Reader** (`/reader`) | Import a source (paste text, a URL, or a PDF) and annotate it. **Start here.** |
+| **Patient Lab** (`/lab`) | Talk to the synthetic patient. Now shows a live **Presence** — an animated form whose breathing and colour track what's planted in the patient. |
+| **Blind scoring** (`/score`) | Score responses without knowing where they came from |
+| **Ontology** (`/ontology`) | See the trait list; add a new trait when the study needs one |
+| **Provenance** (`/provenance`) | The audit trail — proves every trait traces to a real quote |
+| **Presence Studio** (`/presence`) | All four patient states side by side (the visual language) |
+
+Use the **project picker** at the top to stay on the right project — keep practice work off the real
+study data.
 
 ## Step 6 — Check it works
 - **Lab Reader** → **Import a source** → paste some text → **Ingest** → you should see it split into

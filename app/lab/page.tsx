@@ -9,6 +9,7 @@ import {
   ClipboardCheck,
   Copy,
   Download,
+  Eye,
   FlaskConical,
   Loader2,
   RotateCcw,
@@ -20,6 +21,7 @@ import {
 import { useLabConfig, useLabMessage, useSendToScoring } from "@/lib/hooks";
 import { getCurrentProjectId } from "@/lib/project";
 import { ProjectPicker } from "@/components/project-picker";
+import { PresenceLegend, SyntheticPresence, type PresenceState } from "@/components/synthetic-presence";
 import type { LabMessage, LabOutcomeMode, LabProfile, LabRiskLevel } from "@/lib/api";
 
 const PROJECT_ID = getCurrentProjectId();
@@ -68,6 +70,14 @@ export default function LabPage() {
   const activeProfile = config?.profiles.find((p) => p.id === profileId);
   const activeRisk = config?.risk_levels.find((r) => r.id === risk);
   const activeOutcome = config?.outcome_modes.find((o) => o.id === outcome);
+
+  // The presence reflects what the patient is doing right now: generating, holding
+  // the floor after a reply, or waiting on the responder.
+  const presenceState: PresenceState = send.isPending
+    ? "thinking"
+    : messages.length > 0 && messages[messages.length - 1].role === "assistant"
+      ? "speaking"
+      : "idle";
 
   function resetSession() {
     setMessages([]);
@@ -182,6 +192,41 @@ export default function LabPage() {
       <div className="mx-auto grid max-w-6xl gap-5 px-5 pb-12 lg:grid-cols-[340px_1fr]">
         {/* ── Left: profile library + controls ── */}
         <aside className="space-y-4">
+          <section className="rounded-2xl border border-line bg-white p-5 shadow-soft">
+            <div className="flex items-center gap-2">
+              <Eye size={16} className="text-accent" />
+              <h2 className="font-semibold tracking-tight">Presence</h2>
+              <Link
+                href="/presence"
+                className="ml-auto text-[11px] text-muted underline-offset-2 transition hover:text-accent hover:underline"
+              >
+                studio
+              </Link>
+            </div>
+            <div className="mt-2 flex justify-center">
+              <SyntheticPresence
+                risk={risk}
+                outcome={outcome}
+                state={presenceState}
+                personaName={activeProfile?.name}
+                traitCount={activeProfile?.trait_count}
+                size={188}
+              />
+            </div>
+            <details className="mt-3 group">
+              <summary className="cursor-pointer list-none text-[11px] font-medium text-muted transition hover:text-accent">
+                What am I looking at?
+              </summary>
+              <div className="mt-2 rounded-lg bg-panel p-3">
+                <PresenceLegend />
+                <p className="mt-2 border-t border-line pt-2 text-[11px] leading-4 text-muted">
+                  Abstract on purpose — a face would imply a real person and bias how warmth is read.
+                  This is an instrument, not a portrait.
+                </p>
+              </div>
+            </details>
+          </section>
+
           <section className="rounded-2xl border border-line bg-white p-5 shadow-soft">
             <div className="flex items-center gap-2">
               <Sparkles size={16} className="text-accent" />

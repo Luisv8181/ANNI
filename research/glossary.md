@@ -53,6 +53,10 @@ and methods docs.
 - **Lab Reader** — the ingest + cite + annotate surface (`/reader`).
 - **Synthetic Patient Lab** — where a local model (Ollama) role-plays the patient (`/lab`).
 - **Relay Mode** — copying each side of a conversation into Wysa/ChatGPT so the run stays blind.
+- **Presence** — the synthetic patient's animated visual form in the Patient Lab. Abstract on purpose
+  (never a face); its breath, guard ring, and colour encode the planted risk level and outcome mode.
+  **Never shown on the blind scoring view** — it would leak the key. See
+  [`synthetic-presence.md`](synthetic-presence.md).
 - **Scoring item** — one responder message (in context) queued for the blind panel (`/score`).
 - **Project** — a container separating one workstream's data (sources, annotations, profiles, scores)
   from another.
