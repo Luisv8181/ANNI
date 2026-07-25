@@ -156,8 +156,8 @@ ANNI_CORS_ORIGINS=["http://localhost:3000"]
 | POST | `/annotation-assist` | Ollama-assisted trait suggestion for the smart highlighter |
 | POST | `/prompt-compilations` | Compile approved annotations into a system prompt |
 | GET | `/prompt-compilations?project_id=` | List compiled synthetic-patient profiles |
-| GET | `/synthetic-lab/config?project_id=` | Lab config (profiles, risk levels, outcome modes) |
-| POST | `/synthetic-lab/message` | Send a turn to the Ollama synthetic patient |
+| GET | `/synthetic-lab/config?project_id=` | Lab config (profiles + their cited traits, risk levels, outcome modes) |
+| POST | `/synthetic-lab/message` | Send a turn to the Ollama synthetic patient; returns the reply plus the patient's per-turn self-report |
 | POST | `/synthetic-lab/generate-prompt` | Generate a profile prompt + provenance footer + citations |
 | GET | `/scoring-items?project_id=` | Blinded scoring queue |
 | POST | `/scoring-items/from-conversation` | Turn a lab transcript into scoring items |

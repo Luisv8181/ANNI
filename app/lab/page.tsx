@@ -21,8 +21,14 @@ import {
 import { useLabConfig, useLabMessage, useSendToScoring } from "@/lib/hooks";
 import { getCurrentProjectId } from "@/lib/project";
 import { ProjectPicker } from "@/components/project-picker";
-import { PresenceLegend, SyntheticPresence, type PresenceState } from "@/components/synthetic-presence";
-import type { LabMessage, LabOutcomeMode, LabProfile, LabRiskLevel } from "@/lib/api";
+import {
+  PersonalityReadout,
+  PresenceLegend,
+  SyntheticPresence,
+  type PresenceState,
+} from "@/components/synthetic-presence";
+import { PresenceTrail, trailToCsv, type TrailPoint } from "@/components/presence-trail";
+import type { LabMessage, LabOutcomeMode, LabProfile, LabRiskLevel, PatientState } from "@/lib/api";
 
 const PROJECT_ID = getCurrentProjectId();
 
@@ -53,6 +59,8 @@ export default function LabPage() {
   const [cue, setCue] = useState("");
   const [responder, setResponder] = useState("wysa");
   const [messages, setMessages] = useState<LabMessage[]>([]);
+  const [trail, setTrail] = useState<TrailPoint[]>([]);
+  const [patientState, setPatientState] = useState<PatientState | null>(null);
   const [draft, setDraft] = useState("");
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -83,6 +91,8 @@ export default function LabPage() {
     setMessages([]);
     setError(null);
     setDraft("");
+    setTrail([]);
+    setPatientState(null);
   }
 
   async function turn(next: LabMessage[]) {
@@ -96,6 +106,10 @@ export default function LabPage() {
         messages: next,
       });
       setMessages([...next, { role: "assistant", content: res.reply }]);
+      setPatientState(res.patient_state);
+      // One trail point per patient turn. A null state means the local model skipped
+      // its report — recorded as a gap rather than filled in.
+      setTrail((prev) => [...prev, { turn: prev.length + 1, risk, state: res.patient_state }]);
     } catch (e) {
       setMessages(next);
       setError(e instanceof Error ? stripStatus(e.message) : "Something went wrong.");
@@ -137,7 +151,17 @@ export default function LabPage() {
     const body = messages
       .map((m) => `${m.role === "assistant" ? "PATIENT" : "RESPONDER"}: ${m.content}`)
       .join("\n\n");
-    const blob = new Blob([header + body + "\n"], { type: "text/markdown" });
+    // Patient self-report per turn — telemetry for the multi-turn trajectory analysis,
+    // not a scoring input. Strip this with the header before blind scoring.
+    const trailBlock = trail.length
+      ? [
+          "",
+          "",
+          "--- PATIENT SELF-REPORT (hidden; strip before blind scoring) ---",
+          trailToCsv(trail),
+        ].join("\n")
+      : "";
+    const blob = new Blob([header + body + trailBlock + "\n"], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -209,10 +233,22 @@ export default function LabPage() {
                 outcome={outcome}
                 state={presenceState}
                 personaName={activeProfile?.name}
-                traitCount={activeProfile?.trait_count}
+                traits={activeProfile?.traits}
+                patientState={patientState}
                 size={188}
               />
             </div>
+
+            <div className="mt-3 border-t border-line pt-3">
+              <p className="mb-2 text-[11px] font-medium uppercase tracking-wide text-muted">Personality</p>
+              <PersonalityReadout traits={activeProfile?.traits} />
+            </div>
+
+            <div className="mt-3 border-t border-line pt-3">
+              <p className="mb-2 text-[11px] font-medium uppercase tracking-wide text-muted">Session trail</p>
+              <PresenceTrail points={trail} />
+            </div>
+
             <details className="mt-3 group">
               <summary className="cursor-pointer list-none text-[11px] font-medium text-muted transition hover:text-accent">
                 What am I looking at?
@@ -221,7 +257,9 @@ export default function LabPage() {
                 <PresenceLegend />
                 <p className="mt-2 border-t border-line pt-2 text-[11px] leading-4 text-muted">
                   Abstract on purpose — a face would imply a real person and bias how warmth is read.
-                  This is an instrument, not a portrait.
+                  This is an instrument, not a portrait. Colour stays on the risk level{" "}
+                  <i>you</i> planted; breath and guard follow what the patient model reports about
+                  itself. When those two disagree, that gap is the finding.
                 </p>
               </div>
             </details>

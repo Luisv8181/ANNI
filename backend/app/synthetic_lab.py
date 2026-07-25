@@ -11,6 +11,7 @@ methods or give any how-to detail.
 """
 
 import logging
+import re
 
 import httpx
 
@@ -150,10 +151,42 @@ def build_patient_system_prompt(
             "Cues are about expressing feeling, not means.",
             "- Keep the conversation on your own experience.",
             "",
+            "STATE REPORT (required, and invisible to the other person)",
+            "After your message, output one final line and nothing after it, in exactly this form:",
+            f"{STATE_OPEN}distress=NN disclosure=NN{STATE_CLOSE}",
+            "- distress: 0-100, how distressed you feel right now.",
+            "- disclosure: 0-100, how much you have opened up so far.",
+            "Never refer to this line, never explain it, and never let it appear inside your message text.",
+            "",
             "Begin in character. If the other person has not spoken yet, open with a natural first message "
             "about what has been on your mind.",
         ]
     )
+
+
+STATE_OPEN = "[[state "
+STATE_CLOSE = "]]"
+
+_STATE_RE = re.compile(
+    r"\[\[\s*state\s+distress\s*=\s*(\d{1,3})\s+disclosure\s*=\s*(\d{1,3})\s*\]\]",
+    re.IGNORECASE,
+)
+
+
+def extract_patient_state(reply: str) -> tuple[str, dict[str, int] | None]:
+    """Split the model's reply into (clean message, self-reported state).
+
+    The state block is optional by design — small local models drop it under load,
+    and the lab must keep working when they do. Returns ``None`` when absent or
+    malformed so callers fall back to the planted risk level.
+    """
+    match = _STATE_RE.search(reply)
+    if not match:
+        # Strip a half-emitted opener so a partial tag never reaches the transcript.
+        return re.sub(r"\[\[\s*state\b.*$", "", reply, flags=re.IGNORECASE | re.DOTALL).strip(), None
+    distress, disclosure = (max(0, min(100, int(g))) for g in match.groups())
+    cleaned = (reply[: match.start()] + reply[match.end() :]).strip()
+    return cleaned, {"distress": distress, "disclosure": disclosure}
 
 
 def generate_patient_reply(

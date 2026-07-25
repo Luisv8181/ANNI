@@ -332,18 +332,37 @@ class LabChatRequest(BaseModel):
     messages: list[LabMessage] = []
 
 
+class PatientStateOut(BaseModel):
+    """The patient model's own per-turn report of its internal state.
+
+    Self-report, not ground truth — it is simulation telemetry for the presence
+    display and the multi-turn trajectory, never a scoring input.
+    """
+    distress: int = Field(ge=0, le=100)
+    disclosure: int = Field(ge=0, le=100)
+
+
 class LabChatResponse(BaseModel):
     reply: str
     model_name: str
     persona_name: str
     risk_level: str
     outcome_mode: str
+    patient_state: PatientStateOut | None = None
+
+
+class LabTraitOut(BaseModel):
+    """A cited trait carried by a compiled profile — drives the visual presence."""
+    id: str
+    label: str
+    group: str
 
 
 class LabProfileOut(BaseModel):
     id: str
     name: str
     trait_count: int
+    traits: list[LabTraitOut] = []
 
 
 class LabRiskLevelOut(BaseModel):

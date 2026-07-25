@@ -49,6 +49,7 @@ from app.synthetic_lab import (
     OUTCOME_MODES,
     RISK_LEVELS,
     build_patient_system_prompt,
+    extract_patient_state,
     generate_patient_reply,
 )
 from app.schemas import (
@@ -72,6 +73,8 @@ from app.schemas import (
     LabConfigOut,
     LabOutcomeModeOut,
     LabProfileOut,
+    LabTraitOut,
+    PatientStateOut,
     LabRiskLevelOut,
     ProjectCreate,
     ProjectOut,
@@ -628,6 +631,28 @@ def _profile_traits(db: Session, compilation: PromptCompilation) -> list[tuple[s
     return traits
 
 
+def _profile_trait_briefs(db: Session, compilation: PromptCompilation) -> list[LabTraitOut]:
+    """The ontology nodes behind a compiled profile, de-duplicated.
+
+    These drive the visual presence, so each profile looks like the traits it was
+    actually built from rather than like every other profile.
+    """
+    annotation_ids = db.scalars(
+        select(PromptCompilationAnnotation.annotation_id).where(
+            PromptCompilationAnnotation.compilation_id == compilation.id
+        )
+    ).all()
+    seen: dict[str, LabTraitOut] = {}
+    for annotation_id in annotation_ids:
+        annotation = db.get(Annotation, annotation_id)
+        if not annotation:
+            continue
+        ontology = db.get(OntologyNode, annotation.ontology_node_id)
+        if ontology and ontology.id not in seen:
+            seen[ontology.id] = LabTraitOut(id=ontology.id, label=ontology.label, group=ontology.group)
+    return list(seen.values())
+
+
 @app.get("/synthetic-lab/config", response_model=LabConfigOut)
 def synthetic_lab_config(project_id: str | None = Query(None), db: Session = Depends(get_db)):
     """The profile library + available risk levels for the lab."""
@@ -636,7 +661,12 @@ def synthetic_lab_config(project_id: str | None = Query(None), db: Session = Dep
         query = query.where(PromptCompilation.project_id == project_id)
     compilations = db.scalars(query.order_by(PromptCompilation.created_at)).all()
     profiles = [
-        LabProfileOut(id=c.id, name=c.name, trait_count=len(_profile_traits(db, c)))
+        LabProfileOut(
+            id=c.id,
+            name=c.name,
+            trait_count=len(_profile_traits(db, c)),
+            traits=_profile_trait_briefs(db, c),
+        )
         for c in compilations
     ]
     risk_levels = [
@@ -724,12 +754,17 @@ def synthetic_lab_message(payload: LabChatRequest, db: Session = Depends(get_db)
             ),
         ) from exc
 
+    # The patient reports its own distress/disclosure per turn. Optional by design:
+    # when the local model omits it, the presence falls back to the planted level.
+    reply, state = extract_patient_state(reply)
+
     return LabChatResponse(
         reply=reply,
         model_name=cfg.ollama_model,
         persona_name=compilation.name,
         risk_level=payload.risk_level,
         outcome_mode=payload.outcome_mode,
+        patient_state=PatientStateOut(**state) if state else None,
     )
 
 

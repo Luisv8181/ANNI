@@ -57,6 +57,15 @@ and methods docs.
   (never a face); its breath, guard ring, and colour encode the planted risk level and outcome mode.
   **Never shown on the blind scoring view** — it would leak the key. See
   [`synthetic-presence.md`](synthetic-presence.md).
+- **Personality (derived)** — a profile's guardedness / steadiness / warmth, computed from the ontology
+  groups of its cited traits rather than art-directed. Two profiles look different because they were
+  annotated differently.
+- **Patient self-report** — the hidden `distress` / `disclosure` numbers the patient model emits each
+  turn. Telemetry for the presence and the trail; **never a scoring input**, because it is the model
+  describing itself rather than ground truth.
+- **Session trail** — the two-line plot of distress vs. disclosure across a session's turns. Distress
+  rising while disclosure flattens is the shape of a conversation going wrong. Gaps are left broken,
+  not interpolated.
 - **Scoring item** — one responder message (in context) queued for the blind panel (`/score`).
 - **Project** — a container separating one workstream's data (sources, annotations, profiles, scores)
   from another.

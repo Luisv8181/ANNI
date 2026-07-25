@@ -146,6 +146,15 @@ either way. Log the decision in the meeting log.
 
 Add newest at the top: `YYYY-MM-DD — what changed — who`.
 
+- **2026-07-25** — Built out the presence fully: **trait-driven personality** (each profile's
+  guardedness/steadiness/warmth is *derived* from its cited ontology traits, so SP-01/02/03 now look
+  distinct and the look stays traceable to annotations), **per-turn patient self-report**
+  (`[[state distress=NN disclosure=NN]]`, parsed and stripped server-side, optional so the lab still
+  runs when a small model drops it), and a **session trajectory trail** (distress vs. disclosure per
+  turn, gaps broken not interpolated, exported as CSV in the transcript's hidden block). Colour stays on
+  the *planted* risk while breath/guard follow the *reported* state — the divergence is the finding.
+  **Open team decision:** responder-side self-assessment can't be captured automatically in Relay Mode
+  (the responder is an external app) — see [`synthetic-presence.md`](synthetic-presence.md). — Luis
 - **2026-07-25** — Gave the synthetic patient a **visual presence** (`/lab` + `/presence` studio): an
   abstract animated form whose breath rate/depth, guard ring, colour, and dimming encode the planted
   risk level, withdrawal, and outcome mode. Deliberately **not a face** (likeness ethics + scorer bias)

@@ -5,10 +5,15 @@ import { useState } from "react";
 import { ArrowLeft, Eye } from "lucide-react";
 import {
   PRESENCE_RISKS,
+  PersonalityReadout,
   PresenceLegend,
   SyntheticPresence,
   type PresenceState,
 } from "@/components/synthetic-presence";
+import { useLabConfig } from "@/lib/hooks";
+import { getCurrentProjectId } from "@/lib/project";
+
+const PROJECT_ID = getCurrentProjectId();
 
 const STATES: { id: PresenceState; label: string; blurb: string }[] = [
   { id: "idle", label: "Waiting", blurb: "Between turns — breathing only." },
@@ -26,6 +31,8 @@ const RISK_BLURB: Record<string, string> = {
 export default function PresenceStudio() {
   const [state, setState] = useState<PresenceState>("idle");
   const [outcome, setOutcome] = useState("open");
+  const { data: config } = useLabConfig(PROJECT_ID);
+  const profiles = config?.profiles ?? [];
 
   return (
     <main className="min-h-screen">
@@ -112,6 +119,43 @@ export default function PresenceStudio() {
                 <p className="mt-2 text-[11px] leading-4 text-muted">{RISK_BLURB[risk]}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Each profile looks like the traits it was actually compiled from */}
+        <div className="mt-5 rounded-2xl border border-line bg-white/86 p-6 shadow-soft">
+          <h2 className="text-lg font-semibold tracking-tight">The library, at the same risk level</h2>
+          <p className="mt-1 max-w-3xl text-sm text-muted">
+            Same planted risk, same state — the differences below come entirely from each profile&apos;s{" "}
+            <b className="text-ink">cited traits</b>. A profile carrying &ldquo;hesitates to disclose&rdquo; sits
+            behind a tighter guard ring; one carrying &ldquo;family support system&rdquo; burns warmer. The
+            personality is derived, not hand-set, so it stays traceable to the annotations.
+          </p>
+          <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {profiles.map((p) => (
+              <div key={p.id} className="rounded-xl border border-line bg-panel p-4">
+                <div className="flex justify-center">
+                  <SyntheticPresence
+                    risk="subtle"
+                    outcome={outcome}
+                    state={state}
+                    personaName={p.name}
+                    traits={p.traits}
+                    size={168}
+                  />
+                </div>
+                <div className="mt-3 border-t border-line pt-3">
+                  <PersonalityReadout traits={p.traits} />
+                </div>
+              </div>
+            ))}
+            {!config && <p className="text-sm text-muted">Loading the profile library…</p>}
+            {config && profiles.length === 0 && (
+              <p className="text-sm text-muted">
+                No compiled profiles in this project yet — approve annotations and compile one in the Lab
+                Reader.
+              </p>
+            )}
           </div>
         </div>
 

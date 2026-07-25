@@ -102,7 +102,10 @@ export type PromptCompilation = {
   annotation_ids: string[];
 };
 
-export type LabProfile = { id: string; name: string; trait_count: number };
+export type LabTrait = { id: string; label: string; group: string };
+export type LabProfile = { id: string; name: string; trait_count: number; traits: LabTrait[] };
+/** The patient model's own per-turn self-report. Telemetry, never a scoring input. */
+export type PatientState = { distress: number; disclosure: number };
 export type LabRiskLevel = { id: string; label: string; blurb: string };
 export type LabOutcomeMode = { id: string; label: string; blurb: string };
 export type LabConfig = {
@@ -118,6 +121,7 @@ export type LabChatResponse = {
   persona_name: string;
   risk_level: string;
   outcome_mode: string;
+  patient_state: PatientState | null;
 };
 export type Citation = {
   annotation_id: string;
