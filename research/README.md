@@ -79,6 +79,25 @@ research/
 
 ---
 
+## The ANNI app — where each thing lives
+
+Run locally (see the root [`README.md`](../README.md) or
+[`rahmat-antigravity-tutorial.md`](rahmat-antigravity-tutorial.md)), then:
+
+| Page | What you do there |
+|------|-------------------|
+| **`/`** | Annotation workspace — read gate, annotate, ontology browser, AI review, citation engine |
+| **`/annotate`** | Annotator mode — the friendly guided flow for the team |
+| **`/reader`** | Lab Reader — ingest a source (paste / URL / PDF), smart highlighter, annotation tracker, session summary, and generate the synthetic-profile prompt (with citations) |
+| **`/lab`** | Synthetic Patient Lab — a local model role-plays the compiled patient; push transcripts to scoring |
+| **`/score`** | Blind scoring — the blinded queue (safety / accuracy / warmth) + team results |
+| **`/ontology`** | Add/version traits in-app (against the [codebook](annotation-codebook.md)) |
+| **`/provenance`** | The tamper-evident audit chain + a recompute-and-verify badge |
+
+A **project picker** (top of the reader/lab/score pages) keeps real study data separate from the demo.
+
+---
+
 ## GitHub, step by step (brief the team from this)
 
 Everyone on the team should be able to do these six things. Walk through them live at the meeting.

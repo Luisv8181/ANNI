@@ -35,7 +35,17 @@ and methods docs.
 - **Ontology / trait** — the tag set you annotate with (e.g., "Family support system"); versioned.
 - **Annotation** — a highlighted evidence span + a trait + a reviewer note, with provenance.
 - **Provenance** — the traceable chain: source → cited quote → human decision, recorded in a
-  tamper-evident **audit log** (chained SHA-256 hashes).
+  tamper-evident **audit log** (chained SHA-256 hashes). Viewable and re-verifiable at `/provenance`.
+- **Audit chain / chain verification** — every write hashes in the previous event's hash; `/provenance`
+  (and `GET /audit-log/verify`) recomputes the chain and shows a badge — altering any past record breaks it.
+- **Citation report** — the per-annotation provenance record attached to a compiled profile: source,
+  license, sha256, quote, character offsets, ontology version, reviewer, and decisions.
+- **Provenance footer** — the block appended to a generated synthetic-profile prompt naming the compiler
+  and ontology versions, the annotation IDs, and the source hashes it was built from.
+- **Session summary** — the end-of-session table in the Lab Reader: timing plus a per-annotation log of
+  how the session was annotated.
+- **Annotation tracker** — the live "How we annotate" stats (trait distribution, confidence, decisions,
+  AI-agreement); `GET /annotation-stats`.
 - **Read gate** — the reviewer must confirm they personally read a source before annotating it.
 - **Smart highlighter** — suggests likely traits on a selection (offline heuristic + optional model);
   the human confirms.

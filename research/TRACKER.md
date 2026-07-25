@@ -8,7 +8,7 @@
 > change a status emoji, add a line to the log at the bottom. Keep it honest: it's most useful when it
 > shows what *isn't* done yet.
 
-**Last updated:** 2026-07-20 (post-meeting) · **Current phase:** ▶ **Phase 1 — AI-vs-AI data collection (ramping up)** · **Next meeting:** Fri Aug 7
+**Last updated:** 2026-07-25 · **Current phase:** ▶ **Phase 1 — AI-vs-AI data collection (ramping up)** · **Next meeting:** Fri Aug 7
 
 **Status key:** ✅ set up / done · 🔧 in progress · ⬜ not started · ⏸ blocked (waiting on something)
 
@@ -55,6 +55,7 @@ either way. Log the decision in the meeting log.
 | Item | Status | Notes |
 |------|--------|-------|
 | ANNI app (annotation pipeline) | ✅ built | Backend + frontend + provenance + audit log |
+| Provenance viewer (`/provenance`) | ✅ built | Audit chain + recompute-and-verify badge; citations on every compiled profile |
 | Annotator mode (`/annotate`) | ✅ built | Guided flow for the team |
 | Annotator Playground (no-setup) | ✅ built | `annotator-playground.html` — practice in any browser |
 | Synthetic patient profiles (library) | ✅ built | 3 worked profiles seeded; extensible library — new approved profiles auto-appear |
@@ -144,6 +145,12 @@ either way. Log the decision in the meeting log.
 
 Add newest at the top: `YYYY-MM-DD — what changed — who`.
 
+- **2026-07-25** — **Provenance & citation pass.** The generated synthetic-profile prompt now carries an
+  **ANNI provenance footer** (compiler + ontology versions, annotation IDs, source hashes) and returns a
+  **per-annotation citation report** (source, license, sha256, quote, char offsets, reviewer, decisions),
+  surfaced in the Reader's session summary with a `.md` export. Added the **`/provenance` viewer** — the
+  tamper-evident audit chain with a recompute-and-verify badge (`GET /audit-log/verify`). **Retrofitted the
+  docs** (README, pipeline diagram, methods, contributing, glossary) to reflect every built surface. — Luis
 - **2026-07-21** — Added **in-app ontology editing** (`/ontology`: view + add traits, audited, with a
   codebook reminder), **multi-project support** (project picker + create; reader/lab/score follow the
   selected project — keeps real study data separate from the demo), and a **consolidated glossary**

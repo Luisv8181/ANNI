@@ -55,6 +55,8 @@ Newest decisions are added at the top of each section. Dates are when a decision
 | T6 | **Prompt generator:** compiles a session's cited annotations into a pasteable synthetic-patient system prompt (DSM-5 baseline + traits + outcome/risk). | The bridge from annotation → runnable synthetic patient. | Jul 21 |
 | T7 | **Synthetic Patient Lab** with **Relay Mode** (copy each side into Wysa/ChatGPT) to keep the AI-to-AI study blind. | Lets every side "think" it's talking to a person. | Jul 20–21 |
 | T8 | **GitHub is the study-infrastructure home; Google Drive is the manuscript home.** Work developed on a branch, merged to `master` so the team sees it at the repo root. A START HERE index ties the two. | One source of truth for code/protocol; Drive for the written paper. | Jul 20 |
+| T9 | **Citation & provenance are surfaced, not just stored.** Every compiled synthetic-profile prompt ships with a **provenance footer** (compiler + ontology versions, annotation IDs, source hashes) and a **per-annotation citation report** (source, license, sha256, quote, char offsets, reviewer, decisions). The **`/provenance` viewer** recomputes the chained-hash audit log and shows a verify badge. | Reviewers and the manuscript need to *see* the chain from trait → cited quote → human decision, and prove the record wasn't altered. | Jul 25 |
+| T10 | **In-app ontology editing + multi-project support.** New traits are added in-app (audited); reader/lab/score follow the selected project so real study data stays separate from the demo. | Lets the team grow the codebook and keep projects isolated without touching code. | Jul 21 |
 
 ## 5. Deployment
 
@@ -89,4 +91,6 @@ Documented per SCRIP guidance (LLMs are **not** authors; all AI output was revie
 - [ ] Sample sizes (cases per risk level, personas, sessions) → pre-registration.
 
 ## Change log
+- **2026-07-25** — Added T9 (citation/provenance surfacing + `/provenance` viewer) and T10 (in-app
+  ontology editing + multi-project support). Retrofitted the repo docs to reflect every built surface.
 - **2026-07-21** — Created this log; recorded local-only deployment decision + Google AI Studio cloud path.

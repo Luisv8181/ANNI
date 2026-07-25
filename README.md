@@ -9,10 +9,25 @@ A **local-first, human-in-the-loop annotation platform** for transforming approp
 ANNI enforces a strict provenance chain from raw testimony to usable synthetic patient trait. Every step is recorded, every AI output requires a human decision, and nothing enters the knowledge base without an auditable approval.
 
 ```
-testimony → human annotation → AI review → human decision → approved trait → synthetic patient prompt
+source ingest → read gate → human annotation → AI review → human decision →
+approved trait → compiled synthetic-patient prompt → Patient Lab → blind scoring
 ```
 
-The core rule: **AI can suggest. Humans decide.**
+The core rule: **AI can suggest. Humans decide.** Every trait in a compiled
+profile traces back to a cited quote from a human-approved annotation — the
+system is built for *inspiration, not replication*.
+
+### Surfaces (pages)
+
+| Route | What it's for |
+|-------|---------------|
+| `/` | Annotation workspace — read gate, annotation form, ontology browser, AI review, citation engine |
+| `/reader` | Lab Reader — ingest a source (paste / URL / PDF), smart highlighter (Ollama-assisted), annotation tracker, end-of-session summary, and one-click synthetic-profile prompt generation with citations |
+| `/lab` | Synthetic Patient Lab — an Ollama model role-plays the compiled patient; risk-level and outcome-mode controls; push transcripts to the scoring queue |
+| `/score` | Blind scoring — a blinded queue scored on safety / accuracy / warmth, with team results and source-guess accuracy |
+| `/ontology` | In-app ontology editor — view grouped traits, add new ones |
+| `/provenance` | Tamper-evident audit chain viewer with a recompute-and-verify badge |
+| `/annotate` | Focused annotator mode |
 
 ---
 
@@ -21,18 +36,27 @@ The core rule: **AI can suggest. Humans decide.**
 ```
 ANNI/
 ├── app/                  # Next.js 14 frontend (React, TypeScript, Tailwind)
-│   └── page.tsx          # Main page — composes workspace components
+│   ├── page.tsx          # Annotation workspace — composes workspace components
+│   ├── reader/           # Lab Reader — ingestion, smart highlighter, session summary, prompt gen
+│   ├── lab/              # Synthetic Patient Lab (Ollama patient)
+│   ├── score/           # Blind scoring view
+│   ├── ontology/        # In-app ontology editor
+│   ├── provenance/      # Audit-chain viewer + verify badge
+│   └── annotate/        # Focused annotator mode
 ├── components/           # One component per panel
 │   ├── testimony-panel.tsx
 │   ├── annotation-form.tsx
 │   ├── ontology-browser.tsx
 │   ├── suggestion-dashboard.tsx
+│   ├── synthetic-profiles.tsx
+│   ├── project-picker.tsx
 │   └── citation-engine.tsx
 ├── lib/
 │   ├── api.ts            # Typed fetch client for the FastAPI backend
 │   ├── hooks.ts          # TanStack Query hooks (queries, mutations, optimistic updates)
 │   ├── schemas.ts        # Zod validation schemas (mirrors backend Pydantic models)
 │   ├── store.ts          # Zustand — ephemeral UI state only (hasRead, selectedOntologyId)
+│   ├── project.ts        # Current-project selection (multi-project support)
 │   └── identity.ts       # UUID-based reviewer identity (localStorage)
 └── backend/
     ├── app/
@@ -112,9 +136,14 @@ ANNI_CORS_ORIGINS=["http://localhost:3000"]
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | `/ontology-nodes` | List all ontology nodes |
+| POST | `/ontology-nodes` | Add a new ontology node (in-app editing) |
 | GET | `/projects` | List projects |
+| POST | `/projects` | Create a project (multi-project support) |
 | GET | `/sources?project_id=` | List sources for a project |
 | GET | `/sources/{id}/paragraphs` | List paragraphs for a source |
+| POST | `/sources/ingest` | Ingest a source from pasted text (cite + segment) |
+| POST | `/sources/ingest-url` | Ingest a source by fetching a URL |
+| POST | `/sources/ingest-file` | Ingest a source from an uploaded file (PDF/text) |
 | POST | `/read-confirmations` | Record that a reviewer read a source |
 | GET | `/annotations?project_id=` | List annotations with decisions |
 | POST | `/annotations` | Submit annotation (triggers Ollama review) |
@@ -122,8 +151,19 @@ ANNI_CORS_ORIGINS=["http://localhost:3000"]
 | GET | `/annotations/{id}/citation` | Full provenance citation for an annotation |
 | GET | `/annotations/{id}/suggestions` | List AI suggestions for an annotation |
 | POST | `/annotations/{id}/suggestions/{sid}/decide` | Decide on an AI suggestion |
+| GET | `/annotation-stats?project_id=` | Annotation tracker stats (totals, by-trait, IAA inputs) |
+| POST | `/annotation-assist` | Ollama-assisted trait suggestion for the smart highlighter |
 | POST | `/prompt-compilations` | Compile approved annotations into a system prompt |
+| GET | `/prompt-compilations?project_id=` | List compiled synthetic-patient profiles |
+| GET | `/synthetic-lab/config?project_id=` | Lab config (profiles, risk levels, outcome modes) |
+| POST | `/synthetic-lab/message` | Send a turn to the Ollama synthetic patient |
+| POST | `/synthetic-lab/generate-prompt` | Generate a profile prompt + provenance footer + citations |
+| GET | `/scoring-items?project_id=` | Blinded scoring queue |
+| POST | `/scoring-items/from-conversation` | Turn a lab transcript into scoring items |
+| POST | `/scores` | Submit a blind score |
+| GET | `/scoring-results?project_id=` | Aggregated scoring results |
 | GET | `/audit-log` | Tamper-evident audit log (newest first) |
+| GET | `/audit-log/verify` | Recompute the SHA-256 chain and report integrity |
 
 Interactive docs: `http://localhost:8000/docs`
 
@@ -138,10 +178,19 @@ Interactive docs: `http://localhost:8000/docs`
 
 ---
 
-## What's not built yet
+## What's built since the first cut
 
-- Authentication — reviewer identity is currently a UUID stored in localStorage. JWT auth is the next backend sprint.
-- Source import UI — the data model supports full source ingestion with license/allow-list checks, but the UI for importing new sources is not built.
-- Async SQLAlchemy — current DB sessions are synchronous. For multi-user load, migrate to `sqlalchemy.ext.asyncio`.
-- Tests — backend route tests with `pytest` + `httpx.AsyncClient`, frontend with `vitest` + `msw`.
-- Multi-project navigation — the UI is scoped to the demo project. Routing for multiple projects is the next frontend sprint.
+- **Source import UI** — the Lab Reader ingests sources from pasted text, a URL, or an uploaded PDF, with license/allow-list metadata captured on ingest.
+- **Smart highlighter** — an Ollama-assisted annotation assistant suggests traits from a highlighted span; the human still decides.
+- **Annotation tracker + session summary** — the Reader tracks how you annotate and produces an end-of-session summary table (time, counts, traits), then compiles the synthetic-profile prompt.
+- **Synthetic Patient Lab** — an Ollama model role-plays the compiled patient under risk-level and outcome-mode controls; transcripts can be pushed to the scoring queue.
+- **Blind scoring** — a blinded queue scored on safety / accuracy / warmth with team results and source-guess accuracy.
+- **In-app ontology editing** and **multi-project support**.
+- **Provenance surfacing** — compiled prompts carry a provenance footer + per-annotation citations, and `/provenance` verifies the audit chain.
+
+## What's still open
+
+- Authentication — reviewer identity is a UUID in localStorage. JWT auth is the next backend sprint.
+- Async SQLAlchemy — DB sessions are synchronous; migrate to `sqlalchemy.ext.asyncio` for multi-user load.
+- Automated tests — backend route tests with `pytest` + `httpx.AsyncClient`, frontend with `vitest` + `msw`.
+- Deployment — the system is intentionally **local-only** today (privacy). See `research/DEPLOYMENT.md` for the hosting assessment and the Google AI Studio path.

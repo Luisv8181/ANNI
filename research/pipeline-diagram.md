@@ -15,7 +15,8 @@ flowchart TD
     E --> F[Approved, cited annotation<br/>chained-hash audit log]
 
     F --> G[Compile profile<br/>DSM-5 GAD baseline + cited traits]
-    G --> H[Synthetic patient prompt<br/>+ outcome mode + risk level]
+    F --> V[/provenance viewer<br/>recompute + verify chain/]
+    G --> H[Synthetic patient prompt<br/>+ provenance footer + citations<br/>+ outcome mode + risk level]
 
     H --> I[Synthetic Patient Lab<br/>Ollama plays the patient]
     I <-- blinded relay --> J[Responders<br/>Wysa · chatbot · therapist-prompted · counselor-support]
@@ -35,6 +36,7 @@ flowchart TD
     class B,E,D,N,B0 human;
     class SH,I,H,G,SA ai;
     class B gate;
+    class V ai;
 ```
 
 ## The one-line version
@@ -46,3 +48,6 @@ manuscript.** Every trait traces back to a cited quote and a human decision.
 - **Green** = human judgment steps. **Purple** = AI-assisted steps (always human-supervised).
   **Amber** = a gate that blocks progress (license/IRB).
 - The AI *suggests* at annotation and *plays* the synthetic patient; humans decide and humans score.
+- Every approved annotation writes into a chained-hash audit log. The **`/provenance`** page recomputes
+  that chain and shows a verify badge, and every compiled profile ships with a provenance footer plus a
+  per-trait citation report (source, license, sha256, quote, char offsets, reviewer, decisions).

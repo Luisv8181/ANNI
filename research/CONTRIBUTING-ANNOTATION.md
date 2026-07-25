@@ -29,11 +29,15 @@ The friendly, guided flow. No expert UI to learn.
   stay in your browser and don't save to the project.
 
 ### Option 2 — Lab Reader (import + smart highlighter)
-The on-ramp for **real sources**. Open **Lab Reader** (`/reader`) → **Import a source**: paste the text
-with its title/author/URL/license. ANNI cites it, content-hashes it, and formats it into paragraphs.
-Then confirm you read it, **highlight** a phrase, and the **smart highlighter** suggests the most likely
-trait (you confirm or override). A live **"How we annotate"** tracker shows the trait distribution,
-average confidence, decisions, and how often you agree with the AI. Only paste text you're cleared to use.
+The on-ramp for **real sources**. Open **Lab Reader** (`/reader`) → **Import a source**: paste text, **fetch
+a URL**, or **upload a PDF/.txt**, with its title/author/URL/license. ANNI cites it, content-hashes it, and
+formats it into paragraphs. Then confirm you read it, **highlight** a phrase, and the **smart highlighter**
+suggests the most likely trait (an offline heuristic, upgraded to a local Ollama suggestion when a model is
+running — you confirm or override). A live **"How we annotate"** tracker shows the trait distribution,
+average confidence, decisions, and how often you agree with the AI. At the end, the Reader gives you a
+**session summary** (timing + per-annotation log) and **generates the synthetic-profile prompt** — with a
+**provenance footer and a per-trait citation report** you can export as `.md`. Only paste text you're
+cleared to use.
 
 ### Option 3 — Expert workspace
 The full pipeline (read gate, ontology browser, AI suggestions, citation engine, compiled profiles).
@@ -53,15 +57,18 @@ Use this once you're comfortable.
 
 ANNI ships with the trait set we use (hesitation to disclose, indirect communication, healthcare-trust
 barrier, family support, medical-literacy gap, autonomy goal, dignity, learner objective). If the
-study needs new traits (e.g., crisis-specific cues), we add them to the ontology deliberately and
-version them — open an issue or tell Luis; don't invent ad-hoc tags.
+study needs new traits (e.g., crisis-specific cues), add them **in-app on the `/ontology` page** (view
+the grouped traits, add a new one with a group + description) — it's versioned and audited. Do this
+deliberately against the [annotation codebook](annotation-codebook.md); don't invent ad-hoc tags.
 
 ## From annotations → simulated clients
 
 Approved annotations compile into a **behavioral profile** (a constrained system prompt) for a
 synthetic patient. That's the bridge from real testimony to the
 [simulated client](system-prompts/simulated-client.md): the client's persona traits come from
-**cited, approved** annotations, not from thin air.
+**cited, approved** annotations, not from thin air. The compiled prompt carries a **provenance footer**
+and a **per-trait citation report** (source, license, sha256, quote, reviewer, decisions), and the whole
+chain can be re-verified on the **`/provenance`** page — so every trait is auditable back to a real quote.
 
 ## Running ANNI locally (for the app version)
 
