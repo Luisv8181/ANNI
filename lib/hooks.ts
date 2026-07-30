@@ -50,6 +50,14 @@ export function useSources(projectId?: string) {
   });
 }
 
+export function useLibrarySources(projectId?: string) {
+  return useQuery({
+    queryKey: ["library-sources", projectId],
+    queryFn: () => api.getLibrarySources(projectId),
+    staleTime: 30_000,
+  });
+}
+
 export function useParagraphs(sourceId: string) {
   return useQuery({
     queryKey: ["paragraphs", sourceId],

@@ -134,6 +134,13 @@ either way. Log the decision in the meeting log.
 - [x] **Transcript storage** — convention + index in `transcripts/`.
 - [x] **Google Drive** — connector authorized; folder read + START HERE index added.
 
+## Wysa age scope
+
+The initial live Wysa test is **18 years and older only**. Wysa displayed a warning after the under-13
+selection, so under-13 is not approved for this study. The 13–17 condition is deferred until Wysa
+eligibility rules, consent/guardian requirements, research terms, and the team's ethics/IRB process are
+explicitly checked by Heath and the team.
+
 ## Decisions still pending
 
 - [ ] **Responder scope** — all four + counselor-support, or a first subset? (team)
@@ -143,6 +150,10 @@ either way. Log the decision in the meeting log.
 ---
 
 ## Update log
+
+- **2026-07-25** — Wysa age-gate correction: the initial live test will use the **18 years and older**
+  starting point only. Wysa displayed a warning for the under-13 selection, so under-13 is not approved;
+  13–17 is deferred until eligibility, consent, terms, and ethics/IRB review are explicit. — Luis
 
 Add newest at the top: `YYYY-MM-DD — what changed — who`.
 

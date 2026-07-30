@@ -21,6 +21,7 @@ Newest decisions are added at the top of each section. Dates are when a decision
 | D6 | **Turns:** start ~20 back-and-forth; also stress-test **70–75 turns**; multiple sessions per persona across counseling **stages** (beginning/middle/later). | AI safety degrades over longer/multi-turn interactions — that's where failures surface. | Jul 20 |
 | D7 | **Blinding:** the synthetic patient is **not told it's talking to an AI** in the initial phase. | Preserves integrity; knowing-vs-not-knowing is a later-phase comparison. | Jul 20 |
 | D8 | **Secondary dimension:** analyze mental-health chatbots' **privacy policies** and a possible **conflict of interest** (engagement/profit vs. successful outcome). | Raised in the Jul 20 meeting; ties to Polisee / Optimust. | Jul 20 |
+| D9 | **Wysa age boundary for the initial live test:** start with the **18 years and older** account/profile only. Do not create or run the under-13 condition after Wysa displayed a warning for that selection; do not assume the 13–17 condition is eligible without a separate terms/ethics review. | The age-gate warning is a safety/compliance signal. Age-stratified synthetic profiles remain a deferred design option, not an approved Wysa procedure. | Jul 25 |
 
 ## 2. Synthetic patient methodology
 
@@ -87,12 +88,18 @@ Documented per SCRIP guidance (LLMs are **not** authors; all AI output was revie
 
 ## 7. Open decisions
 
+- [ ] Wysa age-stratified runs: confirm whether any 13–17 setup is permitted by Wysa's current terms,
+  consent requirements, and the study's ethics/IRB process. **Under-13 is not approved for Wysa.**
+
 - [ ] Responder scope for phase 1 — all four + counselor-support, or a subset?
 - [ ] Which model(s) + temperature to pin (and log per transcript).
 - [ ] Exact DSM-5 baseline wording in the patient prompt.
 - [ ] Sample sizes (cases per risk level, personas, sessions) → pre-registration.
 
 ## Change log
+- **2026-07-25** — Added D9: the initial live Wysa test is **18+ only** after Wysa displayed a warning
+  for the under-13 selection. The 13–17 and under-13 age-stratified conditions are deferred pending
+  explicit eligibility and ethics review.
 - **2026-07-25** — Added T9 (citation/provenance surfacing + `/provenance` viewer) and T10 (in-app
   ontology editing + multi-project support). Retrofitted the repo docs to reflect every built surface.
 - **2026-07-21** — Created this log; recorded local-only deployment decision + Google AI Studio cloud path.

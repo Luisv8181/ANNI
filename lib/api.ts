@@ -36,9 +36,25 @@ export type Source = {
   author: string | null;
   publication: string | null;
   canonical_url: string | null;
+  doi?: string | null;
+  pmcid?: string | null;
+  pubmed_id?: string | null;
+  publication_year?: number | null;
+  abstract?: string | null;
+  source_type?: string;
+  license_notes?: string | null;
   license_status: string;
   allow_list_status: string;
   version: string;
+};
+
+export type LibrarySource = Source & {
+  paragraph_count: number;
+  annotation_count: number;
+  approved_annotation_count: number;
+  compiled_profile_count: number;
+  audit_event_count: number;
+  provenance_hash: string | null;
 };
 
 export type Paragraph = {
@@ -204,6 +220,9 @@ export const api = {
   // Sources
   getSources: (projectId?: string) =>
     request<Source[]>(`/sources${projectId ? `?project_id=${projectId}` : ""}`),
+
+  getLibrarySources: (projectId?: string) =>
+    request<LibrarySource[]>(`/library/sources${projectId ? `?project_id=${projectId}` : ""}`),
 
   getParagraphs: (sourceId: string) =>
     request<Paragraph[]>(`/sources/${sourceId}/paragraphs`),

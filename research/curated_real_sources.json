@@ -1,0 +1,514 @@
+[
+  {
+    "id": "SRC-PMC13154385",
+    "title": "Sleepless hours: the lived experience of chronic insomnia and anxiety across the US care spectrum",
+    "author": "Haapala N, Allvin H, Riaz S.",
+    "publication": "Frontiers in public health",
+    "canonical_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13154385/",
+    "doi": "10.3389/fpubh.2026.1797563",
+    "pmcid": "PMC13154385",
+    "pubmed_id": "42110248",
+    "publication_year": 2026,
+    "abstract": "BackgroundChronic insomnia is a prevalent condition associated with significant psychosocial and economic burden. When comorbid with Generalized Anxiety Disorder (GAD), symptom severity is intensified resulting in treatment pathways becoming more complex. Despite the impact, insomnia is often normalized, under recognized as a medical condition, and managed through fragmented care systems.MethodsA mixed-methods study was conducted in the United States to explore the patient journey of chronic insomnia with and without comorbid GAD. Qualitative insights were generated through 29 semi-structured online interviews with patients (n = 16), family members (n = 5), and healthcare professionals (n = 8), supported by secondary data review. Quantitative symptom data were collected using the Insomnia Severity Index (ISI) and Generalized Anxiety Disorder-7 (GAD-7) questionnaires to characterize the sample. A structured three step approach was applied: data immersion, qualitative research, and thematic analysis.ResultsFindings revealed substantial delays in help seeking and diagnosis, often spanning years or decades, driven by symptom normalization, stigma, and reliance on self-management remedies. Diagnosis was experienced as a moment of relief and validation, though expectations were frequently unmet due to brief consultations, limited information, and reliance on over-the-counter (OTC) options. Treatment was characterized by trial-and-error approaches, with healthcare professionals (HCP",
+    "source_type": "qualitative_testimony",
+    "license_notes": "CC-BY Open Access via PubMed Central (PMC13154385). Verify individual article license before redistribution.",
+    "license_status": "CC-BY (verify)",
+    "allow_list_status": "pending",
+    "version": "1",
+    "paragraphs": [
+      {
+        "id": "p-pmc13154385-1",
+        "order_index": 1,
+        "text": "Chronic insomnia is a prevalent condition associated with significant psychosocial and economic burden. When comorbid with Generalized Anxiety Disorder (GAD), symptom severity is intensified resulting in treatment pathways becoming more complex. Despite the impact, insomnia is often normalized, under recognized as a medical condition, and managed through fragmented care systems."
+      },
+      {
+        "id": "p-pmc13154385-2",
+        "order_index": 2,
+        "text": "A mixed-methods study was conducted in the United States to explore the patient journey of chronic insomnia with and without comorbid GAD. Qualitative insights were generated through 29 semi-structured online interviews with patients (n = 16), family members (n = 5), and healthcare professionals (n = 8), supported by secondary data review. Quantitative symptom data were collected using the Insomnia Severity Index (ISI) and Generalized Anxiety Disorder-7 (GAD-7) questionnaires to characterize the sample. A structured three step approach was applied: data immersion, qualitative research, and thematic analysis."
+      },
+      {
+        "id": "p-pmc13154385-3",
+        "order_index": 3,
+        "text": "Findings revealed substantial delays in help seeking and diagnosis, often spanning years or decades, driven by symptom normalization, stigma, and reliance on self-management remedies. Diagnosis was experienced as a moment of relief and validation, though expectations were frequently unmet due to brief consultations, limited information, and reliance on over-the-counter (OTC) options. Treatment was characterized by trial-and-error approaches, with healthcare professionals (HCP) acknowledging an overreliance on pharmacological interventions and systemic barriers to the implementation of cognitive behavioral therapy for insomnia (CBT-I). Ongoing management highlighted adaptation to insomnia as a chronic condition, emotional strain on families, and fragmented care across mental health and sleep services. Across all groups, the comorbidity of insomnia and GAD was recognized as exacerbating symptom severity and complicating management."
+      },
+      {
+        "id": "p-pmc13154385-4",
+        "order_index": 4,
+        "text": "This study uniquely captures the lived experience of chronic insomnia and comorbid GAD from the perspectives of patients, family members, and healthcare professionals across the US care spectrum. The findings underscore unmet psychological needs, systemic barriers to nonpharmacological interventions, and the absence of integrated, patient centered care models. Addressing these gaps requires improved recognition of insomnia as a medical condition, expansion of access to CBTI, and inclusion of family perspectives in long term management strategies."
+      },
+      {
+        "id": "p-pmc13154385-5",
+        "order_index": 5,
+        "text": "Keywords: anxiety, chronic insomnia, generalized anxiety disorder, patient journey, qualitative interviews"
+      },
+      {
+        "id": "p-pmc13154385-6",
+        "order_index": 6,
+        "text": "Sleep is a fundamental biological process essential for physical health, emotional regulation, and cognitive functioning. Yet, despite its centrality to wellbeing, insomnia remains one of the most prevalent and burdensome sleep disorders worldwide. This paper reports findings from a qualitative patient journey study conducted in the United States, exploring the lived experience of adults with chronic insomnia, with and without comorbid Generalized Anxiety Disorder (GAD). The US context is particularly salient with inconsistent, predominantly insurance-based US healthcare system creating distinctive barriers to diagnosis and access to evidence-based care, including limited coverage for psychological therapies such as CBT-I, high out-of-pocket costs, and variable availability of specialist services across states. These structural features shape the care pathways of people with insomnia in ways that may differ meaningfully from universal healthcare systems studied elsewhere."
+      },
+      {
+        "id": "p-pmc13154385-7",
+        "order_index": 7,
+        "text": "Despite its widespread prevalence, with approximately 30% of adults reporting at least one symptom of insomnia and 6%−10% of the global population experiencing chronic insomnia, the condition is often misunderstood, under-recognized and insufficiently treated (1, 4, 5). The psychosocial burden of insomnia is substantial, with patients frequently delaying help-seeking due to stigma and a belief that insomnia reflects personal weakness, leading to years of self-management attempts and emotional distress (6)."
+      },
+      {
+        "id": "p-pmc13154385-8",
+        "order_index": 8,
+        "text": "According to both the DSM-5 and the ICSD-3, chronic insomnia is defined as dissatisfaction with sleep quantity or quality (difficulty initiating or maintaining sleep, or early-morning awakening). This results in clinically significant distress or functional impairment, occurring at least three times per week for a duration of at least 3 months (7, 8). It is important to distinguish this from sleep dissatisfaction arising from insufficient opportunity to sleep, which may occur in the context of demanding employment schedules or caregiving responsibilities; insomnia, by definition, occurs in the context of adequate sleep opportunity. In addition, hyperarousal, a state of heightened physiological, cognitive, and emotional activation, is recognized as an important factor underlying insomnia (9). It can manifest as prolonged sleep onset latency, extended periods of wakefulness during the night, and early morning awakening, and is not limited to difficulties falling asleep alone (9, 10)."
+      }
+    ]
+  },
+  {
+    "id": "SRC-PMC12118939",
+    "title": "Co-Designed Online Training Program for Worry Management: The Role of Young People With Lived Experience of Worry in Program Development",
+    "author": "Steward J, Moulds ML, Hirsch CR.",
+    "publication": "JMIR formative research",
+    "canonical_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12118939/",
+    "doi": "10.2196/66461",
+    "pmcid": "PMC12118939",
+    "pubmed_id": "40397821",
+    "publication_year": 2025,
+    "abstract": "BackgroundMany young people report high levels of worry, highlighting the need for interventions that teach strategies to help them shift focus away from worry. To maximize uptake by this population, interventions should be brief and accessible; to maximize dissemination, they should have potential for delivery at scale. We produced a multisession, online training program, Shift Focus, co-designed with young people with lived experience of worry. The online training program was accessed via a mobile app. In this paper, we describe how Lived Experience Advisory Panel (LEAP) members were involved in each stage of the process of developing the Shift Focus online training program, from refining session content through to designing and testing the online training program prototype.ObjectiveWe aimed to engage with young people with lived experience of worry, to help refine, further develop, and tailor a new online training program designed to help shift focus away from worry.MethodsWe recruited LEAP members (aged 16-25 y) with lived experience of worry from diverse backgrounds across the United Kingdom. We used a highly iterative participatory design process, such that LEAP members provided input during all 4 phases of program development: refining and further developing session content, piloting sessions, developing user experience design, and testing the online training program prototype.ResultsFeedback from LEAP members during each phase of the online platform development inform",
+    "source_type": "qualitative_testimony",
+    "license_notes": "CC-BY Open Access via PubMed Central (PMC12118939). Verify individual article license before redistribution.",
+    "license_status": "CC-BY (verify)",
+    "allow_list_status": "pending",
+    "version": "1",
+    "paragraphs": [
+      {
+        "id": "p-pmc12118939-1",
+        "order_index": 1,
+        "text": "Many young people report high levels of worry, highlighting the need for interventions that teach strategies to help them shift focus away from worry. To maximize uptake by this population, interventions should be brief and accessible; to maximize dissemination, they should have potential for delivery at scale. We produced a multisession, online training program, Shift Focus, co-designed with young people with lived experience of worry. The online training program was accessed via a mobile app. In this paper, we describe how Lived Experience Advisory Panel (LEAP) members were involved in each stage of the process of developing the Shift Focus online training program, from refining session content through to designing and testing the online training program prototype."
+      },
+      {
+        "id": "p-pmc12118939-2",
+        "order_index": 2,
+        "text": "We aimed to engage with young people with lived experience of worry, to help refine, further develop, and tailor a new online training program designed to help shift focus away from worry."
+      },
+      {
+        "id": "p-pmc12118939-3",
+        "order_index": 3,
+        "text": "We recruited LEAP members (aged 16‐25 y) with lived experience of worry from diverse backgrounds across the United Kingdom. We used a highly iterative participatory design process, such that LEAP members provided input during all 4 phases of program development: refining and further developing session content, piloting sessions, developing user experience design, and testing the online training program prototype."
+      },
+      {
+        "id": "p-pmc12118939-4",
+        "order_index": 4,
+        "text": "Feedback from LEAP members during each phase of the online platform development informed key decisions regarding the platform content, functionality, and the interface design to ensure it suited our target population. In phase 1, we learned that the platform needed to be simple and aesthetically pleasing, personalized to individual needs and preferences, accessible to all, track progress, and provide individuals with a sense of community with others with similar lived experiences. In phase 2, we learned that the platform also needed to provide further guidance on how to apply the Shift Focus techniques to daily life, using personalized reminder settings. In phase 3, we additionally learned that ease of navigation and interactivity were key to maintaining user engagement. The importance of program tracking was reiterated, as well as the need for accessibility settings to support all learning styles. In phase 4, we identified that technical problems with the online platform were a barrier to engagement. The inclusion of future iterations (eg, reward systems) to help promote engagement was suggested by LEAP members in multiple phases."
+      },
+      {
+        "id": "p-pmc12118939-5",
+        "order_index": 5,
+        "text": "LEAP members brought unique expertise and made key contributions to the development of the Shift Focus online training program and were highly valued members of the team. A highly iterative participatory design process enabled continuous feedback from LEAP members throughout, ensuring that their input was meaningful and that their key messages and ideas were incorporated into the final program."
+      },
+      {
+        "id": "p-pmc12118939-6",
+        "order_index": 6,
+        "text": "Many young people experience high levels of uncontrollable worry [1], which can lead to great distress and be linked to psychological disorders such as generalized anxiety disorder (GAD). GAD is characterized by excessive and uncontrollable worries about everyday events or activities that are out of proportion to the inherent risk [2]. Uncontrollable worry takes up limited capacity resources, and such resources are needed for individuals to shift their focus from worry to other tasks or streams of thinking [3]. Given this, high worriers may benefit from cognitive techniques designed to shift attention away from worry."
+      },
+      {
+        "id": "p-pmc12118939-7",
+        "order_index": 7,
+        "text": "Experimental studies provide preliminary support for this possibility. Eagleson et al [4] trained individuals presenting with GAD to shift focus away from worry by thinking about positive outcomes of their worries in either imagery or verbal based form, while participants in the control group were trained to shift focus away from worry by generating an unrelated positive image which was not associated with their worries. Participants practiced their designated technique for 1 week. In all 3 conditions, participants reported fewer negative intrusive thoughts and lower scores on self-reported measures of worry and anxiety at follow-up. Given this, although originally conceived as a control condition, generating an unrelated positive image appeared to be helpful for adults presenting with worry. Sawjani et al [5] extended this study and demonstrated that high worriers could be trained (in a single session) to generate an unrelated positive image to stop worry in the short term."
+      },
+      {
+        "id": "p-pmc12118939-8",
+        "order_index": 8,
+        "text": "Given that worry is a difficulty experienced by many young people, we built on and extended the single session training developed by Sawjani et al [5] to develop a multisession online training program (Shift Focus), specifically tailored for young people with high levels of worry. Shift Focus is comprised of 8 brief sessions, which include psychoeducation about worry, guided imagery exercises, and within-session exercises practicing shifting focus away from worry and teaching ways to apply the skills in daily life."
+      }
+    ]
+  },
+  {
+    "id": "SRC-PMC10075395",
+    "title": "Accessing mental health services for a child living with anxiety: Parents' lived experience and recommendations",
+    "author": "Woodgate RL, Gonzalez M, Tennent P.",
+    "publication": "PloS one",
+    "canonical_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10075395/",
+    "doi": "10.1371/journal.pone.0283518",
+    "pmcid": "PMC10075395",
+    "pubmed_id": "37018182",
+    "publication_year": 2023,
+    "abstract": "BackgroundLittle research attention has been given to understanding the lived experience of parents who access mental health services in the context of child anxiety disorders. This paper reports on findings specific to parents' lived experience of accessing services for their child living with anxiety and the recommendations they provided for improving access.MethodsWe used the qualitative research approach of hermeneutic phenomenology. The sample included 54 Canadian parents of youth living with an anxiety disorder. Parents took part in one semi-structured and one open-ended interview. We used a 4 staged data analysis process informed by van Manen's approach and Levesque and colleagues' framework of access to healthcare.ResultsThe majority of parents reported being female (85%), white (74%), and single parents (39%). Parents' ability to seek and obtain services was affected by not knowing when or where to access services, having to learn to navigate the system, limited availability of services, lack of timely services and interim supports, limited financial resources, and clinicians' dismissal of parental concerns and knowledge. Provider (ability to listen), parent (willingness to participate in therapy), child (same race/ethnicity as provider), and service characteristics (cultural sensitivity) influenced whether parents perceived services as approachable, acceptable, and appropriate. Parents' recommendations focused on: (1) improving the availability, timeliness, and coor",
+    "source_type": "qualitative_testimony",
+    "license_notes": "CC-BY Open Access via PubMed Central (PMC10075395). Verify individual article license before redistribution.",
+    "license_status": "CC-BY (verify)",
+    "allow_list_status": "pending",
+    "version": "1",
+    "paragraphs": [
+      {
+        "id": "p-pmc10075395-1",
+        "order_index": 1,
+        "text": "Little research attention has been given to understanding the lived experience of parents who access mental health services in the context of child anxiety disorders. This paper reports on findings specific to parents’ lived experience of accessing services for their child living with anxiety and the recommendations they provided for improving access."
+      },
+      {
+        "id": "p-pmc10075395-2",
+        "order_index": 2,
+        "text": "We used the qualitative research approach of hermeneutic phenomenology. The sample included 54 Canadian parents of youth living with an anxiety disorder. Parents took part in one semi-structured and one open-ended interview. We used a 4 staged data analysis process informed by van Manen’s approach and Levesque and colleagues’ framework of access to healthcare."
+      },
+      {
+        "id": "p-pmc10075395-3",
+        "order_index": 3,
+        "text": "The majority of parents reported being female (85%), white (74%), and single parents (39%). Parents’ ability to seek and obtain services was affected by not knowing when or where to access services, having to learn to navigate the system, limited availability of services, lack of timely services and interim supports, limited financial resources, and clinicians’ dismissal of parental concerns and knowledge. Provider (ability to listen), parent (willingness to participate in therapy), child (same race/ethnicity as provider), and service characteristics (cultural sensitivity) influenced whether parents perceived services as approachable, acceptable, and appropriate. Parents’ recommendations focused on: (1) improving the availability, timeliness, and coordination of services, (2) providing supports for parents and the child to facilitate obtaining care (education, interim supports), (3) improving communication with and among healthcare professionals, (4) the need to recognize parents’ experience-based knowledge, and (5) encouraging parents to take care of themselves and advocate for their child."
+      },
+      {
+        "id": "p-pmc10075395-4",
+        "order_index": 4,
+        "text": "Our findings point to possible avenues (parents’ ability, service characteristics) that can be targeted to improve service access. As experts on their situation, parents’ recommendations highlight priority needs of relevance to health care professionals and policymakers."
+      },
+      {
+        "id": "p-pmc10075395-5",
+        "order_index": 5,
+        "text": "Anxiety disorders differ from the fear and anxiety children and youth experience as part of normative emotional development and are characterized by exaggerated symptoms about real or perceived threats that last persistently over a prolonged period of time and often lead to physical symptoms, altered behaviour, and interference with daily activities [1]. The Diagnostic and Statistical Manual of Mental Disorders, Fifth Edition (DSM-5) classifies anxiety disorders as Separation Anxiety Disorder, Selective Mutism, Social Anxiety Disorder, Panic Disorder, Agoraphobia, Specific Phobias, and Generalized Anxiety Disorder [1]. Anxiety disorders are the most common psychiatric disorders in children and adolescents with a global prevalence rate of 6.5% [2]. In Canada, the incidence of anxiety disorders is increasing with professionally diagnosed anxiety in youth 12 to 24 years old doubling from 6.0% in 2011 to 12.9% in 2018 [3]. The age of onset of anxiety disorders is childhood and if left untreated, these disorders often persist into adulthood [4, 5]. Comorbidity between anxiety disorders and other psychiatric disorders is common [6, 7] and related impairment can adversely affect various domains of health and well-being (e.g., psychosocial difficulties, more severe forms of mental illness) as well as future life outcomes (e.g., vocational, family functioning) [8–10]. While it is widely recognized that early access to effective mental health treatment is key to mitigating the disease burden over the long term, only 1 in 5 Canadian youth who needs mental health services receives them [11]. Youth experiencing mental health problems lack the means to access services alone and often turn to family and friends for help [12–14]. Thus, parents play a critical role in accessing mental health services for their child [15–17]."
+      },
+      {
+        "id": "p-pmc10075395-6",
+        "order_index": 6,
+        "text": "Healthcare access is a complex concept that has been conceptualized differently across studies, placing responsibility of access on users, health services, providers, or a combination of these [18–25]. Similarly, numerous frameworks of healthcare access have been proposed [26–29]. However, one of the most comprehensive and recent is Levesque’s Conceptual Framework of Healthcare Access"
+      },
+      {
+        "id": "p-pmc10075395-7",
+        "order_index": 7,
+        "text": "[26]. According to this framework, access is the opportunity to reach and obtain appropriate healthcare services in situations of perceived need for care [26]. The framework: (1) highlights the influential role of both user and healthcare service characteristics, (2) considers the process of seeking and receiving care, and (3) posits that access is influenced by five dimensions of accessibility of services (approachability, acceptability, availability and accommodation, affordability, and appropriateness), five dimensions of ability of users (ability to perceive, seek, reach, pay, and engage in healthcare), and the interaction of these dimensions [26]."
+      },
+      {
+        "id": "p-pmc10075395-8",
+        "order_index": 8,
+        "text": "A large body of evidence has documented the barriers parents face when accessing mental health services for their child [30–36]. However, these studies have not focused on childhood anxiety specifically or have been non-specific in terms of mental health diagnosis. Although documenting whether parents report different barriers when accessing services across mental health conditions is critical for informing tailored approaches to improving service access and facilitating early identification and intervention [30], less research attention has been given to studying access in the context of child anxiety disorders [37–42]. Indeed, few quantitative and qualitative studies have focused on examining barriers parents face when accessing services for a child living with anxiety [37–39]. These studies have documented both tangible (e.g., costs; lack of knowledge on how/where to access services, difficulty identifying the child’s symptoms as anxiety) [38–43] and intangible barriers (e.g., stigma, anticipating professionals would dismiss concerns, limited service provision [38–41, 43]. Further, only a handful of qualitative studies have examined parents’ experience of accessing services for their child living with an anxiety disorder [12, 41, 42, 44,45]."
+      }
+    ]
+  },
+  {
+    "id": "SRC-PMC10129986",
+    "title": "A Systematic Review and Lived Experience Synthesis of Self-disclosure as an Active Ingredient in Interventions for Adolescents and Young Adults with Anxiety and Depression",
+    "author": "Gonsalves PP, Nair R, Roy M, Pal S, Michelson D.",
+    "publication": "Administration and policy in mental health",
+    "canonical_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10129986/",
+    "doi": "10.1007/s10488-023-01253-2",
+    "pmcid": "PMC10129986",
+    "pubmed_id": "36738384",
+    "publication_year": 2023,
+    "abstract": "Self-disclosure, referring to the ability to communicate and share intimate personal feelings, has strong face validity for many young people as a way of improving anxiety and depression outcomes. The current review aimed to generate the first comprehensive evidence synthesis of self-disclosure interventions involving young people aged 14-24 years who are either disclosers or recipients of personal information about living with anxiety and/or depression. A systematic review of quantitative and qualitative data was combined with new insights from an adolescents and young adults lived-experience panel (n = 7) with the intention to combine rigorous systematic review methods and experiential knowledge. Six studies of variable quality were included in this review, five were quantitative and one was qualitative. Findings suggest that self-disclosure may be effective at reducing symptoms for adolescents and young adults with established depression; effects were not apparent when delivered as early prevention. No evidence for impacts on anxiety was found. The potential for negative effects like bullying or harassment was identified. Findings were limited by a small number of studies; low representation of peer-reviewed studies from low-or middle-income countries; and varied interventions in terms of format, participants' context, and nature of delivery. Self-disclosure may be of value in the context of interventions intended explicitly to reduce depression for those already showing s",
+    "source_type": "qualitative_testimony",
+    "license_notes": "CC-BY Open Access via PubMed Central (PMC10129986). Verify individual article license before redistribution.",
+    "license_status": "CC-BY (verify)",
+    "allow_list_status": "pending",
+    "version": "1",
+    "paragraphs": [
+      {
+        "id": "p-pmc10129986-1",
+        "order_index": 1,
+        "text": "Self-disclosure, referring to the ability to communicate and share intimate personal feelings, has strong face validity for many young people as a way of improving anxiety and depression outcomes. The current review aimed to generate the first comprehensive evidence synthesis of self-disclosure interventions involving young people aged 14–24 years who are either disclosers or recipients of personal information about living with anxiety and/or depression. A systematic review of quantitative and qualitative data was combined with new insights from an adolescents and young adults lived-experience panel (n = 7) with the intention to combine rigorous systematic review methods and experiential knowledge. Six studies of variable quality were included in this review, five were quantitative and one was qualitative. Findings suggest that self-disclosure may be effective at reducing symptoms for adolescents and young adults with established depression; effects were not apparent when delivered as early prevention. No evidence for impacts on anxiety was found. The potential for negative effects like bullying or harassment was identified. Findings were limited by a small number of studies; low representation of peer-reviewed studies from low-or middle-income countries; and varied interventions in terms of format, participants' context, and nature of delivery. Self-disclosure may be of value in the context of interventions intended explicitly to reduce depression for those already showing symptoms. Delivery by non-specialists (such as peers and teachers) in addition to mental health professionals can help build capacity in community health systems. Self-disclosure may also be helpful at reducing stigma and stimulating help-seeking at earlier stages of mental health problems."
+      },
+      {
+        "id": "p-pmc10129986-2",
+        "order_index": 2,
+        "text": "Anxiety and depression are the most prevalent mental health problems globally and affect one in five people, with peak onset occurring during adolescence and early adulthood (WHO), W.H.O. 2021; Solmi, 2021). Symptoms frequently co-occur, including mixed subsyndromal presentations that are common in the early stages of illness. Early interventions are key to improving long-term prognosis and mitigating potential negative impacts on interpersonal relationships, academic achievement, and future employment (Davey &amp; McGorry, 2019; Salazar de Pablo, et al., 2021). Yet despite evidence for effective psychosocial interventions, most young people with anxiety or depression do not receive appropriate help, particularly in low-and middle-income countries which contain 90% of the world’s population aged under 25 years (Li et al., 2018; Patel et al., 2013; Yatham et al., 2018). Aside from well documented supply side barriers (i.e., due to human resource shortages), stigma continues to be a powerful demand-side barrier to mental health care (Radez et al., 2021; Scior et al., 2020). Even in high-income settings, mental health services are often over stretched or fragmented, meaning young people cannot access formal support and a growing number ‘fall between the gaps’ (Fusar-Poli et al., 2021)."
+      },
+      {
+        "id": "p-pmc10129986-3",
+        "order_index": 3,
+        "text": "Fundamental changes are required in service organisation and delivery to enhance capacity and align interventions with young people’s key concerns (Fusar-Poli et al., 2021; Gulliver et al., 2010; Persson et al., 2017). Looking beyond conventional therapist-led practice elements (i.e., discrete components of active preventive or therapeutic interventions), self-disclosure has strong face validity for many young people as a way of improving anxiety and depression outcomes (Kahn &amp; Garrison, 2009; Kahn &amp; Hessling, 2001). Referring to the ability to communicate and share intimate personal feelings (Cozby, 1973; Jourard &amp; Lasakow, 1958), self-disclosure is conducted increasingly through online social networking in addition to ‘offline’ behaviours (Luo &amp; Hancock, 2020; Vijayakumar &amp; Pfeifer, 2020). It can take the form of verbal or written emotional expression whereby emotional experiences are articulated into words and communicated to others via written or spoken channels (Berry et al., 1998)."
+      },
+      {
+        "id": "p-pmc10129986-4",
+        "order_index": 4,
+        "text": "Ng et al., 2016 found that talking with supportive peers and family members was ranked second out of 20 evidence-based practice elements by depressed adolescents in terms of its perceived effectiveness and congruence with habitual coping strategies (i.e., fit with coping strategies that young people enact spontaneously). Other research shows that young people seek help through talking to their family and friends and may be more inclined to seek professional help if they feel able to express their feelings (Rickwood et al., 2007)."
+      },
+      {
+        "id": "p-pmc10129986-5",
+        "order_index": 5,
+        "text": "Several studies have documented the proximal impacts, including both benefits and potential harms, of young people ‘coming out’ or disclosing personal experiences of mental health problems. Positive impacts for the ‘disclosers’ include reduced self-stigma (Corrigan, 2012; Corrigan et al., 2016; Goodwin et al., 2021), improved quality of life and personal empowerment (Corrigan &amp; Shapiro, 2010), and enhanced social support (Bos et al., 2009)."
+      },
+      {
+        "id": "p-pmc10129986-6",
+        "order_index": 6,
+        "text": "Potential harms of disclosure such as labelling and discrimination have additionally been documented (Greene et al., 2006; Pachankis, 2007), as well as individual variation in the extent to which some young people use self-disclosure habitually to manage their symptoms (Ng et al., 2016)."
+      },
+      {
+        "id": "p-pmc10129986-7",
+        "order_index": 7,
+        "text": "The effects of self-disclosure can also be understood from the perspective of young people who receive personally disclosed information from others, as occurs in social contact-based interventions (i.e., those involving interpersonal contact with individuals from stigmatised groups). Such interventions may be effective at reducing stigma and promoting help-seeking among ‘recipients’ (Corrigan, 2012; Thornicroft et al., 2016; Yanos et al., 2015). A common feature described in these interventions is a discloser with lived experience who describes pathways to attaining life goals while coping with mental health-related challenges (Corrigan et al., 2014, 2016). This may be accompanied by autobiographical information intended to disconfirm stereotypes, highlight adaptive coping strategies, and convey messages of recovery and hope for the recipients (Reinke, et al., 2004)."
+      },
+      {
+        "id": "p-pmc10129986-8",
+        "order_index": 8,
+        "text": "Distal impacts of self-disclosure on common mental health problems for adolescents and young adults have been less commonly studied and there is no published systematic review of relevant interventions. Thus, the current review aimed to generate the first comprehensive evidence synthesis of self-disclosure interventions involving young people aged 14–24 years who are either disclosers or recipients of personal information about living with anxiety and/or depression. We intended to create an inclusive synthesis involving published peer-reviewed research using any quantitative, qualitative, or mixed methodology. We also involved an adolescents and young adults lived experience advisory group in the process of evidence synthesis, with the intention to combine rigorous systematic review methods and experiential knowledge (Oliver et al., 2015; Sellars et al., 2021) in answering the following research questions:What is the evidence for the benefits and potential harms of self-disclosure in interventions aimed at preventing, treating, or managing anxiety and depression among 14–24 years-olds?"
+      }
+    ]
+  },
+  {
+    "id": "SRC-PMC13155605",
+    "title": "Symptom presentation, perceived causes, and help-seeking practices among adults receiving depression or anxiety care in Nepal: A qualitative study",
+    "author": "Luitel NP, Pudasaini K, Lamichhane B, Gautam K, Jordans MJD.",
+    "publication": "PloS one",
+    "canonical_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13155605/",
+    "doi": "10.1371/journal.pone.0347605",
+    "pmcid": "PMC13155605",
+    "pubmed_id": "42101982",
+    "publication_year": 2026,
+    "abstract": "Depression and anxiety are prevalent worldwide, yet fewer than 20% of individuals in low- and middle-income countries receive appropriate care. Cultural norms play a significant role in how symptoms are expressed and how individuals seek help. In Nepal, traditional healers are often preferred over mental health specialists. This qualitative study explored how symptom presentation and perceived causes impact treatment-seeking behaviour among adults receiving care for depression or anxiety. Twenty-four participants (13 with depression, 9 with anxiety, and 2 with both conditions) were recruited from Jhapa, Chitwan, and Kailali districts through primary healthcare providers, psychosocial counselors, and mental health specialists. Individual interviews were conducted using the adapted McGill Illness Narrative Interview (MINI) to explore symptom experiences, illness narratives, perceived causes, and help-seeking patterns. Thematic analysis of the data was done using NVIVO software. Participants reported a range of emotional, cognitive, and physical symptoms including fear, anxiety, restlessness, irritability, sadness, and hopelessness. Somatic complaints like headaches, fatigue, and gastrointestinal issues were often interpreted as consequences of psychological stress. Some participants described dissociative experiences, such as detachment, amnesia, or perceptual distortions, leading to panic or self-harm. Stressors mentioned included financial hardships, bereavement, family confl",
+    "source_type": "qualitative_testimony",
+    "license_notes": "CC-BY Open Access via PubMed Central (PMC13155605)",
+    "license_status": "CC-BY (verify)",
+    "allow_list_status": "pending",
+    "version": "1",
+    "paragraphs": [
+      {
+        "id": "p-pmc13155605-1",
+        "order_index": 1,
+        "text": "Depression and anxiety are prevalent worldwide, yet fewer than 20% of individuals in low- and middle-income countries receive appropriate care. Cultural norms play a significant role in how symptoms are expressed and how individuals seek help. In Nepal, traditional healers are often preferred over mental health specialists. This qualitative study explored how symptom presentation and perceived causes impact treatment-seeking behaviour among adults receiving care for depression or anxiety. Twenty-four participants (13 with depression, 9 with anxiety, and 2 with both conditions) were recruited from Jhapa, Chitwan, and Kailali districts through primary healthcare providers, psychosocial counselors, and mental health specialists. Individual interviews were conducted using the adapted McGill Illness Narrative Interview (MINI) to explore symptom experiences, illness narratives, perceived causes, and help-seeking patterns. Thematic analysis of the data was done using NVIVO software. Participants reported a range of emotional, cognitive, and physical symptoms including fear, anxiety, restlessness, irritability, sadness, and hopelessness. Somatic complaints like headaches, fatigue, and gastrointestinal issues were often interpreted as consequences of psychological stress. Some participants described dissociative experiences, such as detachment, amnesia, or perceptual distortions, leading to panic or self-harm. Stressors mentioned included financial hardships, bereavement, family conflicts, trauma, and culturally ingrained fears. Most participants initially sought help from biomedical providers like private clinics, hospitals, health centers, or health camps with some also consulting traditional healers. Education and caste played a significant role in treatment choices, with individuals with higher education and from higher castes more likely to seek biomedical care first. Gender and age had minimal impact. The study underscores the importance of culturally sensitive, community-based mental health programs to reduce stigma and ensure equitable access to care for depression and anxiety in Nepal."
+      },
+      {
+        "id": "p-pmc13155605-2",
+        "order_index": 2,
+        "text": "Depression and anxiety are prevalent mental health conditions globally, affecting more than 322 million [1], and 374 million individuals [2], respectively. Factors such as low education levels, poor health, chronic stress, low self-esteem, unemployment, poverty, social isolation, and adverse life events increase the risk of depression and anxiety [3–6]. These conditions have a significant impact on individuals, families, and communities, affecting their quality of life [7,8]. Effective treatments are available through a task-sharing approach in the community [9,10], but individuals with depression or anxiety often do not seek help and may try to manage the condition on their own. In low- and middle-income countries (LMICs), less than 20% of those affected receive treatment, and of those who do, only 2 in 5 receive minimally adequate treatment [11,12]. Timely and appropriate treatment of these conditions can reduce the health burden and improve public health outcomes [13,14]. Challenges persist in detecting and addressing these conditions when integrating mental health services into primary health systems in LMICs, with fewer than one in ten individuals being accurately diagnosed by primary healthcare providers [15]."
+      },
+      {
+        "id": "p-pmc13155605-3",
+        "order_index": 3,
+        "text": "Symptom expression and cultural influences play a significant role in seeking help for depression or anxiety. Cultural norms determine what symptoms are perceived as “normal” or “abnormal,” how they are expressed, and the type of support systems deemed suitable [16]. For instance, individuals with depression or anxiety often manifest their suffering through physical complaints such as headaches, chest tightness, or numbness, attributing the cause to failures in meeting social obligations, gender roles, and spiritual imbalances [17]. Stigma associated with mental illness is influenced by cultural beliefs, attitudes, and values, varying across cultures. In Nepal, the term “heart-mind” problem is socially accepted, while the term “brain-mind” is highly stigmatized [18]. Some cultures prioritize physical symptoms like headaches or stomach aches as signs of distress, while others emphasize emotional symptoms such as sadness or anxiety [19,20]. Research indicates that men are often more hesitant to seek help for mental health issues than women [21], contributing to higher suicide rates among men [22,23]. Understanding these cultural differences is crucial for creating accurate diagnostic and treatment guidelines for depression and anxiety."
+      },
+      {
+        "id": "p-pmc13155605-4",
+        "order_index": 4,
+        "text": "Research in Nepal on help-seeking behavior for mental health care is limited, but existing studies reveal a complex pattern involving various providers, including traditional healers and mental health specialists [24–26]. Only 17% of individuals with mental health conditions seek help directly from mental health specialists, while 28.2% seek assistance from traditional or religious faith healers [24,26]. There is a lack of research on how perceived causes and symptom presentation impact access to and continuation of treatment. To address this gap, we conducted a qualitative study with individuals currently undergoing treatment for depression or anxiety from healthcare professionals. The study aimed to explore how types of symptoms experienced and perceived causes of illness affect help-seeking practices."
+      },
+      {
+        "id": "p-pmc13155605-5",
+        "order_index": 5,
+        "text": "The study took place in Nepal, a country in South Asia with a population of 29.1 million. Nepal has a federal government system comprising 7 provinces and 77 districts. The study focused on Jhapa, Chitwan, and Kailali districts, which are known for their diverse populations and access to mental health services. Nepal’s healthcare system includes public, private, and NGO sectors, with a limited number of mental health professionals. Traditional healers continue to play a significant role, particularly in rural areas. While mental health services are more concentrated in urban areas, these districts have primary healthcare providers trained in World Health Organization’s mental health gap action program intervention guide (mhGAP-IG) along with some resources for mental health care."
+      },
+      {
+        "id": "p-pmc13155605-6",
+        "order_index": 6,
+        "text": "The study used a qualitative design to explore participants’ perspectives on the causes of depression or anxiety, how symptoms manifest, and the factors influencing seeking help from different providers. Qualitative research allows for a comprehensive examination of a topic with limited existing research and encourages participants to contribute to new knowledge [27]. Individual interviews (IDI) were conducted to delve into personal experiences and challenges, as they provide depth, flexibility, and the opportunity to establish a confidential and trusting relationship."
+      },
+      {
+        "id": "p-pmc13155605-7",
+        "order_index": 7,
+        "text": "The study involved adults undergoing treatment for depression or anxiety from trained primary healthcare providers, psychosocial counselors or mental health specialists. To ensure the trustworthiness of the qualitative study, we adhered to Lincoln and Guba’s criteria [28], which included conducting the study in various districts to ensure diversity in terms of caste/ethnicity, cultural practices, and geography. We collaborated with different service providers for participant recruitment, employed experienced interviewers of the same gender as the participants, involved multiple individuals in data analysis, and employed thematic and framework analysis methods. A total of 24 participants were enrolled, with 13 diagnosed with depression, 9 with anxiety disorder, and 2 with both conditions. Seven participants were from Kailali, four from Chitwan, and thirteen from Jhapa district. Recruitment sources included primary healthcare providers (7), psychosocial counselors (7), and psychiatrists (10). Participants were purposively selected based on pre-defined criteria which included being 18 years or older, currently receiving mental health treatment from primary healthcare providers, psychosocial counselors, or mental health specialists, capable of providing informed consent, and proficient in Nepali."
+      },
+      {
+        "id": "p-pmc13155605-8",
+        "order_index": 8,
+        "text": "Two researchers with university degree and several years of experience in qualitative research conducted interviews, pairing interviewers and participants by gender to reduce potential bias. The researchers received two weeks of training, which covered qualitative interviewing techniques, inclusion and exclusion criteria, and an orientation to the interview guides, with particular emphasis on using non-stigmatized terminologies and maintaining confidentiality throughout the interview process and data handling. The first author supervised the interviewers by reviewing audio recordings and providing feedback regularly. Trained interviewers visited participants at homes, explained the study’s objectives, benefits, and risks, and obtained written consent. Interviews were conducted either at home or in a confidential space in the outpatient department at a health center. All interviews were audio recorded in participants’ own words and lasted 45–60 minutes, depending on the depth of information shared. The interviews took place between January 20, 2023 and July 4, 2023."
+      },
+      {
+        "id": "p-pmc13155605-9",
+        "order_index": 9,
+        "text": "We adapted the McGill Illness Narrative Interview (MINI), a semi-structured interview protocol commonly used in mental health research, to collect detailed narratives on symptom experiences, illness narratives, perceived causes of illness and help-seeking behaviors [29,30]. The interview guide comprised five sections: history and understanding of the illness, effects and perceived causes, experience of stigma and discrimination, treatment pathways, and barriers and facilitators to treatment. Prior to data collection, the interview guide underwent pilot testing with a small group of participants. This paper focuses on data related to symptoms experienced, perceived causes and treatment pathways."
+      },
+      {
+        "id": "p-pmc13155605-10",
+        "order_index": 10,
+        "text": "All interviews were audio-recorded, transcribed verbatim into Nepali by the interviewers immediately after each interview, and later translated into English for analysis. The first author reviewed all transcripts against the audio-recordings to ensure accuracy and preserve culturally embedded meaning. Idioms of distress were translated to achieve conceptual rather than literal equivalence, with consultation from an experienced psychiatrist. Two researchers who were involved in coding and data entry independently reviewed all transcripts for initial familiarization."
+      }
+    ]
+  },
+  {
+    "id": "SRC-PMC12678874",
+    "title": "Applying self-regulated learning to anxiety and stress management in severe mental disorders: A qualitative study",
+    "author": "Deliu MM, Soto-Pérez F, Aza A, Verdugo MÁ, Lettieri A.",
+    "publication": "Applied psychology. Health and well-being",
+    "canonical_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12678874/",
+    "doi": "10.1111/aphw.70091",
+    "pmcid": "PMC12678874",
+    "pubmed_id": "41346176",
+    "publication_year": 2025,
+    "abstract": "Severe mental disorders (SMDs), such as schizophrenia, bipolar disorder, and personality disorders, present significant challenges for stress and anxiety management due to cognitive vulnerabilities. Self-regulated learning (SRL) models offer a structured framework for analyzing self-management strategies, yet their application in mental health contexts remains underexplored. This study applies Pintrich's (2000) SRL model to examine how individuals with SMDs manage stress and anxiety, identifying strengths and gaps across the forethought, monitoring, control, and reaction/reflection phases. A qualitative approach was employed, analyzing focus group discussions with 28 adults diagnosed with SMDs. Thematic analysis, conducted using NVivo, combined inductive coding and theory-driven interpretation based on the SRL framework. Results show that the forethought phase was most frequently represented, emphasizing participants' cognitive preparation and anticipation of stressors. The control phase followed, highlighting behavioral and contextual coping strategies such as relaxation, problem-solving, and support-seeking. However, the monitoring and reaction/reflection phases were less developed, with limited focus on real-time awareness and evaluation. These findings point to the need for tailored interventions and highlight theoretical adaptations required to extend SRL to clinical contexts. We discuss how integrating SRL with recovery-oriented frameworks could support more adaptive, p",
+    "source_type": "qualitative_testimony",
+    "license_notes": "CC-BY Open Access via PubMed Central (PMC12678874)",
+    "license_status": "CC-BY (verify)",
+    "allow_list_status": "pending",
+    "version": "1",
+    "paragraphs": [
+      {
+        "id": "p-pmc12678874-1",
+        "order_index": 1,
+        "text": "Correspondence , Felipe Soto‐Pérez, Institute on Community Integration (INICO), University of Salamanca, Salamanca, Spain. Email: fcsotop@usal.es"
+      },
+      {
+        "id": "p-pmc12678874-2",
+        "order_index": 2,
+        "text": "Severe mental disorders (SMDs), such as schizophrenia, bipolar disorder, and personality disorders, present significant challenges for stress and anxiety management due to cognitive vulnerabilities. Self‐regulated learning (SRL) models offer a structured framework for analyzing self‐management strategies, yet their application in mental health contexts remains underexplored. This study applies Pintrich's (2000) SRL model to examine how individuals with SMDs manage stress and anxiety, identifying strengths and gaps across the forethought, monitoring, control, and reaction/reflection phases. A qualitative approach was employed, analyzing focus group discussions with 28 adults diagnosed with SMDs. Thematic analysis, conducted using NVivo, combined inductive coding and theory‐driven interpretation based on the SRL framework. Results show that the forethought phase was most frequently represented, emphasizing participants' cognitive preparation and anticipation of stressors. The control phase followed, highlighting behavioral and contextual coping strategies such as relaxation, problem‐solving, and support‐seeking. However, the monitoring and reaction/reflection phases were less developed, with limited focus on real‐time awareness and evaluation. These findings point to the need for tailored interventions and highlight theoretical adaptations required to extend SRL to clinical contexts. We discuss how integrating SRL with recovery‐oriented frameworks could support more adaptive, person‐centered strategies for managing stress and anxiety in SMDs."
+      },
+      {
+        "id": "p-pmc12678874-3",
+        "order_index": 3,
+        "text": "Keywords: recovery model, self‐management strategies, self‐regulated learning (SRL), severe mental disorders, stress and anxiety management"
+      },
+      {
+        "id": "p-pmc12678874-4",
+        "order_index": 4,
+        "text": "Severe mental disorders (SMDs) are long‐term psychiatric conditions characterized by substantial functional impairment (Zumstein &amp; Riese, 2020); typically including schizophrenia, bipolar disorder, and severe affective or personality disorders, affecting approximately 1% to 5.5% of adults (CIBERSAM, 2024; NIMH, 2023)."
+      },
+      {
+        "id": "p-pmc12678874-5",
+        "order_index": 5,
+        "text": "Beyond core symptoms, individuals with SMDs face heightened difficulties compared to the general population in managing stress and anxiety (de Gispen‐Wied, 2000; Hofer et al., 2022). Although conceptually distinct—stress often being linked to situational pressures and anxiety to persistent internal worry (American Psychological Association, 2022)—they commonly co‐occur and interact dynamically in SMD populations, jointly exacerbating symptom severity and impairing coping (Phillips et al., 2007; Temmingh &amp; Stein, 2015). Compared to the general population, individuals with SMDs are more vulnerable to both stress and anxiety (Hofer et al., 2022), increasing their risk of emotional dysregulation and relapse (Menefee et al., 2022; Underwood et al., 2016)."
+      },
+      {
+        "id": "p-pmc12678874-6",
+        "order_index": 6,
+        "text": "As described in the stress‐vulnerability model (Georgiades et al., 2023; Zubin &amp; Spring, 1977), individuals with SMDs, environmental and psychological stressors interact with genetic predispositions to trigger acute episodes and further impair coping capacities, which may result in overestimating threats, leading to exaggerated stress responses (Phillips et al., 2007)."
+      },
+      {
+        "id": "p-pmc12678874-7",
+        "order_index": 7,
+        "text": "In this context, self‐regulated learning (SRL), grounded in Bandura's social‐cognitive theory, offers a valuable framework for understanding how individuals manage internal processes such as stress and anxiety (Bandura, 2001). Self‐regulated learning encompasses the strategies that individuals use to actively regulate their goal‐directed activities (De La Fuente et al., 2022; Panadero, 2017). One of the most influential SRL models is Pintrich's (2000) goal orientation model, which has been widely studied across various domains (Panadero, 2017; Schunk, 2005). This model (see Table 1), delineates four key phases: (1) forethought, planning, and activation, which involves setting goals and preparing strategies before engaging in a task; (2) monitoring, which refers to tracking one's progress and internal states during the activity; (3) control, which involves making adjustments or applying strategies in response to perceived challenges; and (4) reaction and reflection, which includes evaluating outcomes and reflecting on performance to inform future efforts. It also identifies four domains where self‐regulation occurs: (1) cognition, (2) motivation and affect, (3) behavior, and (4) context."
+      },
+      {
+        "id": "p-pmc12678874-8",
+        "order_index": 8,
+        "text": "Adapted self‐regulated learning phases and areas of stress and anxiety for SMD contexts (following Pintrich, 2000)."
+      },
+      {
+        "id": "p-pmc12678874-9",
+        "order_index": 9,
+        "text": "Note: The interplay between phases (left) and areas (top) is illustrated with some of the most characteristic general examples. Note that not all examples are displayed in this table. For a more comprehensive presentation of specific examples from the focus groups, refer to the results section."
+      },
+      {
+        "id": "p-pmc12678874-10",
+        "order_index": 10,
+        "text": "SRL principles, although extensively applied in academic settings, have increasingly been recognized as effective in health‐related contexts (Clark et al., 2014; Clark &amp; Zimmerman, 1990; Inzlicht et al., 2021; Shegog et al., 2020; Strauman, 2017; Tavakolizadeh et al., 2012; Wang et al., 2023), including stress and anxiety regulation (e.g., Broks et al., 2024). While several models of self‐regulation have been applied to mental health—including Gross's process model of emotion regulation (e.g., Gross et al., 2019) or the COM‐B model of behavior change (Michie et al., 2011)—we believe Pintrich's (2000) self‐regulated learning (SRL) framework offers distinct advantages for the aims of this review. Pintrich's (2000) model further clarified and expanded SRL (Panadero, 2017), offering a structured yet flexible framework that can help to identify specific strengths and gaps in self‐regulation across all life areas. This is particularly relevant for individuals with severe mental disorders (SMDs), who often present with uneven regulatory profiles and require an approach that combines biopsychosocial actions, including effective stress and illness management (Killaspy et al., 2022; Wiersma, 2006), along with an understanding of self‐regulation."
+      }
+    ]
+  },
+  {
+    "id": "SRC-PMC13279597",
+    "title": "Understanding the Context and Needs of Adolescents Experiencing Subclinical Anxiety and Depression Symptoms in Wales: Document Analysis and Qualitative Data Collection",
+    "author": "Reed H, Renold R, Hewald E, Shenderovich Y.",
+    "publication": "School mental health",
+    "canonical_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13279597/",
+    "doi": "10.1007/s12310-026-09849-3",
+    "pmcid": "PMC13279597",
+    "pubmed_id": "42325303",
+    "publication_year": 2026,
+    "abstract": "This study aimed to understand the context and needs of adolescents experiencing elevated but subclinical anxiety and depression symptoms, who have been termed the \"missing middle\" in Wales (UK). It is part of a project to identify and adapt an effective secondary school-based intervention to Wales. The methods used were document analysis, and qualitative primary data collection. Sixteen documents were analysed: Welsh policy (n = 2), primary research (n = 3), research overviews (n = 2), and reports of stakeholders' views on adolescent mental health (n = 9). Next, focus groups and interviews were conducted with 35 students aged 11-18 years old; 18 school staff; 23 practitioners involved in managing, delivering or referring to non-clinical and clinical mental health services; and two policy officials. A hybrid approach of deductive and inductive thematic analysis was conducted which produced four themes. Firstly, we identified definitions and understandings of the \"missing middle\". Secondly, contextual factors included an increase in help seeking, alongside challenges of self-diagnosis and the striving for specialist support even when this was inappropriate. A third theme highlighted enablers and barriers to implementing targeted provision e.g., while funding had increased for school services, this was still not adequate to meet demand. Fourthly, desired intervention targets were at the intrapersonal (cultivating emotional regulation and problem-solving skills) and the interper",
+    "source_type": "qualitative_testimony",
+    "license_notes": "CC-BY Open Access via PubMed Central (PMC13279597)",
+    "license_status": "CC-BY (verify)",
+    "allow_list_status": "pending",
+    "version": "1",
+    "paragraphs": [
+      {
+        "id": "p-pmc13279597-1",
+        "order_index": 1,
+        "text": "This study aimed to understand the context and needs of adolescents experiencing elevated but subclinical anxiety and depression symptoms, who have been termed the “missing middle” in Wales (UK). It is part of a project to identify and adapt an effective secondary school-based intervention to Wales. The methods used were document analysis, and qualitative primary data collection. Sixteen documents were analysed: Welsh policy (n = 2), primary research (n = 3), research overviews (n = 2), and reports of stakeholders’ views on adolescent mental health (n = 9). Next, focus groups and interviews were conducted with 35 students aged 11–18 years old; 18 school staff; 23 practitioners involved in managing, delivering or referring to non-clinical and clinical mental health services; and two policy officials. A hybrid approach of deductive and inductive thematic analysis was conducted which produced four themes. Firstly, we identified definitions and understandings of the “missing middle”. Secondly, contextual factors included an increase in help seeking, alongside challenges of self-diagnosis and the striving for specialist support even when this was inappropriate. A third theme highlighted enablers and barriers to implementing targeted provision e.g., while funding had increased for school services, this was still not adequate to meet demand. Fourthly, desired intervention targets were at the intrapersonal (cultivating emotional regulation and problem-solving skills) and the interpersonal levels (reducing loneliness and supporting social relationships), with school-based, one-to-one delivery via external providers preferred. These findings offer insights into how preventive interventions should include those experiencing high levels of distress and/or functional impairment even in the absence of high symptoms."
+      },
+      {
+        "id": "p-pmc13279597-2",
+        "order_index": 2,
+        "text": "Adolescent mental health is a prevention priority. It is estimated that 13% of 10–19 year-olds have a diagnosable mental health disorder (United Nations Children’s Fund, 2021). Mental ill health is the leading cause of disability-adjusted life years in under 24-year-olds, with anxiety and depression being two of the most prevalent disorders (Erskine et al., 2015). The peak age of onset for anxiety disorders is 5.5 years old with a second peak at 17 years old, and for depression it is 20.5 years old (Solmi et al., 2022). These conditions can have chronic and relapsing trajectories (Moriarty et al., 2020), with relapse in 1/3 of those with anxiety (Taylor et al., 2015) and up to 3/4 of those with depression (Conradi et al., 2017)."
+      },
+      {
+        "id": "p-pmc13279597-3",
+        "order_index": 3,
+        "text": "Studies also report a growing global population of adolescents with subclinical but elevated anxiety and depression symptoms. As those with subthreshold symptoms are at higher risk for later disorder onset than those without symptoms (Fergusson et al., 2005), this has led to the growth in the development and evaluation of indicated interventions. Even prior to COVID-19, an increasing trend in adolescent emotional problems was demonstrated (Anthony et al., 2023; Collishaw, 2015; Patalay &amp; Gage, 2019), but this has been exacerbated by the pandemic (Creswell et al., 2021; Racine et al., 2021; Viner et al., 2022). One systematic review from 2022 found 17 studies that measured anxiety symptoms and 25 that measured depressive symptoms that showed population increases from pre to post pandemic (Samji et al., 2022)."
+      },
+      {
+        "id": "p-pmc13279597-4",
+        "order_index": 4,
+        "text": "Reports by the US Institute of Medicine (Mrazek &amp; Haggerty, 1994; O'Connell et al., 2009) demarcated primary prevention interventions as those provided before the first onset of a diagnostic disorder, whereas treatment interventions aim to cure the disorder or reduce symptoms in those with a diagnosed condition. Primary prevention interventions include universal, which are delivered to a whole cohort, selective, which target groups or individuals with an elevated risk, e.g., parental psychopathology, and indicated, which target populations with early symptoms or behaviours that precede disorder. Selective and indicated interventions are collectively referred to as targeted interventions (e.g., Hetrick et al., 2016; Werner-Seidler et al., 2021)."
+      },
+      {
+        "id": "p-pmc13279597-5",
+        "order_index": 5,
+        "text": "Indicated interventions fall between universal programmes, that tend to focus on psychosocial content such as social emotional learning for all adolescents, and treatment programmes, that focus on therapeutic approaches such as cognitive behavioural therapy delivered mainly in clinical settings. Indicated interventions are often delivered in school settings due to the potential reach in the population, and are shown to be more acceptable to deliverers and recipients as they can often be tailored to the individual needs of adolescents, and they can be more sustainable (Fazel et al., 2014; Rapee et al., 2006)."
+      },
+      {
+        "id": "p-pmc13279597-6",
+        "order_index": 6,
+        "text": "There is evidence that indicated interventions are effective in decreasing secondary school students’ anxiety and depression symptoms (Werner-Seidler et al., 2021; WHO &amp; UNICEF, 2021). Further, targeted approaches (indicated and selective) tend to have higher effects sizes than universal programmes (Werner-Seidler et al., 2021). Providing universal interventions alone may not be sufficient to alter the trajectories of those already exhibiting symptoms (Greenberg &amp; Abenavoli, 2017), with one study finding a possibility of increased emotional difficulties for some as they become aware of their symptoms (Montero-Marin et al., 2022). Researchers have highlighted the need to explore for school-based interventions “what works, for whom and how, as well as considering key contextual and implementation factors” (Kuyken et al., 2022, p.104)."
+      },
+      {
+        "id": "p-pmc13279597-7",
+        "order_index": 7,
+        "text": "This study is important as it adds to the emergent literature on including the voices of those with lived experience in indicated prevention. Qualitative research on depression demonstrates that adolescents’ lived experience of mental health difficulties may not always match the expectations of professionals and map onto diagnostic criteria (Twivy et al., 2023) which demonstrates the need to incorporate lived experience. However, within the indicated prevention field there is a lack of qualitative research with or about the adolescent population with subclinical depression and anxiety symptoms. For example, Beket et al’s (2025) review of qualitative studies on adolescents’ perceptions on mental health found 74 articles but only one aimed explicitly at understanding subclinical depression, while a few others focused on experiences of emotional distress, and seeking/accessing help, including barriers to support, that may be associated with this group."
+      },
+      {
+        "id": "p-pmc13279597-8",
+        "order_index": 8,
+        "text": "Further, indicated interventions have historically been developed by researchers or adapted from treatment approaches without incorporating lived experience. There is nascent literature about the use of university-community partnerships that utilise human-centred design (HCD) to develop and adapt school-based mental health interventions (Lawson &amp; Owens, 2024). The first step in HCD processes often employs predominately qualitative methods to elucidate the lived experience of stakeholders, such as students and school staff, as a means of “discovery of user and context needs” (Lyon, 2024, p. 932)."
+      },
+      {
+        "id": "p-pmc13279597-9",
+        "order_index": 9,
+        "text": "Therefore, both the presentation of subthreshold mental health difficulties and the indicated approaches to addressing them, require the understanding and integration of lived experience. Our work does this through primary qualitative data collection that centres the perspectives of stakeholders including adolescents and school staff, and analysis of documents comprising those that foreground stakeholders’ views on adolescent mental health in Wales. This will provide insight into the support needs of young people experiencing subclinical levels of depression and anxiety within the context of Wales for the purpose of adapting an intervention for the “missing middle”."
+      },
+      {
+        "id": "p-pmc13279597-10",
+        "order_index": 10,
+        "text": "Wales is one of the four UK nations with devolved responsibility (transfer of decision-making power and resources from the central government to a country in a union) for health. The growing burden of adolescent anxiety and depression shown globally is reflected in Wales. This is demonstrated through biennial repeated cross-sectional, representative samples of Welsh 11–16-year-olds that undertake the Strengths and Difficulties Questionnaire which includes questions on mood and fears. In 2019–20, 39% of adolescents reported at least slightly elevated mental health symptoms (Page et al., 2021), and this increased to 46% in the 2021–2022 survey (Page et al., 2023). Pre-pandemic analyses also show these increases in emotional problems are observed throughout the secondary school age group (11–16 year olds), with more marked increases for girls and those from families with higher deprivation (Anthony et al., 2023)."
+      }
+    ]
+  },
+  {
+    "id": "SRC-PMC12161304",
+    "title": "Primary care practitioners' and patients' views on the benefits and challenges of remote consulting for anxiety and depression in UK general practice: a qualitative interview study",
+    "author": "Archer C, Ting L, Kessler D, Wiles N, Turner KM.",
+    "publication": "BMJ open",
+    "canonical_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12161304/",
+    "doi": "10.1136/bmjopen-2024-093795",
+    "pmcid": "PMC12161304",
+    "pubmed_id": "40484428",
+    "publication_year": 2025,
+    "abstract": "ObjectiveTo explore primary care patients' and practitioners' views and experiences of remote consulting for common mental disorders (CMDs), to optimise their management in primary care.DesignQualitative study using in-depth interviews and thematic analysis. A topic guide was used to ensure consistency across interviews. The interviews were audio-recorded, transcribed verbatim and analysed thematically. There was patient and public input throughout.SettingParticipants were recruited from general practices. Interviews were held by telephone or videocall between March 2023 and October 2023.ParticipantsWe interviewed 20 practitioners and 21 patients.ResultsInterviewees suggested benefits included convenience, increased anonymity and were easier for those feeling very low or anxious. Challenges included practitioners finding it hard to assess risk, which lengthened consultation duration or led to further contact, increasing practice workload and patients feeling anxious waiting for the practitioner to call. In-person appointments were viewed as important for initial consultations and providing a safe space. Continuity of care and practitioner training were identified as facilitators for telephone consultations, and both patients and practitioners identified training needs around how to deliver mental healthcare remotely.ConclusionsPractitioners should aim to offer continuity of care and in-person appointments when patients initially seek help. Remote consultations may not be more",
+    "source_type": "qualitative_testimony",
+    "license_notes": "CC-BY Open Access via PubMed Central (PMC12161304)",
+    "license_status": "CC-BY (verify)",
+    "allow_list_status": "pending",
+    "version": "1",
+    "paragraphs": [
+      {
+        "id": "p-pmc12161304-1",
+        "order_index": 1,
+        "text": "Supplemental material This content has been supplied by the author(s). It has not been vetted by BMJ Publishing Group Limited (BMJ) and may not have been peer-reviewed. Any opinions or recommendations discussed are solely those of the author(s) and are not endorsed by BMJ. BMJ disclaims all liability and responsibility arising from any reliance placed on the content. Where the content includes any translated material, BMJ does not warrant the accuracy and reliability of the translations (including but not limited to local regulations, clinical guidelines, terminology, drug names and drug dosages), and is not responsible for any error and/or omissions arising from translation and adaptation or otherwise."
+      },
+      {
+        "id": "p-pmc12161304-2",
+        "order_index": 2,
+        "text": "To explore primary care patients’ and practitioners’ views and experiences of remote consulting for common mental disorders (CMDs), to optimise their management in primary care."
+      },
+      {
+        "id": "p-pmc12161304-3",
+        "order_index": 3,
+        "text": "Qualitative study using in-depth interviews and thematic analysis. A topic guide was used to ensure consistency across interviews. The interviews were audio-recorded, transcribed verbatim and analysed thematically. There was patient and public input throughout."
+      },
+      {
+        "id": "p-pmc12161304-4",
+        "order_index": 4,
+        "text": "Participants were recruited from general practices. Interviews were held by telephone or videocall between March 2023 and October 2023."
+      },
+      {
+        "id": "p-pmc12161304-5",
+        "order_index": 5,
+        "text": "Interviewees suggested benefits included convenience, increased anonymity and were easier for those feeling very low or anxious. Challenges included practitioners finding it hard to assess risk, which lengthened consultation duration or led to further contact, increasing practice workload and patients feeling anxious waiting for the practitioner to call. In-person appointments were viewed as important for initial consultations and providing a safe space. Continuity of care and practitioner training were identified as facilitators for telephone consultations, and both patients and practitioners identified training needs around how to deliver mental healthcare remotely."
+      },
+      {
+        "id": "p-pmc12161304-6",
+        "order_index": 6,
+        "text": "Practitioners should aim to offer continuity of care and in-person appointments when patients initially seek help. Remote consultations may not be more time or cost-efficient for individuals with CMDs as risk is harder to assess. There is a need to evaluate existing training on delivering remote consultations to identify whether remote mental healthcare is included or should be incorporated in the future."
+      },
+      {
+        "id": "p-pmc12161304-7",
+        "order_index": 7,
+        "text": "Keywords: Anxiety disorders, Depression &amp; mood disorders, QUALITATIVE RESEARCH, MENTAL HEALTH, Primary Health Care, Risk Assessment"
+      },
+      {
+        "id": "p-pmc12161304-8",
+        "order_index": 8,
+        "text": "Patient and public involvement was actively embedded in all stages of the research process, and participants had a wide range of sociodemographic and clinical characteristics."
+      },
+      {
+        "id": "p-pmc12161304-9",
+        "order_index": 9,
+        "text": "Patients were recruited if they already had anxiety or depression in their recent medical history. Therefore, this study does not capture the views of those who are yet to seek help for their mental health."
+      },
+      {
+        "id": "p-pmc12161304-10",
+        "order_index": 10,
+        "text": "Participants were self-selecting in terms of being individuals who responded to the research invitation. As such, those interviewed may have been individuals who had strong preferences for or against remote consultations."
+      }
+    ]
+  }
+]

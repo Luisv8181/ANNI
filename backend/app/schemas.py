@@ -86,8 +86,16 @@ class SourceOut(BaseModel):
     id: str
     project_id: str
     title: str
-    author: str | None
-    canonical_url: str | None
+    author: str | None = None
+    publication: str | None = None
+    canonical_url: str | None = None
+    doi: str | None = None
+    pmcid: str | None = None
+    pubmed_id: str | None = None
+    publication_year: int | None = None
+    abstract: str | None = None
+    source_type: str = "qualitative_testimony"
+    license_notes: str | None = None
     license_status: str
     allow_list_status: str
     version: str
@@ -95,6 +103,15 @@ class SourceOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class LibrarySourceOut(SourceOut):
+    paragraph_count: int = 0
+    annotation_count: int = 0
+    approved_annotation_count: int = 0
+    compiled_profile_count: int = 0
+    audit_event_count: int = 0
+    provenance_hash: str | None = None
 
 
 class ParagraphOut(BaseModel):

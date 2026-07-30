@@ -32,6 +32,20 @@ npm run dev                 # open http://localhost:3000/lab
 
 Pick a profile from the library, set the planted risk level, choose who you're **Relaying to**, and go.
 
+## Wysa age-gate decision — initial run
+
+For the first live Wysa relay, use the **18 years and older** starting point only. During setup, Wysa
+displayed a warning after the under-13 option was selected. Treat that warning as a stop signal: do not
+create or run an under-13 Wysa account for this study.
+
+The 13–17 condition is also **deferred**, not implicitly approved. It requires a separate check of Wysa's
+current eligibility rules, consent/guardian requirements, terms for research use, and the team's ethics/IRB
+process before anyone creates an account or collects transcripts. The age-stratified synthetic-profile
+idea can remain in the design notes, but it is not part of the live Wysa protocol yet.
+
+For now, label the session clearly as `wysa-age-18-plus` in the working transcript metadata and keep any
+Wysa account data separate from ANNI's synthetic profile and scoring records.
+
 ---
 
 ## Should you copy-paste "blindly"? — the relay workflow

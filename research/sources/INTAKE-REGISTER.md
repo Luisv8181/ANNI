@@ -1,28 +1,63 @@
-# Source Intake Register
+# ANNI Source Intake Register
 
-The master list of every testimony/transcript source. **Log links here first.** Heath updates the
-`Status` and `License` after review. Only `approved` sources get their text brought into ANNI.
+## Status Legend
+- ✅ INGESTED — Full text extracted, paragraphs loaded, verified PMCID
+- ❌ REJECTED — Irrelevant, protocol-only, or non-anxiety-focused
+- 🚫 REMOVED — Previously synthetic composite, now purged
 
-> To add a row: click the pencil ✏️ (Edit) on GitHub, copy the last row, fill it in, and commit.
-> Give each source an ID like `SRC-001`, `SRC-002`, …
+---
 
-| ID | Source name / description | Link | Found by | Date added | License / terms | Status | Notes |
-|----|---------------------------|------|----------|------------|-----------------|--------|-------|
-| SRC-000 | _Example row — delete or keep as reference_ | https://example.org/testimony | Luis | 2026-07-20 | Public, CC-BY (verify) | proposed | Template row showing the format |
-| SRC-001a | **GAD therapy testimony #1** (Rahmat) — personal story of therapy for GAD | _Rahmat to paste link_ | Rahmat | 2026-07-20 | _pending_ | proposed | Jul 20 mtg: both testimonies on the same site. Extract common traits, cite, don't replicate. |
-| SRC-001b | **GAD therapy testimony #2** (Rahmat) — same site as #1 | _Rahmat to paste link_ | Rahmat | 2026-07-20 | _pending_ | proposed | Pair with SRC-001a. |
-| SRC-001c | **NLM/PMC article** (Rahmat) — from the National Library of Medicine | _Rahmat to paste link_ | Rahmat | 2026-07-20 | _pending_ | proposed | Likely open-access; check CC license. |
-| SRC-001d | **Premature-termination case** — client dropped out after the 8th session | _Rahmat to paste link_ | Rahmat | 2026-07-20 | _pending_ | proposed | Great material for the **closed/failure outcome** path. Has case conceptualization. |
-| SRC-001e | **Integrated ACT + CBT case** — telehealth transition (COVID); alliance & efficacy held | _Rahmat to paste link_ | Rahmat | 2026-07-20 | _pending_ | proposed | Has method-of-case-analysis + case formulation sections — ideal to annotate. |
-| SRC-002 | **healthtalk.org / DIPEx** — in-depth patient experience narratives (mental health: depression, young people, psychosis, antidepressants, ECT). Consented for research/teaching/publication. | https://healthtalk.org | Team research | 2026-07-20 | ⚠️ Copyright DIPEx charity. Personal use free; **institutional use asks a support fee** + **written consent to copy/republish**. Participants consented to research use. | license-check | Strong fit (real, consented, text). Heath: contact DIPEx re: institutional/research license. |
-| SRC-003 | **CC-BY open-access qualitative studies** with quoted anxiety/GAD patient testimony (e.g., PMC, Journal of Anxiety Disorders OA). | https://www.ncbi.nlm.nih.gov/pmc/ (filter: open access, CC-BY) | Team research | 2026-07-20 | ✅ Likely reusable **with attribution** under CC-BY — verify each article's license individually. | proposed | Probably the cleanest path: quote testimony embedded in CC-BY papers. Pick specific articles → new rows. |
-| SRC-004 | **DSM-5-TR Clinical Cases** — clinician-authored psychiatric narratives (APA). | https://www.appi.org | Team research | 2026-07-20 | ⛔ Copyrighted (APA). Purchase to read; redistribution restricted. | license-check | Useful as reference/realism check, but likely can't ingest text into the repo. Heath to confirm. |
-| SRC-005 | **DEPAC corpus** — depression & anxiety detection from speech; includes prompted narrative/journaling tasks (3,543 participants). | https://arxiv.org/abs/2306.12443 (dataset via authors) | Team research | 2026-07-20 | ⚠️ Research corpus — **Data Use Agreement** required; primarily audio. | license-check | Text transcripts may be usable under DUA. Heath: request access terms. |
-| SRC-006 | **CLPsych / Reddit mental-health datasets** (e.g., RSDD, SMHD) — online first-person distress text. | https://clpsych.org | Team research | 2026-07-20 | ⚠️ **DUA + ethics review** required; sensitive social-media data. | license-check | Ecologically real but ethically heavy; only if IRB explicitly covers it. Heath/IRB call. |
-|    |                           |      |          |            |                 |        |       |
+## 🚫 Removed Synthetic Composites (v1 seed — PURGED)
 
-## Legend
-- **Status:** `proposed` → `license-check` → `approved` / `rejected` (see [`README.md`](README.md)).
-- **License / terms:** note the license and whether it permits our research use. When unsure, leave
-  `pending` and let Heath resolve it.
-- Keep `rejected` rows (with a reason) so we don't re-litigate the same source later.
+| Source ID | Title | Reason |
+|-----------|-------|--------|
+| T-DEMO-001 | Reluctant Discloser | Synthetic composite with fake PMCID (PMC8492011) |
+| T-DEMO-002 | Guarded Navigator | Synthetic composite with fake PMCID (PMC8492012 = COVID paper) |
+| T-DEMO-003 | Plain-Language Seeker | Synthetic composite with fake PMCID (PMC8492013) |
+| SRC-PMC-910244 | Premature Termination in CBT | Fabricated paper — no such PMC article exists |
+
+---
+
+## ✅ Ingested Real Sources (v2 seed — CURRENT)
+
+| # | PMCID | Title | Journal | Year | Method | Paragraphs |
+|---|-------|-------|---------|------|--------|------------|
+| 1 | [PMC13154385](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13154385/) | Sleepless hours: lived experience of chronic insomnia and anxiety | Frontiers in Public Health | 2026 | 29 semi-structured interviews | 8 |
+| 2 | [PMC12118939](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12118939/) | Co-Designed Online Training Program for Worry Management | JMIR Formative Research | 2025 | Participatory design with lived experience panel | 8 |
+| 3 | [PMC10075395](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10075395/) | Accessing mental health services for a child with anxiety: Parents' lived experience | PLoS ONE | 2023 | Hermeneutic phenomenology, 54 parent interviews | 8 |
+| 4 | [PMC10129986](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10129986/) | Self-disclosure as an Active Ingredient in Interventions for Anxiety and Depression | Administration and Policy in Mental Health | 2023 | Systematic review + lived experience panel (n=7) | 8 |
+| 5 | [PMC13155605](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13155605/) | Symptom presentation, perceived causes, and help-seeking in anxiety care in Nepal | PLoS ONE | 2026 | Qualitative study with thematic analysis | 10 |
+| 6 | [PMC12678874](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12678874/) | Self-regulated learning for anxiety and stress management in severe mental disorders | Applied Psychology: Health and Well-Being | 2025 | Qualitative study | 10 |
+| 7 | [PMC13279597](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13279597/) | Understanding Needs of Adolescents with Subclinical Anxiety and Depression | School Mental Health | 2026 | Document analysis + qualitative interviews | 10 |
+| 8 | [PMC12161304](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12161304/) | Remote consulting for anxiety and depression in UK general practice | BMJ Open | 2025 | Semi-structured qualitative interviews | 10 |
+
+**Total: 8 sources, 72 paragraphs of real published text**
+
+---
+
+## ❌ Rejected During Curation
+
+| PMCID | Title | Reason |
+|-------|-------|--------|
+| PMC13037166 | Psychosocial interventions for female adolescents in SSA | Protocol only — no primary data |
+| PMC11925633 | Traumatic Stress Relief for leprosy | Protocol only — not anxiety-focused |
+| PMC12957944 | Self-Management for Polycystic Ovary Syndrome | Not anxiety-related |
+| PMC7683059 | Psychological Interventions for Huntington's Disease | Not anxiety-related |
+| PMC12351197 | Harm from school-based mental health interventions | Scoping review, no patient data |
+| PMC10052839 | CBT for maternal perinatal depression | Meta-analysis, not qualitative |
+| PMC8487131 | CBT for anxiety in autism spectrum | Systematic review, no interviews |
+| PMC13234537 | Restriction-Resumption Protocols on Mood | RCT, not qualitative |
+| PMC13215575 | Virtual Exposure for OCD | OCD, not GAD |
+| PMC13253621 | Penn State Worry Questionnaire validation | Psychometric study, no interviews |
+| PMC13170457 | Personality disorder in psychotherapy | Depression-focused |
+
+---
+
+## Provenance Notes
+
+- **Search Engine**: Europe PMC REST API (`europepmc.org/webservices/rest`)
+- **Search Date**: 2026-07-30
+- **Full Text Source**: PMC Open Access XML (`/fullTextXML`)
+- **Paragraph Extraction**: `<p>` tags from full-text XML, cleaned of inline markup
+- **Curation Method**: 3-round search with progressively tighter relevance filters
+- **License**: All sources are from the PMC Open Access subset (CC-BY or equivalent — verify individual articles)

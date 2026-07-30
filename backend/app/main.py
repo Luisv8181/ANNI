@@ -63,6 +63,7 @@ from app.schemas import (
     GeneratePromptRequest,
     GeneratePromptResponse,
     IngestResult,
+    LibrarySourceOut,
     LabeledCount,
     DecisionOut,
     OntologyNodeCreate,
@@ -102,6 +103,10 @@ from app.seed import seed_demo_data
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     cfg = get_settings()
+    # Ensure all tables exist (handles fresh DB or missing tables)
+    from app.models import Base
+    from app.database import engine
+    Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
         seed_demo_data(db)
@@ -227,6 +232,57 @@ def list_sources(project_id: str | None = Query(None), db: Session = Depends(get
     if project_id:
         query = query.where(Source.project_id == project_id)
     return db.scalars(query.order_by(Source.created_at)).all()
+
+
+@app.get("/library/sources", response_model=list[LibrarySourceOut])
+def list_library_sources(project_id: str | None = Query(None), db: Session = Depends(get_db)):
+    """Research Library endpoint: lists sources with full citation metadata, annotation counts, derived persona counts, and provenance hashes."""
+    query = select(Source)
+    if project_id:
+        query = query.where(Source.project_id == project_id)
+    sources = db.scalars(query.order_by(Source.created_at.desc())).all()
+
+    result = []
+    for s in sources:
+        paras = db.scalars(select(Paragraph.id).where(Paragraph.source_id == s.id)).all()
+        para_count = len(paras)
+
+        annotations = db.scalars(select(Annotation).where(Annotation.paragraph_id.in_(paras))).all() if paras else []
+        ann_count = len(annotations)
+        approved_count = len([a for a in annotations if a.status in ("approved", "accepted")])
+
+        audit_events = db.scalars(select(AuditLog).where(AuditLog.entity_id == s.id)).all()
+        audit_count = len(audit_events)
+        latest_hash = audit_events[-1].event_hash if audit_events else s.content_hash
+
+        result.append(
+            LibrarySourceOut(
+                id=s.id,
+                project_id=s.project_id,
+                title=s.title,
+                author=s.author,
+                publication=s.publication,
+                canonical_url=s.canonical_url,
+                doi=s.doi,
+                pmcid=s.pmcid,
+                pubmed_id=s.pubmed_id,
+                publication_year=s.publication_year,
+                abstract=s.abstract,
+                source_type=s.source_type or "qualitative_testimony",
+                license_notes=s.license_notes,
+                license_status=s.license_status,
+                allow_list_status=s.allow_list_status,
+                version=s.version,
+                created_at=s.created_at,
+                paragraph_count=para_count,
+                annotation_count=ann_count,
+                approved_annotation_count=approved_count,
+                compiled_profile_count=0,
+                audit_event_count=audit_count,
+                provenance_hash=latest_hash,
+            )
+        )
+    return result
 
 
 @app.get("/sources/{source_id}/paragraphs", response_model=list[ParagraphOut])

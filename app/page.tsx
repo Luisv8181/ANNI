@@ -13,6 +13,7 @@ import {
   FileText,
   FlaskConical,
   GitBranch,
+  Library,
   Loader2,
   Lock,
   Network,
@@ -104,6 +105,12 @@ export default function Home() {
             className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3.5 py-2 text-sm font-medium text-ink shadow-sm transition hover:border-accent hover:text-accent"
           >
             <Network size={15} /> Ontology
+          </a>
+          <a
+            href="/library"
+            className="inline-flex items-center gap-1.5 rounded-full border border-teal-200 bg-teal-50 px-3.5 py-2 text-sm font-medium text-teal-800 shadow-sm transition hover:bg-teal-100"
+          >
+            <Library size={15} className="text-teal-600" /> Research Library
           </a>
           <a
             href="/provenance"
